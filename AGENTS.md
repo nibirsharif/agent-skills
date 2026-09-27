@@ -11,6 +11,7 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 - `examples/example-skill/`: blank skeleton to copy when starting a new skill. Not installed.
 - `tests/validate.py`: checks that apply to every skill (see below).
 - `tests/test_*.py`: unit tests for a skill's scripts, run by `make test`.
+- `evals/<skill-name>/`: optional eval cases for a skill: made-up inputs, checks, and a runner. Not installed. See each folder's README.
 - `agent-skills-config.yaml.template`: optional user settings that skills read.
 
 ## Adding a skill

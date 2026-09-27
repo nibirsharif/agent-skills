@@ -1,0 +1,15 @@
+{
+  "description": "Only impressions and no system. Nothing can be written, so the reply is questions only.",
+  "requirements": {"min": 0, "max": 0},
+  "questions": {"min": 2, "max": 6},
+  "must_match": [
+    {"pattern": "^Q-\\d+:[^\\n]*\\b(service|system|component)\\b[^\\n]*\\?", "why": "no system is named: ask which one"}
+  ],
+  "must_not_match": [
+    {"pattern": "^Q-\\d+:[^\\n]*Proposed: [^\\n]*\\d", "why": "a time threshold or security setting is a business decision: no numeric proposal"}
+  ],
+  "manual": [
+    "The questions ask what \"securely\" and \"fast\" mean in terms a tester can check.",
+    "No question asks two separate things."
+  ]
+}

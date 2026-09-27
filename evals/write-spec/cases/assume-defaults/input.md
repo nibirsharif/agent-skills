@@ -1,0 +1,1 @@
+Write EARS requirements for the password reset flow of the account service. When a user requests a reset, the account service emails a reset link to the user's registered address. Reset links expire, and reset requests are rate limited. Just assume sensible defaults for anything I didn't say.

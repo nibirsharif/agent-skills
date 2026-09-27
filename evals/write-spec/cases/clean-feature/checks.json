@@ -1,0 +1,34 @@
+{
+  "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and real ambiguities (whether \"every export\" includes rejected ones, and which instant \"the export time\" is).",
+  "requirements": {
+    "min": 3,
+    "max": 3
+  },
+  "questions": {
+    "min": 0,
+    "max": 3
+  },
+  "must_match": [
+    {
+      "pattern": "^REQ-\\d+: (While [^\\n]*, when|When) an admin clicks \"Export CSV\" on the Reports page, the export service shall [^\\n]*within 5 minutes of the click",
+      "why": "the event-driven statement keeps the input's terms and its starting point"
+    },
+    {
+      "pattern": "^REQ-\\d+: If [^\\n]*more than 100,000 rows, then the export service shall reject the export and display \"Report too large to export\"\\.",
+      "why": "the unwanted case uses If ... then with the exact message"
+    },
+    {
+      "pattern": "^REQ-\\d+: Where the audit module is installed, [^\\n]*the export service shall log",
+      "why": "an installed module is a feature, so Where"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "(?i)^Q-\\d+:[^\\n]*\\b(how many (rows|minutes)|(what|which) time zone|within how (long|many)|what (row )?limit)\\b",
+      "why": "asked for a value the input already gives"
+    }
+  ],
+  "manual": [
+    "Each question asks about the evident failure case (the email cannot be delivered) or a real ambiguity in the input, not a value the input gives."
+  ]
+}
