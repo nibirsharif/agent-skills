@@ -9,11 +9,9 @@ Turn a feature description, user story, or draft requirements into EARS requirem
 
 ## Before writing
 
-Read all three reference files in full before producing anything:
-
-- [references/ears-rules.md](references/ears-rules.md): sentence structure, the five patterns, choosing a keyword, system and response rules, testability, banned words, functional versus non-functional, what to rewrite versus ask, and the validation checklist. This file is authoritative.
-- [references/ears-template.md](references/ears-template.md): the specification file template and how to fill it.
-- [references/examples.md](references/examples.md): worked examples, from input to reply, including a follow-up turn and a saved file.
+- Always read [references/ears-rules.md](references/ears-rules.md) in full before producing anything: sentence structure, the five patterns, choosing a keyword, system and response rules, testability, banned words, functional versus non-functional, what to rewrite versus ask, and the validation checklist. This file is authoritative.
+- Before writing or updating a file, read [references/ears-template.md](references/ears-template.md): the specification file template and how to fill it.
+- Read [references/examples.md](references/examples.md) before your first reply in a conversation, and again whenever you are unsure of a keyword, a question, a follow-up reply, or a saved file.
 
 ## Scope
 
@@ -22,7 +20,7 @@ This skill writes EARS requirements only. It does not write Given/When/Then (Ghe
 Stop and ask instead of writing when:
 
 - The input states no behaviour or property of any system. Write nothing, and ask what the system must do.
-- The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap as a question with a proposed value, in the question format under [Output](#output), and write the requirement after the user confirms.
+- The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap as a question, with a proposed value where [Output](#output) allows one, and write the requirement after the user confirms.
 - The user insists on a banned word or an untestable requirement. Do not write it. Keep its question open and say once which rule blocks it.
 
 ## Workflow
@@ -34,13 +32,13 @@ Stop and ask instead of writing when:
 5. **Write the sentence** in the fixed clause order.
 6. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
 7. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
-8. **Ask.** Put every open question in one batch, in the format under [Output](#output). Hold back a question whose wording depends on another's answer until that answer arrives.
+8. **Ask.** Give every open question an ID, and put the most important ones in this reply, as [Output](#output) says. Hold back a question whose wording depends on another's answer until that answer arrives.
 9. **Classify** each requirement as functional or non-functional, as the rules say.
 10. **Return** the requirements that passed step 6, then the open questions, then **save** if a target path is set.
 
 ## Output
 
-Return the requirements that pass the checklist, then the open questions. If no requirement can be written, return only the questions. Nothing else: no preamble, no summary, and no title, priority, or rationale on a requirement.
+Return the requirements that pass the checklist, then the open questions. If no requirement can be written, return only the questions. Nothing else: no preamble, no summary, no closing note, and no title, priority, or rationale on a requirement. Never mention the lint, the checklist, the rules, or how you worked; act on their findings without reporting them. The reply's first line is its first `REQ-` or `Q-` line, and the only other line it may hold is the `<N> more open questions after these.` line.
 
 ```
 REQ-001: <EARS sentence>
@@ -52,9 +50,13 @@ Q-001: <one direct question>? Proposed: <value>.
 
 Put a blank line between lines so each renders on its own.
 
-Ask one gap per question, on one line, for exactly what is missing: a system, value, unit, limit, threshold, name, or the response to an evident failure case. Add `Proposed:` only when a sensible value exists, and never write the requirement until the user confirms it. No padding, hedging, or apologies.
+Ask one gap per question, on one line, for exactly what is missing: a system, value, unit, limit, threshold, name, or the response to an evident failure case. One gap is one decision the user makes. A value with its parts is one gap: a number with its unit, a time with the percentage of cases it holds for. Two things the user could decide separately are two questions: what a limit counts per, and how high it is. No padding, hedging, or apologies.
 
-When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the questions still open.
+Add `Proposed:` only when the input suggests the value, or a named standard or common practice sets it (for example SPF, DKIM, and DMARC for email sender authentication, or WCAG 2.2 level AA). Never propose a business decision: a target, limit, retry count, retention period, price, or schedule that the business must choose. When there is nothing to propose, leave `Proposed:` out; never write `Proposed: none`. Never write the requirement until the user confirms the value.
+
+Ask at most 10 questions in one reply. Put first the questions that unblock the most requirements, then the rest in input order. When more are open, end with one line: `<N> more open questions after these.` The user can answer by ID, or accept proposals with `accept Q-001, Q-004` or `accept all proposed`. Treat an accepted proposal as the user's answer.
+
+When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the next open questions, at most 10.
 
 ## IDs
 
@@ -79,7 +81,7 @@ If the file already exists and follows the template, update it:
 
 - Add new requirements at the end of their section, functional or non-functional, each with its source comment.
 - Rewrite changed and withdrawn requirements in place under their existing IDs.
-- Close answered questions in place and add new questions at the end of the section.
+- Close answered questions in place and add new questions at the end of the section. The file holds every open question, including those not yet asked in chat.
 - Add to Summary, Scope (including its Systems line), and References only what the new input states.
 - Raise the version, update the date, and add one Revision History row, as the template says.
 

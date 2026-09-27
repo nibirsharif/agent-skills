@@ -53,6 +53,10 @@ A precondition is something you can observe being true for a while. A trigger is
 
 An event that does not happen within a time limit ("no reply within 30 seconds") is a trigger at the instant the time runs out, not a state. Use `When` if the timeout is expected, `If ... then` if it is unwanted.
 
+A schedule or interval ("every 6 hours", "every Monday at 06:00 UTC") is a trigger at the instant it fires. Put it in a `When` clause, never in the response.
+
+- **Wrong:** `The backup service shall copy the database every 6 hours.` (a schedule in the response)
+- **Right:** `When 6 hours have passed since the previous database copy, the backup service shall copy the database.`
 - **Wrong:** `Where an account is on the Enterprise plan, ...` (a plan can change at runtime)
 - **Right:** `While an account is on the Enterprise plan, ...`
 - **Wrong:** `When the payment gateway is down, the checkout service shall cancel the charge request.` (unwanted, and a state rather than an event)
@@ -62,7 +66,8 @@ An event that does not happen within a time limit ("no reply within 30 seconds")
 
 - Name exactly one concrete system: the subsystem, service, component, client, or device that performs the response, for example `the checkout service`, `the engine control unit`, `the iOS push notification client`.
 - These are not system names: `the system`, `the application`, `the app`, `the platform`, `the service`, `the software`, `the server`, `the backend`, `the frontend`, `it`.
-- A system named once for the whole input (for example "Requirements for the billing service: ...") applies to every requirement in that input.
+- A system named once for the whole input (for example "Requirements for the billing service: ...") applies to every requirement in that input. A section heading that names a system applies the same way to the statements under it that name no system.
+- A statement whose subject is a name from the not-a-name list (`The system archives readings`) needs a question, even under such a heading: it may mean another system. Never take the system from a nearby statement or from context.
 - Use the system names already in the target file's Scope (Systems line) exactly. If a new name could be a system already listed under another name, ask.
 
 - **Wrong:** `The system shall send a receipt.`
@@ -77,7 +82,8 @@ An event that does not happen within a time limit ("no reply within 30 seconds")
 - List several responses in one requirement only when they share the system and every condition and together form one reaction, for example `reject the request and return HTTP status 401`. Otherwise split them.
 - No `or` between responses. A response with alternatives hides the condition that picks one of them.
 - Use `shall not` only for a prohibition that can be tested, for example `The payment service shall not store full card numbers.`
-- Give every quantity a unit and every time of day a time zone: `60 seconds`, `06:00 UTC`.
+- `only` in the input (`shows the number only after access is granted`) makes a prohibition for every other case. Write the `shall not` for the other case. Write the positive behaviour as a separate requirement only when the input states it.
+- Give every quantity a unit, and every time of day and every date or day boundary a time zone: `60 seconds`, `06:00 UTC`, `when the 1st day of a month begins in UTC`. The instant a day starts differs by time zone, so a tester needs it.
 - Write every limit with an exact comparison: `more than`, `at least`, `at most`, `fewer than`. `up to`, `between X and Y`, and `within` with no stated starting point leave the boundary open.
 
 - **Wrong:** `When a user saves a draft, the draft shall be stored.` (passive)
@@ -86,6 +92,8 @@ An event that does not happen within a time limit ("no reply within 30 seconds")
 - **Right:** `When an admin selects "Export CSV", the reporting service shall send the report as a CSV file.` (only when the input names that trigger)
 - **Wrong:** `If a login fails, then the authentication service shall display an error or lock the account.` (`or` between responses)
 - **Right:** two requirements, each with the condition that selects its response.
+- **Wrong:** `While a homeowner has granted an installer access, the installer portal shall display the phone number of the homeowner to that installer.` (from "shows the number only after access is granted": the prohibition is lost)
+- **Right:** `While a homeowner has not granted an installer access, the installer portal shall not display the phone number of the homeowner to that installer.`
 - **Wrong:** `The upload service shall accept files between 1 KB and 25 MB.` (are 1 KB and 25 MB accepted?)
 - **Right:** `If an uploaded file is smaller than 1 KB, then the upload service shall reject the upload.` and `If an uploaded file is larger than 25 MB, then the upload service shall reject the upload.` (only when the input says that files of exactly 1 KB and 25 MB are accepted)
 
@@ -98,6 +106,8 @@ A requirement is testable when a tester could write a pass/fail check from the s
 - every value needed to judge the result: numbers with units, limits, names, message text, standards.
 
 If any of these is missing and the input does not give it, ask.
+
+A response that needs judgement to check is not observable: `an open-ended question`, `a friendly message`, `a relevant answer`. Ask for the exact text, or for a property a tester can check. A response stated as an absence (`without requiring a reply`, `independent of business hours`) is testable only when the sentence names the event to test with; otherwise ask what the system does in that event.
 
 - **Wrong:** `When a user uploads a file, the storage service shall validate the file.` (validate against what?)
 - **Right:** no requirement yet. Ask: `Q-001: What does the storage service check when it validates an uploaded file, and what does it do when a check fails?`
@@ -141,6 +151,11 @@ Classify each requirement for the specification file:
 - **Non-functional:** its response sets a measurable threshold on how well a system performs (time, throughput, capacity, availability, accessibility level), or it is a constraint the user confirmed (a mandated technology, platform, standard, or regulation).
 - **Functional:** everything else, including security behaviour such as rejecting, locking, or logging.
 
+A technology, product, or vendor in the input ("store sessions in Redis") is an implementation choice until the user confirms it is a constraint. Ask first; write it only after the user confirms.
+
+- **Wrong:** `The session service shall store sessions in Redis.` (from "Store sessions in Redis", not yet confirmed)
+- **Right:** no requirement yet. Ask: `Q-001: Is storing sessions in Redis a constraint the session service must meet?`
+
 ## Rewrite, or ask
 
 Fix these yourself; they do not need the user:
@@ -151,6 +166,7 @@ Fix these yourself; they do not need the user:
 - A passive response: make the named system the subject.
 - An unwanted event written with `When`: use `If ... then`.
 - A timeout written as a state: make it a trigger at the instant the time runs out.
+- A schedule or interval in the response: move it into a `When` clause.
 - Both `When` and `If` in one sentence: keep one trigger. If the expected event is only context for the unwanted one, fold it into the `If` clause (`If the payment for a submitted order is declined, ...`). If they describe two behaviours, write two requirements.
 - `Where` used for something that can change at runtime: use `While`.
 - `or` between conditions or triggers: write one requirement per alternative.
@@ -160,7 +176,7 @@ Fix these yourself; they do not need the user:
 
 Ask when:
 
-- No system is named, or only a name from the not-a-name list above.
+- No system is named, or only a name from the not-a-name list above, and no heading or whole-input system covers the statement. A not-a-name as the subject always needs a question.
 - A new system name could be a system already in the target file under another name.
 - The response is not observable, or depends on a banned word that the input gives no replacement for.
 - The requirement is not [testable](#testable).
@@ -186,10 +202,12 @@ Each requirement:
 4. Names exactly one concrete system, not one on the not-a-name list, and matching the target file's name for that system.
 5. Uses `shall` once, in the active voice, with the named system as the subject.
 6. States behaviour with an observable verb, not a capability, with no `or` between responses.
-7. Gives every quantity a unit, every time of day a time zone, and every limit an exact comparison.
+7. Gives every quantity a unit, every time of day and date boundary a time zone, and every limit an exact comparison.
 8. Contains no banned word in its banned sense and no placeholder.
 9. Is [testable](#testable) from the sentence alone.
-10. Contains no system, value, name, or behaviour that the input, the user's answers, or the target file did not give.
+10. Keeps every `only` in the input as a `shall not` for the other case.
+11. Names no technology, product, or vendor unless the user confirmed it as a constraint.
+12. Contains no system, value, name, or behaviour that the input, the user's answers, or the target file did not give.
 
 The whole set:
 
