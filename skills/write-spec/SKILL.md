@@ -32,7 +32,7 @@ Stop and ask instead of writing when:
 3. **Fill the slots** for each requirement from the input, the user's answers, and the target file only: system, response, and any feature, precondition, and trigger.
 4. **Choose the keywords** as the rules' "Choosing the keyword" section says.
 5. **Write the sentence** in the fixed clause order.
-6. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead.
+6. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
 7. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
 8. **Ask.** Put every open question in one batch, in the format under [Output](#output). Hold back a question whose wording depends on another's answer until that answer arrives.
 9. **Classify** each requirement as functional or non-functional, as the rules say.
@@ -89,3 +89,22 @@ If the file exists but does not follow the template, change nothing yet. Say so 
 - If it holds no `REQ-NNN` lines, ask whether to use another path instead.
 
 After writing, state the path in one line.
+
+## Lint
+
+Run [scripts/lint.py](scripts/lint.py) on every draft reply before you return it, and on every file you save. Do not skip it. Pass the draft on standard input, in one command and with no temporary file:
+
+```bash
+python3 <this skill folder>/scripts/lint.py - <<'EOF'
+<the draft reply>
+EOF
+```
+
+For a saved file, run `python3 <this skill folder>/scripts/lint.py <file>`.
+
+- Fix every `ERROR`, then run it again until none remain.
+- For each `CHECK`, reread the rule it names and fix the line unless the words are used in an allowed sense.
+- Never report lint results in the reply.
+- The lint checks only the mechanical rules. A clean result does not replace the validation checklist.
+
+Skip the lint only when you cannot run commands at all; the checklist still applies.

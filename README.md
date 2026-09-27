@@ -48,9 +48,10 @@ See [AGENTS.md](AGENTS.md). In short: copy `examples/example-skill/` to `skills/
 ## Layout
 
 ```
-skills/<skill-name>/     one folder per skill (SKILL.md, optional references/)
+skills/<skill-name>/     one folder per skill (SKILL.md, optional references/ and scripts/)
 examples/example-skill/  blank skeleton for new skills
 tests/validate.py        checks that apply to every skill
+tests/test_*.py          unit tests for skill scripts
 setup.sh                 installer (symlinks)
 ```
 

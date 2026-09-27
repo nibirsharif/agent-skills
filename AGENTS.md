@@ -7,8 +7,10 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 - `skills/<skill-name>/`: one folder per skill, flat (no category folders). Installed by `setup.sh`.
   - `SKILL.md`: required. Frontmatter plus the instructions the agent follows.
   - `references/`: optional detail files that `SKILL.md` links to and tells the agent to read.
+  - `scripts/`: optional helper scripts the skill tells the agent to run. Python 3 standard library only, and the skill must still work when the agent cannot run commands.
 - `examples/example-skill/`: blank skeleton to copy when starting a new skill. Not installed.
 - `tests/validate.py`: checks that apply to every skill (see below).
+- `tests/test_*.py`: unit tests for a skill's scripts, run by `make test`.
 - `agent-skills-config.yaml.template`: optional user settings that skills read.
 
 ## Adding a skill
@@ -29,6 +31,6 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 
 ## Commands
 
-- `make test`: validate every skill.
+- `make test`: validate every skill and run the unit tests.
 - `make install`: symlink skills into `~/.agents/skills` and `~/.claude/skills`. `make install TARGET=<dir>` installs into one directory instead.
 - `make uninstall`: remove the symlinks this repo created.
