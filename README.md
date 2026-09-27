@@ -39,7 +39,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 | Key | Used by | Effect |
 |-----|---------|--------|
-| `spec_output_dir` | write-spec | Write requirements to `<spec_output_dir>/<feature-name>/requirements.md`, adding to the file if it exists. Empty means reply in chat only. |
+| `spec_output_dir` | write-spec | Write a requirements specification to `<spec_output_dir>/<feature-name>/requirements.md`, updating the file if it exists. Empty means reply in chat only. |
 
 ## Adding a skill
 

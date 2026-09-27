@@ -1,6 +1,8 @@
 # EARS Rules
 
-EARS (Easy Approach to Requirements Syntax, Mavin et al., Rolls-Royce) writes each requirement as one constrained sentence. These rules are the EARS ruleset plus stricter rules against ambiguity. Follow every rule without exception.
+EARS (Easy Approach to Requirements Syntax, Mavin et al., Rolls-Royce) writes each requirement as one constrained sentence. These rules are the EARS ruleset plus stricter rules against ambiguity. Follow every rule without exception. The [validation checklist](#validation-checklist) at the end sums them up. Every requirement must pass it before it is output.
+
+Most rule sections end with **Wrong** and **Right** pairs that show that one rule. A Right uses only what its Wrong states, unless a note in parentheses says the input gave more; without that input, ask instead. The system names and values in the pairs are illustrations, not defaults to reuse. Full replies are in [examples.md](examples.md).
 
 ## Sentence structure
 
@@ -20,6 +22,11 @@ A keyword is capitalised only when it starts the sentence. After a comma it is l
 Reference example:
 `While the aircraft is on ground, when reverse thrust is commanded, the engine control system shall enable reverse thrust.`
 Here `the aircraft is on ground` is the precondition, `reverse thrust is commanded` is the trigger, `the engine control system` is the system, and `enable reverse thrust` is the response.
+
+- **Wrong:** `The authentication service shall lock the account when five consecutive logins fail.` (trigger after the response)
+- **Right:** `If five consecutive login attempts for one account fail, then the authentication service shall lock that account.`
+- **Wrong:** `When a user submits a payment, if the card is declined, then the checkout service shall ...` (two triggers)
+- **Right:** `If the payment for a submitted order is declined, then the checkout service shall ...`
 
 ## The five patterns
 
@@ -44,11 +51,22 @@ Ask these in order for each condition in the input:
 
 A precondition is something you can observe being true for a while. A trigger is something you could timestamp.
 
+An event that does not happen within a time limit ("no reply within 30 seconds") is a trigger at the instant the time runs out, not a state. Use `When` if the timeout is expected, `If ... then` if it is unwanted.
+
+- **Wrong:** `Where an account is on the Enterprise plan, ...` (a plan can change at runtime)
+- **Right:** `While an account is on the Enterprise plan, ...`
+- **Wrong:** `When the payment gateway is down, the checkout service shall cancel the charge request.` (unwanted, and a state rather than an event)
+- **Right:** `If the payment gateway returns no response within 10 seconds of a charge request, then the checkout service shall cancel the charge request.` (only when the input says how "down" is detected, here as 10 seconds without a response)
+
 ## The system
 
 - Name exactly one concrete system: the subsystem, service, component, client, or device that performs the response, for example `the checkout service`, `the engine control unit`, `the iOS push notification client`.
 - These are not system names: `the system`, `the application`, `the app`, `the platform`, `the service`, `the software`, `the server`, `the backend`, `the frontend`, `it`.
 - A system named once for the whole input (for example "Requirements for the billing service: ...") applies to every requirement in that input.
+- Use the system names already in the target file's Scope (Systems line) exactly. If a new name could be a system already listed under another name, ask.
+
+- **Wrong:** `The system shall send a receipt.`
+- **Right:** `The billing service shall send a receipt.` (only when the input names the billing service)
 
 ## The response
 
@@ -57,8 +75,32 @@ A precondition is something you can observe being true for a while. A trigger is
 - State behaviour, not capability. Not `shall be able to export`, `shall have the ability to`, or `shall be capable of`: write the action and the condition that causes it.
 - Use a concrete verb for something observable from outside the system and testable: `return`, `reject`, `log`, `display`, `send`, `store`, `disable`, `enable`, `compute`, `transmit`.
 - List several responses in one requirement only when they share the system and every condition and together form one reaction, for example `reject the request and return HTTP status 401`. Otherwise split them.
+- No `or` between responses. A response with alternatives hides the condition that picks one of them.
 - Use `shall not` only for a prohibition that can be tested, for example `The payment service shall not store full card numbers.`
 - Give every quantity a unit and every time of day a time zone: `60 seconds`, `06:00 UTC`.
+- Write every limit with an exact comparison: `more than`, `at least`, `at most`, `fewer than`. `up to`, `between X and Y`, and `within` with no stated starting point leave the boundary open.
+
+- **Wrong:** `When a user saves a draft, the draft shall be stored.` (passive)
+- **Right:** `When a user saves a draft, the document service shall store the draft.` (only when the input names the document service)
+- **Wrong:** `The reporting service shall be able to export reports as CSV.` (capability)
+- **Right:** `When an admin selects "Export CSV", the reporting service shall send the report as a CSV file.` (only when the input names that trigger)
+- **Wrong:** `If a login fails, then the authentication service shall display an error or lock the account.` (`or` between responses)
+- **Right:** two requirements, each with the condition that selects its response.
+- **Wrong:** `The upload service shall accept files between 1 KB and 25 MB.` (are 1 KB and 25 MB accepted?)
+- **Right:** `If an uploaded file is smaller than 1 KB, then the upload service shall reject the upload.` and `If an uploaded file is larger than 25 MB, then the upload service shall reject the upload.` (only when the input says that files of exactly 1 KB and 25 MB are accepted)
+
+## Testable
+
+A requirement is testable when a tester could write a pass/fail check from the sentence alone, without asking anyone. The sentence must give:
+
+- the stimulus: the state, feature, or trigger that sets up the test, or none for a Ubiquitous requirement;
+- a response that can be observed from outside the named system;
+- every value needed to judge the result: numbers with units, limits, names, message text, standards.
+
+If any of these is missing and the input does not give it, ask.
+
+- **Wrong:** `When a user uploads a file, the storage service shall validate the file.` (validate against what?)
+- **Right:** no requirement yet. Ask: `Q-001: What does the storage service check when it validates an uploaded file, and what does it do when a check fails?`
 
 ## Terms
 
@@ -66,7 +108,7 @@ Use one term for one thing across all requirements. Keep the input's own terms.
 
 ## Banned words
 
-Each banned word hides an unanswered question. The ban applies to the sense shown. The same word is allowed in another sense, inside quoted text (UI labels, messages, identifiers), or inside a proper name the input gives: `about` meaning "approximately" is banned but `a message about the order` is fine; `support` as a verb is banned but `the Customer Support page` is fine.
+Each banned word hides an unanswered question. The ban applies to the sense shown. The same word is allowed in another sense, inside quoted text (UI labels, messages, identifiers), or inside a proper name the input gives: `about` meaning "approximately" is banned but `a message about the order` is fine; `support` as a verb is banned but `the Customer Support page` is fine. The ban applies to requirement text, not to questions.
 
 - Vague qualities: `gracefully`, `appropriately`, `properly`, `correctly`, `sufficient`, `adequate`, `reasonable`, `acceptable`, `significant`, `robust`, `reliable`, `scalable`, `flexible`, `efficient`, `fast`, `slow`, `secure`, `user-friendly`, `easy`, `simple`, `intuitive`, `seamless`, `smooth`, `modern`, `clean`
 - Vague timing: `immediately`, `instantly`, `promptly`, `quickly`, `soon`, `as soon as possible`, `ASAP`, `real-time`, `in real time`, `timely`, `periodically`, `regularly`
@@ -82,9 +124,22 @@ Each banned word hides an unanswered question. The ban applies to the sense show
 
 Replace each banned word with a concrete value or verb that the input gives: a number with a unit, a complete list, a named actor, or a concrete verb from [The response](#the-response). Replace a pronoun, or a slash between alternatives (`email/SMS`), with what it stands for. `this` and `that` are allowed only directly before a noun: `that address`.
 
+- **Wrong:** `When a user submits a search, the search API shall return results quickly.`
+- **Right:** `When a user submits a search, the search API shall return results within 300 ms of the submission.` (only when the input gives 300 ms)
+
 ## Quality requirements
 
-Performance, capacity, availability, accessibility, and other quality requirements follow the same rules. They are usually Ubiquitous, or State-driven when they apply only in one state: `The search API shall return results within 300 ms for 95% of requests.` They need a measurable threshold with a unit, or a named standard such as WCAG 2.2 level AA. If the input gives only an impression ("must be fast", "must feel premium", "must be enterprise-grade"), ask for a measurable proxy.
+Performance, capacity, availability, accessibility, and other quality requirements follow the same rules. They are usually Ubiquitous, or State-driven when they apply only in one state: `The search API shall return results within 300 ms of receiving a request for 95% of requests.` They need a measurable threshold with a unit, or a named standard such as WCAG 2.2 level AA. If the input gives only an impression ("must be fast", "must feel premium", "must be enterprise-grade"), ask for a measurable proxy.
+
+- **Wrong:** `The search API shall be fast.`
+- **Right:** `The search API shall return results within 300 ms of receiving a request for 95% of requests.` (only when the input gives 300 ms and 95%)
+
+## Functional or non-functional
+
+Classify each requirement for the specification file:
+
+- **Non-functional:** its response sets a measurable threshold on how well a system performs (time, throughput, capacity, availability, accessibility level), or it is a constraint the user confirmed (a mandated technology, platform, standard, or regulation).
+- **Functional:** everything else, including security behaviour such as rejecting, locking, or logging.
 
 ## Rewrite, or ask
 
@@ -95,20 +150,50 @@ Fix these yourself; they do not need the user:
 - A modal verb other than `shall`: change it to `shall`.
 - A passive response: make the named system the subject.
 - An unwanted event written with `When`: use `If ... then`.
+- A timeout written as a state: make it a trigger at the instant the time runs out.
 - Both `When` and `If` in one sentence: keep one trigger. If the expected event is only context for the unwanted one, fold it into the `If` clause (`If the payment for a submitted order is declined, ...`). If they describe two behaviours, write two requirements.
 - `Where` used for something that can change at runtime: use `While`.
 - `or` between conditions or triggers: write one requirement per alternative.
 - A pronoun whose noun is clear: repeat the noun.
 - A banned word whose concrete replacement the input states elsewhere: use that replacement.
-- A statement that requires no behaviour or property (background, rationale, a user story's "so that" clause, project dates): leave it out and do not ask about it.
+- A statement that requires no behaviour or property (background, rationale, a user story's "so that" clause, project dates): leave it out of the requirements and do not ask about it. A stated purpose or scope still goes in the file's Summary or Scope.
 
 Ask when:
 
 - No system is named, or only a name from the not-a-name list above.
+- A new system name could be a system already in the target file under another name.
 - The response is not observable, or depends on a banned word that the input gives no replacement for.
+- The requirement is not [testable](#testable).
 - A value the requirement needs is missing: a number, limit, threshold, unit, time zone, name, list item, or message text.
+- A limit's boundary is open: `up to`, `between X and Y`, or `within` with no starting point.
+- A response offers alternatives joined by `or`: ask which condition selects each.
+- The input states an implementation choice ("store sessions in Redis"): ask whether it is a constraint the system must meet. If it is, write it as a non-functional requirement.
 - A quality requirement has no measurable threshold.
 - A pronoun or term could mean two things that would be tested differently.
 - Two statements in the input, or a statement and an existing requirement, contradict each other.
 
 Never invent a system, value, name, or behaviour that the input does not give, even a plausible one. Ask one direct question per gap: no padding, no hedging, no apologies.
+
+## Validation checklist
+
+Check every requirement against every item. If an item fails, fix it when [Rewrite, or ask](#rewrite-or-ask) says to rewrite. Otherwise leave the requirement out and ask a question. A requirement that fails any item is never output.
+
+Each requirement:
+
+1. Is one sentence, with its clauses in the fixed order.
+2. Has at most one `Where`, at most one `While`, and at most one trigger (`When` or `If ... then`).
+3. Uses the keyword that [Choosing the keyword](#choosing-the-keyword) gives for each condition.
+4. Names exactly one concrete system, not one on the not-a-name list, and matching the target file's name for that system.
+5. Uses `shall` once, in the active voice, with the named system as the subject.
+6. States behaviour with an observable verb, not a capability, with no `or` between responses.
+7. Gives every quantity a unit, every time of day a time zone, and every limit an exact comparison.
+8. Contains no banned word in its banned sense and no placeholder.
+9. Is [testable](#testable) from the sentence alone.
+10. Contains no system, value, name, or behaviour that the input, the user's answers, or the target file did not give.
+
+The whole set:
+
+- Uses one term for one thing, matching the input and the target file.
+- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other.
+- Uses IDs that are unique and continue from the highest existing ID.
+- Has a question for every statement that could not be written.

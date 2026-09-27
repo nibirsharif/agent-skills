@@ -1,131 +1,75 @@
-# EARS Output Formats and Examples
+# Specification File Template
 
-The rules are in [ears-rules.md](ears-rules.md). Every example here follows them.
+Use the template below the line for every new requirements file. Everything above the line is instructions and is never copied into the file. Sentence rules are in [ears-rules.md](ears-rules.md); a filled-in file is in [examples.md](examples.md#a-saved-file).
 
-## Response format
+- Replace every `[...]` and `<...>`, and `YYYY-MM-DD` with today's date.
+- Fill Summary, Scope, and References only with what the input states. Write `None given.` under any heading or subheading the input leaves empty.
+- Write the Author only when the user gave a name; otherwise write `Not given.` Do not ask for it.
+- The requirement lines in sections 3 and 4 show the pattern shapes. Replace them with the real requirements and keep no line the input does not support. A section with no requirements holds `None given.`
+- Put each requirement in section 3 or 4 as the rules' [Functional or non-functional](ears-rules.md#functional-or-non-functional) section says.
+- End each requirement and question line with `<!-- Source: <the input statement or answer it comes from> -->`. For a coverage-gap question, name the requirement: `<!-- Source: coverage gap in REQ-001 -->`.
+- Keep one requirement or question per line, with a blank line between lines. No priority, dependencies, user story, or titled subsections.
+- The Systems line lists every system the requirements name, spelled as they spell it.
+- Section 5 holds `None.` while there has never been a question. Closed questions stay in it, in the form [IDs](../SKILL.md#ids) gives.
+- A new file is version 1.0. Each update raises the minor version by one (1.0, 1.1, 1.2) and adds one Revision History row that names the IDs added, changed, withdrawn, or closed.
 
-Requirements first, then open questions. Omit a part that is empty. Nothing else: no preamble, no summary, and no prose between requirements unless the user asks for rationale.
+---
 
-```
-REQ-001: <requirement>
+# Requirements Specification: [Feature Name]
 
-REQ-002: <requirement>
+**Version:** 1.0
+**Date:** YYYY-MM-DD
+**Author:** [Name]
+**Status:** Draft
 
-## Open questions
+## 1. Summary
 
-1. <question> (blocks: "<input statement>")
-2. <question> (blocks: "<input statement>")
-```
+[What the input says the feature does and why, in 1 to 3 sentences.]
 
-- One requirement per paragraph, with a blank line between requirements so each renders on its own.
-- One question per gap. If one gap blocks several statements, ask it once and quote each statement it blocks.
-- Add `(blocks: "<input statement>")` only when the input has more than one statement. Shorten a long statement with `...`.
-- A question may offer the options the input suggests, ending with "or something else?".
+## 2. Scope
 
-## File format
+### In Scope
 
-The same content as the response, under a title:
+- [What the input includes]
 
-```
-# <Feature name> requirements
+### Out of Scope
 
-REQ-001: <requirement>
+- [What the input excludes]
 
-REQ-002: <requirement>
+**Systems:** [each system the requirements name, comma-separated]
 
-## Open questions
+## 3. Functional Requirements
 
-1. <question> (blocks: "<input statement>")
-```
+REQ-001: The <system> shall <response>. <!-- Source: [...] -->
 
-## One example per pattern
+REQ-002: When <trigger>, the <system> shall <response>. <!-- Source: [...] -->
 
-```
-REQ-001: The checkout service shall record the completion time of every order in UTC.
+REQ-003: While <precondition>, the <system> shall <response>. <!-- Source: [...] -->
 
-REQ-002: While the cart contains no items, the web storefront client shall disable the "Place order" button.
+REQ-004: Where <feature is included>, the <system> shall <response>. <!-- Source: [...] -->
 
-REQ-003: When a user submits a password-reset request for a registered email address, the authentication service shall send a single-use reset link to that address within 60 seconds.
+REQ-005: If <unwanted event>, then the <system> shall <response>. <!-- Source: [...] -->
 
-REQ-004: Where the gift-card module is installed, the web storefront client shall display a "Gift card code" field on the payment page.
+## 4. Non-Functional Requirements
 
-REQ-005: If five consecutive login requests for one account supply an incorrect password, then the authentication service shall lock that account for 15 minutes.
+REQ-006: The <system> shall <response> within <number> <unit> of <starting event> for <percentage> of <operations>. <!-- Source: [...] -->
 
-REQ-006: While two-factor authentication is enabled for an account, when a login request for that account supplies the correct password, the authentication service shall request a one-time code.
+REQ-007: The <system> shall comply with <named standard and level>. <!-- Source: [...] -->
 
-REQ-007: While an account is locked, if a login request for that account is received, then the authentication service shall reject the request and return the time at which the lock expires.
+REQ-008: The <system> shall <constraint the user confirmed>. <!-- Source: [...] -->
 
-REQ-008: Where the SSO module is installed, when a user opens the login page, the web storefront client shall display a "Sign in with SSO" button.
-```
+## 5. Open Questions
 
-REQ-001 to REQ-005 follow the five patterns in table order. REQ-006 to REQ-008 are complex: `While` with `When`, `While` with `If ... then`, and `Where` with `When`.
+Q-001: <one direct question>? Proposed: <value>. <!-- Source: [...] -->
 
-REQ-004 and REQ-008 use `Where` because the gift-card and SSO modules are included or left out when the storefront is deployed. REQ-006 uses `While` because a user can switch two-factor authentication on and off at runtime.
+Q-002: Closed. Answer: <the user's answer> <!-- Source: [...] -->
 
-## Worked examples
+## 6. Revision History
 
-### An unwanted event written with When
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | YYYY-MM-DD | [Name] | Initial draft |
 
-Input: "When the user submits the order form and the payment is declined, the checkout service shows "Your card was declined" above the form."
+## 7. References
 
-A decline is an unwanted event, so `If ... then` replaces `When`. The submission is only context for the decline, so it folds into the `If` clause instead of becoming a second trigger.
-
-```
-REQ-001: If the payment for a submitted order is declined, then the checkout service shall display "Your card was declined" above the order form.
-```
-
-### A runtime state and a schedule
-
-Input: "The reporting service emails a usage report to each admin every Monday at 06:00 UTC, on Enterprise accounts only. If the email bounces, the reporting service logs the recipient address and the bounce code."
-
-An account's plan can change at runtime, so it is a state (`While`), not a feature (`Where`). The schedule is a trigger, so it goes in the `When` clause, not in the response. The bounce is a separate, unwanted event, so it gets its own `If ... then` requirement.
-
-```
-REQ-001: While an account is on the Enterprise plan, when the time reaches 06:00 UTC on a Monday, the reporting service shall email a usage report to each admin of that account.
-
-REQ-002: If a usage report email bounces, then the reporting service shall log the recipient address and the bounce code.
-```
-
-### Some statements complete, one with a gap
-
-Input: "When a registered user requests a password reset, the authentication service emails a reset link to their registered address. The link expires 30 minutes after it is sent. Reset requests should be rate limited."
-
-The first two statements have everything they need, so they are written. The third gives no limit, so it becomes a question.
-
-```
-REQ-001: When a registered user requests a password reset, the authentication service shall email a reset link to the user's registered email address.
-
-REQ-002: If a user opens a reset link more than 30 minutes after the reset link was sent, then the authentication service shall reject the reset link.
-
-## Open questions
-
-1. What is the rate limit for password-reset requests: how many requests, counted per account or per IP address, in what time window? (blocks: "Reset requests should be rate limited.")
-```
-
-### Nothing can be written yet
-
-Input: "Users should be able to reset their password securely."
-
-```
-## Open questions
-
-1. Which service performs the password reset?
-2. What does "securely" require, in observable terms: a link expiry time, single use, an attempt limit, or something else?
-```
-
-Input: "The dashboard must load fast."
-
-```
-## Open questions
-
-1. Which component loads the dashboard?
-2. What is the maximum load time, at which percentile, and under what load?
-```
-
-Input: "The billing service should handle failed payments gracefully."
-
-```
-## Open questions
-
-1. What does the billing service do when a payment fails: retry (how many times, at what interval), suspend the account, notify the customer, or something else?
-```
+- [Document, ticket, or standard the input names]

@@ -7,7 +7,7 @@
 # write-spec: directory where requirements are written.
 # Each feature gets its own subdirectory:
 #   <spec_output_dir>/<feature-name>/requirements.md
-# An existing requirements.md is extended: new requirements continue its numbering.
+# An existing requirements.md is updated in place: IDs are kept and new ones continue its numbering.
 # A relative path is resolved against the project root; absolute and ~ paths also work.
 # Leave empty to return requirements in the chat only and write no files.
 # Example: docs/specs

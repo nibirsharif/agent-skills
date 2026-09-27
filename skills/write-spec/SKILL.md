@@ -5,47 +5,87 @@ description: Write software requirements in EARS (Easy Approach to Requirements 
 
 # Write Spec (EARS)
 
-Turn a feature description, user story, or draft requirements into EARS requirements. Write every requirement the input fully supports; turn every gap into a question.
+Turn a feature description, user story, or draft requirements into EARS requirements, and keep them in a requirements specification file when a path is set. Write every requirement the input fully supports; turn every gap into a question.
 
 ## Before writing
 
-Read both reference files in full before producing anything:
+Read all three reference files in full before producing anything:
 
-- [references/ears-rules.md](references/ears-rules.md): sentence structure, the five patterns, choosing a keyword, system and response rules, banned words, and what to rewrite versus ask. This file is authoritative.
-- [references/ears-template.md](references/ears-template.md): response and file formats, question format, and worked examples.
+- [references/ears-rules.md](references/ears-rules.md): sentence structure, the five patterns, choosing a keyword, system and response rules, testability, banned words, functional versus non-functional, what to rewrite versus ask, and the validation checklist. This file is authoritative.
+- [references/ears-template.md](references/ears-template.md): the specification file template and how to fill it.
+- [references/examples.md](references/examples.md): worked examples, from input to reply, including a follow-up turn and a saved file.
+
+## Scope
+
+This skill writes EARS requirements only. It does not write Given/When/Then (Gherkin) scenarios, test cases, PRDs, design or architecture documents, or code. When asked for one of these, say that this skill does not produce it and offer EARS requirements for the same input. Never convert the input silently into another format.
+
+Stop and ask instead of writing when:
+
+- The input states no behaviour or property of any system. Write nothing, and ask what the system must do.
+- The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap as a question with a proposed value, in the question format under [Output](#output), and write the requirement after the user confirms.
+- The user insists on a banned word or an untestable requirement. Do not write it. Keep its question open and say once which rule blocks it.
 
 ## Workflow
 
-1. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
-2. **Fill the slots** for each requirement from the input only: system, response, and any feature, precondition, and trigger.
-3. **Choose the keywords** as the rules' "Choosing the keyword" section says.
-4. **Write the sentence** in the fixed clause order.
-5. **Check it** against every rule, banned words included. Fix what the rules say to rewrite. Anything still missing is a gap: ask about it and leave that requirement out.
-6. **Check the set.** One term per thing, no duplicates, no two requirements that contradict each other or a requirement already in the target file.
+1. **Read the target file.** Find it as [Saving to a file](#saving-to-a-file) says, and read it if it exists: its highest `REQ` and `Q` IDs, its systems and terms, and its requirements.
+2. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
+3. **Fill the slots** for each requirement from the input, the user's answers, and the target file only: system, response, and any feature, precondition, and trigger.
+4. **Choose the keywords** as the rules' "Choosing the keyword" section says.
+5. **Write the sentence** in the fixed clause order.
+6. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead.
+7. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
+8. **Ask.** Put every open question in one batch, in the format under [Output](#output). Hold back a question whose wording depends on another's answer until that answer arrives.
+9. **Classify** each requirement as functional or non-functional, as the rules say.
+10. **Return** the requirements that passed step 6, then the open questions, then **save** if a target path is set.
 
 ## Output
 
-Return the requirements that pass every rule, then the open questions, in the format in the template file. If no requirement can be written, return only the questions.
+Return the requirements that pass the checklist, then the open questions. If no requirement can be written, return only the questions. Nothing else: no preamble, no summary, and no title, priority, or rationale on a requirement.
 
-Number requirements from `REQ-001`, or continue from the highest ID already in this conversation or the target file. When an answer or new input changes an existing requirement, rewrite it under its existing ID. Never renumber requirements or reuse an ID.
+```
+REQ-001: <EARS sentence>
 
-When the user answers questions, return the requirements the answers unblock, any requirements the answers change, and the questions still open.
+REQ-002: <EARS sentence>
+
+Q-001: <one direct question>? Proposed: <value>.
+```
+
+Put a blank line between lines so each renders on its own.
+
+Ask one gap per question, on one line, for exactly what is missing: a system, value, unit, limit, threshold, name, or the response to an evident failure case. Add `Proposed:` only when a sensible value exists, and never write the requirement until the user confirms it. No padding, hedging, or apologies.
+
+When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the questions still open.
+
+## IDs
+
+- Requirements are `REQ-001`, `REQ-002`, and so on; questions are `Q-001`, `Q-002`, and so on. Functional and non-functional requirements share one `REQ` sequence.
+- Continue each sequence from its highest ID in this conversation or the target file, whichever is higher.
+- When an answer or new input changes a requirement, rewrite it under its existing ID.
+- When the user withdraws or deletes a requirement, replace its text with `Withdrawn.` and keep the line, so its ID is never reused.
+- An answered question is closed and drops out of the open questions in chat. In the file it becomes `Q-NNN: Closed. Answer: <the user's answer>`, so its ID is never reused and the answer stays on record.
+- Never renumber.
 
 ## Saving to a file
 
 Pick the path, in this order:
 
 1. A path the user named.
-2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the input's feature in kebab-case (for example `password-reset`). Resolve a relative `spec_output_dir` against the project root.
-3. Neither is set: write no file.
+2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the input's feature in kebab-case (for example `password-reset`). First look at the existing `<spec_output_dir>/*/requirements.md` files: if one already covers this feature, use it. Ask when the input names no feature, or when more than one existing file could match.
+3. Neither is set: write no file. If the user asked to save, ask for the path.
 
-Write a file only when at least one requirement was written.
+Write a file only when at least one requirement was written. A new file uses the [specification file template](references/ears-template.md).
 
-If the file already exists and holds `REQ-NNN` lines, update it:
+If the file already exists and follows the template, update it:
 
-- Add new requirements after the last one, continuing its numbering.
-- Rewrite changed requirements in place under their existing IDs.
-- Replace the open questions section with the current open questions, or remove it when none remain.
-- Delete a requirement only when the user asks, and never reuse its ID.
+- Add new requirements at the end of their section, functional or non-functional, each with its source comment.
+- Rewrite changed and withdrawn requirements in place under their existing IDs.
+- Close answered questions in place and add new questions at the end of the section.
+- Add to Summary, Scope (including its Systems line), and References only what the new input states.
+- Raise the version, update the date, and add one Revision History row, as the template says.
 
-If the file exists but holds no `REQ-NNN` lines, say so and ask before changing it. After writing, state the path in one line.
+If the file exists but does not follow the template, change nothing yet. Say so and ask before rewriting it:
+
+- If it holds `REQ-NNN` lines and the user agrees, move it into the template. Keep every `REQ` ID and every requirement's text. Turn each open question it lists into a `Q-NNN` line, in its order, continuing from the highest `Q` ID in the file.
+- If it holds no `REQ-NNN` lines, ask whether to use another path instead.
+
+After writing, state the path in one line.
