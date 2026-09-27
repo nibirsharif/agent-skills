@@ -1,5 +1,19 @@
+# OS and editor files
 .DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Agent session folders (Claude Code also leaves empty .claude/.cc-writes/ markers)
 .claude/
+
+# Python
 __pycache__/
 *.pyc
+
+# Personal settings copied from agent-skills-config.yaml.template
+.agent-skills-config.yaml
+
+# Eval replies and transcripts, and local scratch copies of inputs (may hold private documents)
 evals/*/runs/
+scratch-*
