@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Checks that apply to every skill under skills/ and examples/."""
+"""Checks that apply to every skill under skills/ and examples/, and to the plugin manifest."""
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -14,7 +15,8 @@ FENCE_RE = re.compile(r"^[ \t]*(`{3,}|~{3,}).*?^[ \t]*\1[ \t]*$", re.DOTALL | re
 INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
 MAX_NAME = 64
 MAX_DESCRIPTION = 1024
-ALLOWED_FIELDS = {"name", "description"}
+ALLOWED_FIELDS = {"name", "description", "disable-model-invocation"}
+PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 
 
 def unquote(value):
@@ -92,6 +94,9 @@ def check_skill(skill_dir, seen_names):
     elif len(desc) > MAX_DESCRIPTION:
         errors.append(f"{label}: description is {len(desc)} characters (limit {MAX_DESCRIPTION})")
 
+    if fm.get("disable-model-invocation", "true") not in ("true", "false"):
+        errors.append(f"{label}: disable-model-invocation must be true or false")
+
     extra = set(fm) - ALLOWED_FIELDS
     if extra:
         errors.append(f"{label}: unexpected frontmatter fields {sorted(extra)} (allowed: {sorted(ALLOWED_FIELDS)})")
@@ -106,8 +111,29 @@ def check_skill(skill_dir, seen_names):
     return errors
 
 
+def check_plugin():
+    """Return a list of problems with the skills listed in .claude-plugin/plugin.json."""
+    if not PLUGIN_JSON.is_file():
+        return []
+    label = PLUGIN_JSON.relative_to(ROOT)
+    try:
+        skills = json.loads(PLUGIN_JSON.read_text()).get("skills", [])
+    except ValueError as e:
+        return [f"{label}: not valid JSON: {e}"]
+    if not isinstance(skills, list):
+        return [f"{label}: skills must be a list of skill folders"]
+    errors = []
+    for entry in skills:
+        path = (ROOT / entry).resolve()
+        if path.parent != (ROOT / "skills").resolve():
+            errors.append(f"{label}: skill '{entry}' must be a folder directly under skills/")
+        elif not (path / "SKILL.md").is_file():
+            errors.append(f"{label}: skill '{entry}' has no SKILL.md")
+    return errors
+
+
 def main():
-    errors, count, seen_names = [], 0, {}
+    errors, count, seen_names = check_plugin(), 0, {}
     for root in SKILL_ROOTS:
         if not root.is_dir():
             continue

@@ -10,6 +10,23 @@ My skills for coding agents such as Claude Code. Each skill is a folder with a `
 
 ## Install
 
+In Claude Code, add this repo as a marketplace and install the plugin:
+
+```
+/plugin marketplace add nibirsharif/agent-skills
+/plugin install nibirsharif-skills@nibirsharif
+```
+
+Skills from the plugin are named `nibirsharif-skills:<skill>`, for example `nibirsharif-skills:write-spec`.
+
+For other agents, or to copy editable skill files into a project, use [skills.sh](https://skills.sh):
+
+```bash
+npx skills add nibirsharif/agent-skills
+```
+
+### From a clone, for working on the skills
+
 ```bash
 make install
 ```
@@ -19,7 +36,7 @@ This symlinks every folder in `skills/` into two places, so edits in this repo t
 - `~/.agents/skills`: the shared location for agents that read it.
 - `~/.claude/skills`: Claude Code does not scan `~/.agents/skills`, so it needs its own links.
 
-It never overwrites an existing entry it did not create, and it removes links to skills that were renamed or deleted in this repo.
+It never overwrites an existing entry it did not create, and it removes links to skills that were renamed or deleted in this repo. Do not install both the plugin and the symlinks, or Claude Code loads each skill twice.
 
 To install into a single directory instead (check that tool's documentation for its path):
 
@@ -53,8 +70,13 @@ examples/example-skill/  blank skeleton for new skills
 tests/validate.py        checks that apply to every skill
 tests/test_*.py          unit tests for skill scripts
 evals/<skill-name>/      eval cases and runner for a skill (not installed)
+.claude-plugin/          Claude Code plugin and marketplace manifests
 setup.sh                 installer (symlinks)
 ```
+
+## License
+
+[MIT](LICENSE)
 
 ## Acknowledgements
 

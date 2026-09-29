@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "nibirsharif",
+  "description": "Shariful Nibir's skills for coding agents, as an installable Claude Code plugin.",
+  "owner": {
+    "name": "Shariful Nibir",
+    "url": "https://github.com/nibirsharif"
+  },
+  "plugins": [
+    {
+      "name": "nibirsharif-skills",
+      "source": "./",
+      "description": "Skills for coding agents that ask instead of guessing: EARS requirements, with more to come.",
+      "version": "0.1.0",
+      "license": "MIT",
+      "keywords": ["skills", "requirements", "ears", "specification"]
+    }
+  ]
+}

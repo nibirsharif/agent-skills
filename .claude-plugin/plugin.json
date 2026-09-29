@@ -1,0 +1,14 @@
+{
+  "name": "nibirsharif-skills",
+  "version": "0.1.0",
+  "description": "Skills for coding agents that ask instead of guessing: EARS requirements, with more to come.",
+  "author": {
+    "name": "Shariful Nibir",
+    "url": "https://github.com/nibirsharif"
+  },
+  "homepage": "https://github.com/nibirsharif/agent-skills",
+  "repository": "https://github.com/nibirsharif/agent-skills",
+  "license": "MIT",
+  "keywords": ["skills", "requirements", "ears", "specification"],
+  "skills": ["./skills/write-spec"]
+}
