@@ -1,12 +1,16 @@
 {
   "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and real ambiguities (whether \"every export\" includes rejected ones, and which instant \"the export time\" is).",
-  "requirements": {
-    "min": 3,
-    "max": 3
-  },
-  "questions": {
-    "min": 0,
-    "max": 3
+  "counts": {
+    "requirements": {
+      "pattern": "^REQ-\\d+",
+      "min": 3,
+      "max": 3
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 0,
+      "max": 3
+    }
   },
   "must_match": [
     {

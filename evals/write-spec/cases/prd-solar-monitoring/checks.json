@@ -1,12 +1,16 @@
 {
   "description": "A made-up PRD with about 40 statements. It mixes clean requirements with the traps a real PRD run hit: misuse written with When, a runtime setting written with Where, a response that needs judgement, or between responses, a contradiction, a statement with no system, an implementation choice, business decisions, open limits, a time with no time zone, the system as subject, a so-that clause, and project dates.",
-  "requirements": {
-    "min": 10,
-    "max": 20
-  },
-  "questions": {
-    "min": 5,
-    "max": 10
+  "counts": {
+    "requirements": {
+      "pattern": "^REQ-\\d+",
+      "min": 10,
+      "max": 20
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 5,
+      "max": 10
+    }
   },
   "must_match": [
     {

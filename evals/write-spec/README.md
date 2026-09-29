@@ -8,42 +8,39 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `clean-feature` | A complete input: everything is written, and at most the coverage-gap question is asked. |
 | `vague-only` | Only impressions and no system: questions only. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
+| `routing-shall-statements` | Routing: a request for shall statements that does not name the skill. The skill must fire. |
+| `routing-gherkin` | Routing: a Given/When/Then request, which the skill's description excludes. The skill must not fire. |
 
 Each case folder holds:
 
-- `input.md`: the prompt given to the agent.
-- `checks.json`: requirement and question counts, patterns that must and must not appear, and the manual checklist.
-- `golden.md`: a hand-written reply that passes every check. `make test` grades it, so a check that no reply could pass fails the build.
+- `input.md`: the input. The runner wraps it in the prompt from [config.json](config.json), which names the skill, except in routing cases, which are sent as written.
+- `checks.json`: the checks, in the format described in [evals/grading.py](../grading.py): line counts, patterns that must and must not appear, whether the skill must fire, expectations for the LLM judge, and a checklist to review by hand.
+- `golden.md`: a hand-written reply that passes every check. `make test` grades it, so a check that no reply could pass fails the build. Required when the case checks the reply.
 - `bad.md` (optional): a reply with known faults. `make test` confirms it fails.
+
+Besides each case's checks, every reply except in a `"fires": false` case must pass [hooks.py](hooks.py): the skill's lint finds no errors, and the reply holds nothing but requirement and question lines (and the "N more open questions" line).
 
 ## Running
 
 Run every case through Claude Code, or name cases:
 
 ```bash
-evals/write-spec/run.sh
-evals/write-spec/run.sh prd-solar-monitoring clean-feature
+make eval SKILL=write-spec
+python3 evals/run.py write-spec prd-solar-monitoring clean-feature
 ```
 
-All runs start in parallel, so a full run takes about as long as the slowest case. Options, set as environment variables:
+The runner loads this repo's skills as a plugin, so no install is needed. If write-spec is also installed with `make install`, it loads twice; run `make uninstall` first for a clean routing result. All runs start in parallel, so a full run takes about as long as the slowest case. Options:
 
-- `MODEL=sonnet` (or `haiku`, or a full model ID): the model for the default agent.
-- `RUNS=3`: run each case 3 times, to see how much results vary between runs.
-- `AGENT="my-agent --print"`: another agent command, which takes the prompt as its last argument.
+- `MODEL=sonnet` (`--model`): the model for the agent.
+- `RUNS=3` (`--runs`): run each case 3 times. Agents vary between runs, and whether a skill fires varies most, so read routing cases over several runs.
+- `JUDGE=1` (`--judge`): also grade each case's `expectations` with an LLM judge, one more call per run.
+- `--agent "my-agent --print"`: another agent command, which takes the prompt as its last argument. Checks that need a transcript are then reported as skipped.
 
 ```bash
-MODEL=sonnet RUNS=3 evals/write-spec/run.sh
+make eval SKILL=write-spec MODEL=sonnet RUNS=3 JUDGE=1
 ```
 
-Replies, run stats (turns, time, cost, and how often the lint ran or was blocked), full transcripts (`.jsonl`), and any error output are saved in `runs/`, which git ignores.
-
-Grade a reply you produced yourself:
-
-```bash
-python3 evals/write-spec/grade.py evals/write-spec/cases/clean-feature reply.md
-```
-
-A case passes when the reply has no lint errors, holds nothing but requirement and question lines (and the "N more open questions" line), and passes every automatic check. Then work through the "Review by hand" list: the checks cannot tell whether a value was invented. Agents vary between runs, so run a case a few times before trusting one result.
+Replies, run stats (turns, time, cost, how often the lint ran or was blocked, and which skills fired), full transcripts (`.jsonl`), judge results, and any error output are saved in `runs/`, which git ignores. Work through each case's "Review by hand" list: the checks cannot tell whether a value was invented.
 
 ## Adding a case
 

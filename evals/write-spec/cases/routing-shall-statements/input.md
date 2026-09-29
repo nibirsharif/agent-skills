@@ -1,0 +1,1 @@
+We're adding password reset to our web app. When a user submits their email address on the Forgot Password page, the auth service emails them a reset link. Can you write this up as shall statements for the spec?

@@ -68,8 +68,8 @@ See [AGENTS.md](AGENTS.md). In short: copy `examples/example-skill/` to `skills/
 skills/<skill-name>/     one folder per skill (SKILL.md, optional references/ and scripts/)
 examples/example-skill/  blank skeleton for new skills
 tests/validate.py        checks that apply to every skill
-tests/test_*.py          unit tests for skill scripts
-evals/<skill-name>/      eval cases and runner for a skill (not installed)
+tests/test_*.py          unit tests for skill scripts and eval cases
+evals/                   eval runner and checks; evals/<skill-name>/ holds a skill's cases (not installed)
 .claude-plugin/          Claude Code plugin and marketplace manifests
 setup.sh                 installer (symlinks)
 ```

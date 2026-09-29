@@ -1,12 +1,16 @@
 {
   "description": "The user asks for defaults. The skill still writes no value the user did not give, and proposes none for business decisions.",
-  "requirements": {
-    "min": 1,
-    "max": 2
-  },
-  "questions": {
-    "min": 2,
-    "max": 6
+  "counts": {
+    "requirements": {
+      "pattern": "^REQ-\\d+",
+      "min": 1,
+      "max": 2
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 2,
+      "max": 6
+    }
   },
   "must_match": [
     {

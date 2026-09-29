@@ -1,0 +1,8 @@
+{
+  "description": "Routing: a Given/When/Then (Gherkin) request, which the skill's description excludes. write-spec must not fire.",
+  "fires": false,
+  "expectations": [
+    "The reply is written as Given/When/Then scenarios.",
+    "The reply contains no EARS `shall` statements."
+  ]
+}
