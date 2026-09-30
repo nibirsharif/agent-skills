@@ -1,0 +1,4 @@
+{
+  "description": "Routing: a request to break saved requirements into reviewable PRs, without naming the skill. write-plan must fire.",
+  "fires": true
+}

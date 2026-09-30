@@ -1,0 +1,157 @@
+{
+  "description": "Nineteen written requirements exceed the phase limit of 8, so the plan splits them into phases by flow. Every ID lands in exactly one phase, no phase has more than 8 IDs or more than 10 files, and the label-email deadline NFR-001 sits with REQ-005, the requirement it constrains.",
+  "counts": {
+    "REQ-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-002 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-002\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-003 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-003\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-004 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-004\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-005 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-005\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-006 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-006\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-007 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-007\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-008 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-008\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-009 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-009\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-010 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-010\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-011 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-011\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-012 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-012\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-013 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-013\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-014 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-014\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-015 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-015\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-016 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-016\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-002 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-002\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-003 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-003\\b",
+      "min": 1,
+      "max": 1
+    },
+    "phases": {
+      "pattern": "^### Phase \\d+",
+      "min": 3
+    },
+    "phase over 8 requirements": {
+      "pattern": "^\\*\\*Requirements:\\*\\*(?:[^\\n]*?(?:REQ|NFR)-\\d+){9}",
+      "max": 0
+    },
+    "size stated": {
+      "pattern": "^\\*\\*Size:\\*\\* about \\d+ files",
+      "min": 3
+    },
+    "phase over 10 files": {
+      "pattern": "^\\*\\*Size:\\*\\* about (1[1-9]|[2-9]\\d|\\d{3,}) files",
+      "max": 0
+    },
+    "reuse none found": {
+      "pattern": "^\\*\\*Reuse:\\*\\*\\s*None found\\.",
+      "min": 3
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A## 1\\. Approach",
+      "why": "the reply is the plan alone: it starts at the Approach heading, with no preamble"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*(?=.*\\bREQ-005\\b)(?=.*\\bNFR-001\\b)",
+      "why": "NFR-001 is a deadline on REQ-005's response: same phase"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^### Phase \\d+: (Database|Data model|API|UI|Frontend|Backend)\\s*$",
+      "why": "phases follow the flow, not the layers"
+    },
+    {
+      "pattern": "^Blocked by",
+      "why": "nothing is blocked"
+    },
+    {
+      "pattern": "^```",
+      "why": "a plan holds no code"
+    },
+    {
+      "pattern": "^## 5\\. Revision History|^---$|^Note:",
+      "why": "no Revision History, closing note, or rule in a chat reply"
+    }
+  ],
+  "expectations": [
+    "Each phase can merge on its own: no phase needs something that only a later phase builds.",
+    "If NFR-003 (availability) is in its own later phase, the reply says why it can be met afterwards without changing behaviour.",
+    "No requirement is added, reworded, or split."
+  ],
+  "manual": [
+    "NFR-002 (accessibility) sits with REQ-015, or has a stated reason for a later phase.",
+    "No phase name is a layer such as Database or UI."
+  ]
+}

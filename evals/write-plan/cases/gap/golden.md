@@ -1,0 +1,1 @@
+Q-001 decides the data model, so no plan can be written yet: Is each tenant's audit log stored in a separate database or in one shared database? Record the answer with write-spec, then run write-plan again.

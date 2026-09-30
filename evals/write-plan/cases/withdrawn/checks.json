@@ -1,0 +1,49 @@
+{
+  "description": "REQ-002 is withdrawn and REQ-003 is withdrawn and moved to NFR-001. The plan covers REQ-001, REQ-004, and NFR-001, and puts neither withdrawn ID in a phase.",
+  "counts": {
+    "phases": {
+      "pattern": "^### Phase \\d+",
+      "min": 1,
+      "max": 2
+    },
+    "REQ-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-004 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-004\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-001\\b",
+      "min": 1,
+      "max": 1
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A## 1\\. Approach",
+      "why": "the reply is the plan alone: it starts at the Approach heading, with no preamble"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*(?=.*\\bREQ-001\\b)(?=.*\\bNFR-001\\b)",
+      "why": "NFR-001 is a deadline on REQ-001: same phase"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(\\*\\*Requirements:\\*\\*|\\|).*\\bREQ-00[23]\\b",
+      "why": "withdrawn requirements are not planned"
+    },
+    {
+      "pattern": "^- REQ-00[23]:",
+      "why": "withdrawn requirements get no verification"
+    },
+    {
+      "pattern": "^## 5\\. Revision History|^---$|^Note:",
+      "why": "no Revision History, closing note, or rule in a chat reply"
+    }
+  ]
+}

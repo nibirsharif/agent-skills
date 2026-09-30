@@ -12,3 +12,11 @@
 # Leave empty to return requirements in the chat only and write no files.
 # Example: docs/specs
 spec_output_dir:
+
+# write-plan: the largest number of requirement IDs (REQ and NFR together) in one phase.
+# A phase with more is split. Default 8.
+plan_max_requirements_per_phase:
+
+# write-plan: the largest estimated number of files a phase may add or change, tests included.
+# A phase with more is split, however few requirements it has. Default 10.
+plan_max_files_per_phase:

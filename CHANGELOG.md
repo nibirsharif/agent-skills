@@ -2,6 +2,14 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.3.0
+
+- New skill `write-plan`: reads a saved `requirements.md`, explores the codebase, and writes `plan.md`: the approach split into phases that each merge as one reviewable PR, with the `REQ` and `NFR` IDs each covers, code to reuse, interface and data changes, and how to verify.
+- write-plan: requirements that wait on open questions are listed as `Blocked by Q-nnn` and not planned; a question that decides the core approach stops the plan and is asked in chat. A missing requirements file stops with one line pointing to write-spec.
+- write-plan: each `NFR` is placed with the `REQ` it constrains. Withdrawn IDs are skipped, and files saved by write-spec 0.1.0 keep their `REQ` IDs in section 4.
+- New config keys `plan_max_requirements_per_phase` (default 8) and `plan_max_files_per_phase` (default 10).
+- Known: in eval runs the agent sometimes writes a line before `## 1. Approach` in a chat reply. On Haiku 4.5, write-plan did not fire on a request that did not name it (Sonnet 5 did), and large specs were sometimes split with a phase depending on a later one.
+
 ## 0.2.0
 
 - write-spec: non-functional requirements get their own ID sequence, `NFR-001`, `NFR-002`, …, next to `REQ-` (functional) and `Q-` (questions). Each sequence continues from its own highest ID.

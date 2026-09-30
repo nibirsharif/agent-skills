@@ -1,0 +1,7 @@
+{
+  "description": "Routing: a request to write requirements, which the skill's description excludes. write-plan must not fire.",
+  "fires": false,
+  "expectations": [
+    "The reply is not an implementation plan: it has no phases and no PR breakdown."
+  ]
+}

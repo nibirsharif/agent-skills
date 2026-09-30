@@ -1,0 +1,33 @@
+{
+  "description": "An open question decides the data model. The skill writes no plan, asks the question in chat, and says the answer belongs in the requirements through write-spec.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 1,
+      "max": 4
+    },
+    "phases": {
+      "pattern": "^#+ Phase",
+      "max": 0
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "(?i)separate database.*shared database|shared database.*separate database",
+      "why": "it asks the open question"
+    },
+    {
+      "pattern": "write-spec",
+      "why": "it says the answer is recorded through write-spec"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^\\*\\*(Requirements|Scope):\\*\\*",
+      "why": "no plan is written around a guess"
+    }
+  ],
+  "expectations": [
+    "The reply chooses neither a separate database nor a shared database."
+  ]
+}

@@ -7,6 +7,7 @@ My skills for coding agents such as Claude Code. Each skill is a folder with a `
 | Skill | What it does |
 |-------|--------------|
 | [write-spec](skills/write-spec/SKILL.md) | Writes software requirements in EARS format. Writes every requirement the input supports and asks questions for the rest instead of guessing. |
+| [write-plan](skills/write-plan/SKILL.md) | Turns a saved requirements file into an implementation plan: phases that each merge as one reviewable PR, with the requirement IDs each covers. Requirements that wait on open questions are listed as blocked, not guessed. |
 
 ## Install
 
@@ -56,7 +57,9 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 | Key | Used by | Effect |
 |-----|---------|--------|
-| `spec_output_dir` | write-spec | Write a requirements specification to `<spec_output_dir>/<feature-name>/requirements.md`, updating the file if it exists. Empty means reply in chat only. |
+| `spec_output_dir` | write-spec | Write a requirements specification to `<spec_output_dir>/<feature-name>/requirements.md`, updating the file if it exists. Empty means reply in chat only. write-plan reads `requirements.md` from there and writes `plan.md` beside it. |
+| `plan_max_requirements_per_phase` | write-plan | The most `REQ` and `NFR` IDs in one phase before it is split. Default 8. |
+| `plan_max_files_per_phase` | write-plan | The most files a phase may add or change, tests included, before it is split. Default 10. |
 
 ## Adding a skill
 

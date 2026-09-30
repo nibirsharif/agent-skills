@@ -1,0 +1,86 @@
+{
+  "description": "Two open questions about rate limiting block a requirement that is not written yet. The plan covers the three written requirements in one phase, lists one Blocked by entry naming both questions, answers neither question, and plans no rate limiting.",
+  "counts": {
+    "phases": {
+      "pattern": "^### Phase \\d+",
+      "min": 1,
+      "max": 1
+    },
+    "blocked entries": {
+      "pattern": "^Blocked by ",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "REQ-002 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-002\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-001\\b",
+      "min": 1,
+      "max": 1
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A## 1\\. Approach",
+      "why": "the reply is the plan alone: it starts at the Approach heading, with no preamble"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*(?=.*\\bREQ-001\\b)(?=.*\\bNFR-001\\b)",
+      "why": "NFR-001 constrains REQ-001, so they share a phase"
+    },
+    {
+      "pattern": "^Blocked by Q-001, Q-002: ",
+      "why": "both questions block one requirement, so they share one entry"
+    },
+    {
+      "pattern": "^Q-001: .*rate limit.*\\(touches ",
+      "why": "the open questions are listed with what each touches"
+    },
+    {
+      "pattern": "^Q-002: .*\\(touches ",
+      "why": "the open questions are listed with what each touches"
+    },
+    {
+      "pattern": "^\\*\\*Reuse:\\*\\*\\s*None found\\.",
+      "why": "there is no code to reuse, so it says so instead of naming files"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Blocked by .*Q-003|^Q-003\\b",
+      "why": "Q-003 is closed: it is neither a blocker nor an open question"
+    },
+    {
+      "pattern": "^(#+ .*|\\*\\*Scope:\\*\\*.*)\\brate.limit",
+      "why": "the blocked requirement is not planned as a phase or scope"
+    },
+    {
+      "pattern": "^Q-00[12]: Closed",
+      "why": "it never closes or answers a question"
+    },
+    {
+      "pattern": "\\b(per account|per IP)\\b.*\\b\\d+ (requests|per)",
+      "why": "no guessed answer to the rate-limit questions"
+    },
+    {
+      "pattern": "^## 5\\. Revision History|^---$|^Note:",
+      "why": "no Revision History, closing note, or rule in a chat reply"
+    }
+  ],
+  "expectations": [
+    "The reply plans no rate limiting: no phase, scope, or verification covers it.",
+    "The reply does not answer or assume an answer to Q-001 or Q-002.",
+    "The reply names no file or library path as existing code to reuse."
+  ],
+  "manual": [
+    "The approach invents no stack details beyond what the requirements imply."
+  ]
+}
