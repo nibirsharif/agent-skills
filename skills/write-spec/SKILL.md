@@ -25,25 +25,27 @@ Stop and ask instead of writing when:
 
 ## Workflow
 
-1. **Read the target file.** Find it as [Saving to a file](#saving-to-a-file) says, and read it if it exists: its highest `REQ` and `Q` IDs, its systems and terms, and its requirements.
+1. **Read the target file.** Find it as [Saving to a file](#saving-to-a-file) says, and read it if it exists: its highest `REQ`, `NFR`, and `Q` IDs, its systems and terms, and its requirements.
 2. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
 3. **Fill the slots** for each requirement from the input, the user's answers, and the target file only: system, response, and any feature, precondition, and trigger.
 4. **Choose the keywords** as the rules' "Choosing the keyword" section says.
 5. **Write the sentence** in the fixed clause order.
-6. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
-7. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
-8. **Ask.** Give every open question an ID, and put the most important ones in this reply, as [Output](#output) says. Hold back a question whose wording depends on another's answer until that answer arrives.
-9. **Classify** each requirement as functional or non-functional, as the rules say.
-10. **Return** the requirements that passed step 6, then the open questions, then **save** if a target path is set.
+6. **Classify** each requirement as functional or non-functional, as the rules' "Functional or non-functional" section says. The class sets the ID: `REQ` for functional, `NFR` for non-functional (see [IDs](#ids)). A statement that gives a behaviour and a threshold on how fast or how well it happens becomes two requirements: a `REQ` for the behaviour and an `NFR` for the threshold.
+7. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
+8. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
+9. **Ask.** Give every open question an ID, and put the most important ones in this reply, as [Output](#output) says. Hold back a question whose wording depends on another's answer until that answer arrives.
+10. **Return** the requirements that passed step 7, then the open questions, then **save** if a target path is set.
 
 ## Output
 
-Return the requirements that pass the checklist, then the open questions. If no requirement can be written, return only the questions. Nothing else: no preamble, no summary, no closing note, and no title, priority, or rationale on a requirement. Never mention the lint, the checklist, the rules, or how you worked; act on their findings without reporting them. The reply's first line is its first `REQ-` or `Q-` line, and the only other line it may hold is the `<N> more open questions after these.` line.
+Return the requirements that pass the checklist, `REQ` lines first and then `NFR` lines, then the open questions. If no requirement can be written, return only the questions. Nothing else: no preamble, no summary, no closing note, and no title, priority, or rationale on a requirement. Never mention the lint, the checklist, the rules, or how you worked; act on their findings without reporting them. The reply's first line is its first `REQ-`, `NFR-`, or `Q-` line, and the only other line it may hold is the `<N> more open questions after these.` line.
 
 ```
 REQ-001: <EARS sentence>
 
 REQ-002: <EARS sentence>
+
+NFR-001: <EARS sentence>
 
 Q-001: <one direct question>? Proposed: <value>.
 ```
@@ -60,10 +62,12 @@ When the user answers questions or adds input, return the requirements the answe
 
 ## IDs
 
-- Requirements are `REQ-001`, `REQ-002`, and so on; questions are `Q-001`, `Q-002`, and so on. Functional and non-functional requirements share one `REQ` sequence.
-- Continue each sequence from its highest ID in this conversation or the target file, whichever is higher.
-- When an answer or new input changes a requirement, rewrite it under its existing ID.
+- Functional requirements are `REQ-001`, `REQ-002`, and so on; non-functional requirements are `NFR-001`, `NFR-002`, and so on; questions are `Q-001`, `Q-002`, and so on. These are three separate sequences.
+- Continue each sequence from its own highest ID in this conversation or the target file, whichever is higher. An answered question never becomes a requirement ID: it closes, and the requirement it unblocks takes the next free `REQ` or `NFR` ID.
+- A requirement's prefix is fixed when it is first written. When an answer or new input changes a requirement but not its class, rewrite it under its existing ID.
+- When an answer shows that a requirement belongs to the other class, replace its text with `Withdrawn. Moved to <new ID>.` and write it under the next free ID of the other sequence.
 - When the user withdraws or deletes a requirement, replace its text with `Withdrawn.` and keep the line, so its ID is never reused.
+- A file saved before `NFR` IDs existed may hold `REQ` lines in its Non-Functional section. Keep those IDs; number new non-functional requirements from `NFR-001`.
 - An answered question is closed and drops out of the open questions in chat. In the file it becomes `Q-NNN: Closed. Answer: <the user's answer>`, so its ID is never reused and the answer stays on record.
 - Never renumber.
 
@@ -79,7 +83,7 @@ Write a file only when at least one requirement was written. A new file uses the
 
 If the file already exists and follows the template, update it:
 
-- Add new requirements at the end of their section, functional or non-functional, each with its source comment.
+- Add new `REQ` lines at the end of the Functional section and new `NFR` lines at the end of the Non-Functional section, each with its source comment.
 - Rewrite changed and withdrawn requirements in place under their existing IDs.
 - Close answered questions in place and add new questions at the end of the section. The file holds every open question, including those not yet asked in chat.
 - Add to Summary, Scope (including its Systems line), and References only what the new input states.

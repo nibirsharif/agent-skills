@@ -41,7 +41,7 @@ class SkillExamplesPass(unittest.TestCase):
                 for sentence in re.findall(r"`([^`]+)`", line):
                     if "..." in sentence:
                         continue
-                    text = sentence if re.match(r"(REQ|Q)-\d", sentence) else f"REQ-001: {sentence}"
+                    text = sentence if re.match(r"(REQ|NFR|Q)-\d", sentence) else f"REQ-001: {sentence}"
                     self.assertEqual(errors(text), [], sentence)
 
     def test_banned_words_are_read_from_rules(self):
@@ -107,6 +107,24 @@ class LintCatches(unittest.TestCase):
         self.assertCaught("Q-001: How long is the buffer? Proposed: 24 hours.", "number or time", "CHECK")
         self.assertEqual(run("Q-001: What happens when the address is not registered? Proposed: send no email."), [])
 
+    def test_nfr_lines_follow_requirement_rules(self):
+        self.assertCaught("NFR-001: The search API should return results within 300 ms of a request.", "modal")
+        self.assertEqual(run("NFR-001: The search API shall return results within 300 ms of receiving a request "
+                             "for 95% of requests."), [])
+
+    def test_threshold_on_a_functional_response_is_a_check(self):
+        self.assertCaught("REQ-001: When an admin clicks \"Export CSV\", the export service shall email the report "
+                          "within 5 minutes of the click.", "is an NFR", "CHECK")
+        self.assertCaught("REQ-001: The search API shall return results within 300 ms of receiving a request "
+                          "for 95% of requests.", "is an NFR", "CHECK")
+        self.assertEqual(run("REQ-001: If the payment gateway returns no response within 10 seconds of a charge "
+                             "request, then the checkout service shall cancel the charge request."), [])
+
+    def test_withdrawn_lines(self):
+        self.assertEqual(run("REQ-001: Withdrawn."), [])
+        self.assertEqual(run("REQ-001: Withdrawn. Moved to NFR-002."), [])
+        self.assertCaught("REQ-001: Withdrawn because it moved.", "withdrawn line")
+
     def test_layout(self):
         self.assertCaught("REQ-001: The billing service shall send a receipt.\n"
                           "REQ-002: The billing service shall log the receipt.", "blank line")
@@ -114,10 +132,16 @@ class LintCatches(unittest.TestCase):
 
 
 class FileChecks(unittest.TestCase):
-    def file_errors(self, body):
+    def file_text(self, body):
         head = "# Requirements Specification: X\n\n" + "\n\n".join(h + "\n\nNone given." for h in lint.FILE_HEADINGS)
         head = head.replace("## 2. Scope\n\nNone given.", "## 2. Scope\n\n**Systems:** billing service")
-        return [f[3] for f in run(head.replace("## 3. Functional Requirements\n\nNone given.", body)) if f[1] == "ERROR"]
+        # body holds one or more sections, each starting with its heading, and replaces them
+        for section in re.split(r"\n(?=## )", body):
+            head = head.replace(section.split("\n", 1)[0] + "\n\nNone given.", section)
+        return head
+
+    def file_errors(self, body):
+        return [f[3] for f in run(self.file_text(body)) if f[1] == "ERROR"]
 
     def test_clean_file(self):
         self.assertEqual(self.file_errors("## 3. Functional Requirements\n\nREQ-001: The billing service shall send a receipt."), [])
@@ -130,6 +154,20 @@ class FileChecks(unittest.TestCase):
         found = self.file_errors("## 3. Functional Requirements\n\nOne EARS sentence per line.\n\n"
                                  "REQ-001: The billing service shall send a receipt.")
         self.assertTrue(any("not an ID line" in m for m in found), found)
+
+    def test_nfr_system_missing_from_systems_line(self):
+        found = self.file_errors("## 3. Functional Requirements\n\nNone given.\n\n## 4. Non-Functional Requirements\n\n"
+                                 "NFR-001: The tax service shall comply with WCAG 2.2 level AA.")
+        self.assertTrue(any("Systems line" in m for m in found), found)
+
+    def test_ids_in_the_wrong_section(self):
+        found = self.file_errors("## 3. Functional Requirements\n\n"
+                                 "NFR-001: The billing service shall comply with WCAG 2.2 level AA.")
+        self.assertTrue(any("only REQ lines" in m for m in found), found)
+        text = self.file_text("## 4. Non-Functional Requirements\n\n"
+                              "REQ-006: The billing service shall comply with WCAG 2.2 level AA.")
+        self.assertTrue(any(f[1] == "CHECK" and "before NFR IDs" in f[3] for f in run(text)))
+        self.assertFalse([f for f in run(text) if f[1] == "ERROR"])
 
     def test_duplicate_ids_and_placeholders(self):
         found = self.file_errors("## 3. Functional Requirements\n\nREQ-001: The billing service shall send a receipt.\n\n"

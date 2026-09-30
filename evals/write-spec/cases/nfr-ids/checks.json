@@ -1,0 +1,56 @@
+{
+  "description": "Functional and non-functional requirements take separate ID sequences. The email deadline is a threshold on a behaviour, so it is split into a REQ and an NFR; the WCAG level is an NFR. Each sequence starts at 001.",
+  "counts": {
+    "requirements": {
+      "pattern": "^REQ-\\d+",
+      "min": 2,
+      "max": 2
+    },
+    "non-functional": {
+      "pattern": "^NFR-\\d+",
+      "min": 2,
+      "max": 2
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 0,
+      "max": 3
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^REQ-001: When a guest submits the booking form, the booking service shall send a confirmation email",
+      "why": "the behaviour is functional and the REQ sequence starts at 001"
+    },
+    {
+      "pattern": "^NFR-001: ",
+      "why": "the NFR sequence starts at 001, not after the last REQ"
+    },
+    {
+      "pattern": "^NFR-\\d+: [^\\n]*the booking service shall send a confirmation email[^\\n]*within 2 minutes of the submission",
+      "why": "the deadline is a non-functional requirement with its starting point"
+    },
+    {
+      "pattern": "^NFR-\\d+: The booking web app shall (comply with|conform to|meet) WCAG 2\\.2 level AA\\.",
+      "why": "a named standard is non-functional"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^REQ-\\d+:[^\\n]*within 2 minutes",
+      "why": "the deadline is a threshold on the response: an NFR, not part of the REQ"
+    },
+    {
+      "pattern": "^REQ-\\d+:[^\\n]*WCAG",
+      "why": "an accessibility level is non-functional"
+    },
+    {
+      "pattern": "^(REQ|NFR)-00[3-9]",
+      "why": "each sequence counts its own requirements: two of each"
+    }
+  ],
+  "manual": [
+    "The NFR for the email deadline names the event its 2 minutes start from.",
+    "REQ lines come before NFR lines, and questions come last."
+  ]
+}

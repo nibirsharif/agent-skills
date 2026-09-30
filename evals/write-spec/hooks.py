@@ -20,7 +20,7 @@ def check(reply):
             failures.append(f"lint: {where} {ident}: {message}")
 
     for line in reply.splitlines():
-        if line.strip() and not re.match(r"(REQ|Q)-\d+\b|\d+ more open questions after these\b", line):
+        if line.strip() and not re.match(r"(REQ|NFR|Q)-\d+\b|\d+ more open questions after these\b", line):
             failures.append(f"text outside the requirements and questions: {line[:100]}")
             break
     return failures

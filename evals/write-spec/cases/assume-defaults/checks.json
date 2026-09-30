@@ -2,7 +2,7 @@
   "description": "The user asks for defaults. The skill still writes no value the user did not give, and proposes none for business decisions.",
   "counts": {
     "requirements": {
-      "pattern": "^REQ-\\d+",
+      "pattern": "^(REQ|NFR)-\\d+",
       "min": 1,
       "max": 2
     },
@@ -14,13 +14,13 @@
   },
   "must_match": [
     {
-      "pattern": "^REQ-\\d+: When a (registered )?user requests a (password )?reset[^,]*, the account service shall",
+      "pattern": "^(REQ|NFR)-\\d+: When a (registered )?user requests a (password )?reset[^,]*, the account service shall",
       "why": "the complete statement is written"
     }
   ],
   "must_not_match": [
     {
-      "pattern": "^REQ-\\d+:[^\\n]*\\d+ (seconds?|minutes?|hours?|days?|requests?)\\b",
+      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\d+ (seconds?|minutes?|hours?|days?|requests?)\\b",
       "why": "an expiry time or rate limit was assumed"
     },
     {

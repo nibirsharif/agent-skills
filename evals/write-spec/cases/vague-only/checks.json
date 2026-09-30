@@ -2,7 +2,7 @@
   "description": "Only impressions and no system. Nothing can be written, so the reply is questions only.",
   "counts": {
     "requirements": {
-      "pattern": "^REQ-\\d+",
+      "pattern": "^(REQ|NFR)-\\d+",
       "min": 0,
       "max": 0
     },

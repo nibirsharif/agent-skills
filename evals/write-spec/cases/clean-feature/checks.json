@@ -1,10 +1,15 @@
 {
-  "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and real ambiguities (whether \"every export\" includes rejected ones, and which instant \"the export time\" is).",
+  "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and real ambiguities (whether \"every export\" includes rejected ones, and which instant \"the export time\" is). The 5-minute deadline is a threshold on the email, so it is split off as an NFR.",
   "counts": {
     "requirements": {
       "pattern": "^REQ-\\d+",
       "min": 3,
       "max": 3
+    },
+    "non-functional": {
+      "pattern": "^NFR-\\d+",
+      "min": 1,
+      "max": 1
     },
     "questions": {
       "pattern": "^Q-\\d+: (?!Closed\\.)",
@@ -14,8 +19,12 @@
   },
   "must_match": [
     {
-      "pattern": "^REQ-\\d+: (While [^\\n]*, when|When) an admin clicks \"Export CSV\" on the Reports page, the export service shall [^\\n]*within 5 minutes of the click",
-      "why": "the event-driven statement keeps the input's terms and its starting point"
+      "pattern": "^REQ-\\d+: (While [^\\n]*, when|When) an admin clicks \"Export CSV\" on the Reports page, the export service shall email the report",
+      "why": "the event-driven behaviour keeps the input's terms"
+    },
+    {
+      "pattern": "^NFR-\\d+: [^\\n]*the export service shall [^\\n]*within 5 minutes of the click",
+      "why": "the deadline is a non-functional requirement with its starting point"
     },
     {
       "pattern": "^REQ-\\d+: If [^\\n]*more than 100,000 rows, then the export service shall reject the export and display \"Report too large to export\"\\.",
@@ -30,6 +39,10 @@
     {
       "pattern": "(?i)^Q-\\d+:[^\\n]*\\b(how many (rows|minutes)|(what|which) time zone|within how (long|many)|what (row )?limit)\\b",
       "why": "asked for a value the input already gives"
+    },
+    {
+      "pattern": "^REQ-\\d+:[^\\n]*within 5 minutes",
+      "why": "the deadline is a threshold on the response: an NFR, not part of the REQ"
     }
   ],
   "manual": [

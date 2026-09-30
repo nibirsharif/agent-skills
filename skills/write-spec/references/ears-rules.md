@@ -135,21 +135,28 @@ Each banned word hides an unanswered question. The ban applies to the sense show
 Replace each banned word with a concrete value or verb that the input gives: a number with a unit, a complete list, a named actor, or a concrete verb from [The response](#the-response). Replace a pronoun, or a slash between alternatives (`email/SMS`), with what it stands for. `this` and `that` are allowed only directly before a noun: `that address`.
 
 - **Wrong:** `When a user submits a search, the search API shall return results quickly.`
-- **Right:** `When a user submits a search, the search API shall return results within 300 ms of the submission.` (only when the input gives 300 ms)
+- **Right:** `When a user submits a search, the search API shall return results within 300 ms of the submission.` (only when the input gives 300 ms; a threshold, so non-functional)
 
 ## Quality requirements
 
-Performance, capacity, availability, accessibility, and other quality requirements follow the same rules. They are usually Ubiquitous, or State-driven when they apply only in one state: `The search API shall return results within 300 ms of receiving a request for 95% of requests.` They need a measurable threshold with a unit, or a named standard such as WCAG 2.2 level AA. If the input gives only an impression ("must be fast", "must feel premium", "must be enterprise-grade"), ask for a measurable proxy.
+Performance, capacity, availability, accessibility, and other quality requirements follow the same rules, and are [non-functional](#functional-or-non-functional). They are usually Ubiquitous, or State-driven when they apply only in one state: `The search API shall return results within 300 ms of receiving a request for 95% of requests.` They need a measurable threshold with a unit, or a named standard such as WCAG 2.2 level AA. If the input gives only an impression ("must be fast", "must feel premium", "must be enterprise-grade"), ask for a measurable proxy.
 
 - **Wrong:** `The search API shall be fast.`
 - **Right:** `The search API shall return results within 300 ms of receiving a request for 95% of requests.` (only when the input gives 300 ms and 95%)
 
 ## Functional or non-functional
 
-Classify each requirement for the specification file:
+Classify each requirement before giving it an ID. Functional requirements get `REQ` IDs, non-functional ones `NFR` IDs.
 
-- **Non-functional:** its response sets a measurable threshold on how well a system performs (time, throughput, capacity, availability, accessibility level), or it is a constraint the user confirmed (a mandated technology, platform, standard, or regulation).
-- **Functional:** everything else, including security behaviour such as rejecting, locking, or logging.
+- **Non-functional:** it sets a measurable threshold on how fast or how well a system performs a response (a deadline, a latency with the percentage of cases it holds for, throughput, capacity, availability, an accessibility level), or it is a constraint the user confirmed (a mandated technology, platform, standard, or regulation). A service-level objective is non-functional.
+- **Functional:** everything else: what a system does, including security behaviour such as rejecting, locking, or logging.
+
+A statement that gives both a behaviour and a threshold on that behaviour becomes two requirements: a `REQ` for the behaviour, with no threshold, and an `NFR` for the threshold. The `NFR` keeps the conditions it needs to be tested. The pair is not a duplicate.
+
+- **Wrong:** `REQ-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report within 5 minutes of the click.`
+- **Right:** `REQ-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report.` and `NFR-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report within 5 minutes of the click.`
+
+A threshold in a condition, such as a timeout that triggers the response, is part of the stimulus and stays functional: `If the payment gateway returns no response within 10 seconds of a charge request, then the checkout service shall cancel the charge request.` is a `REQ`.
 
 A technology, product, or vendor in the input ("store sessions in Redis") is an implementation choice until the user confirms it is a constraint. Ask first; write it only after the user confirms.
 
@@ -161,6 +168,7 @@ A technology, product, or vendor in the input ("store sessions in Redis") is an 
 Fix these yourself; they do not need the user:
 
 - Several requirements in one sentence: split them.
+- A behaviour with a threshold on how fast or how well it happens: split it into a `REQ` and an `NFR`, as [Functional or non-functional](#functional-or-non-functional) says.
 - Clauses out of order: reorder them.
 - A modal verb other than `shall`: change it to `shall`.
 - A passive response: make the named system the subject.
@@ -208,10 +216,11 @@ Each requirement:
 10. Keeps every `only` in the input as a `shall not` for the other case.
 11. Names no technology, product, or vendor unless the user confirmed it as a constraint.
 12. Contains no system, value, name, or behaviour that the input, the user's answers, or the target file did not give.
+13. Has the ID prefix of its class: `REQ` for functional, `NFR` for non-functional, with no threshold on how fast or how well its response happens in a `REQ`.
 
 The whole set:
 
 - Uses one term for one thing, matching the input and the target file.
-- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other.
-- Uses IDs that are unique and continue from the highest existing ID.
+- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other. An `NFR` that sets the threshold on a `REQ`'s response is not a duplicate of it.
+- Uses IDs that are unique and continue each sequence (`REQ`, `NFR`, `Q`) from its own highest existing ID.
 - Has a question for every statement that could not be written.

@@ -3,7 +3,7 @@
 
 Usage: python3 lint.py FILE [FILE ...]    (use - to read standard input)
 
-Checks every `REQ-NNN:` and `Q-NNN:` line. A file whose first heading is
+Checks every `REQ-NNN:`, `NFR-NNN:`, and `Q-NNN:` line. A file whose first heading is
 `# Requirements Specification` is also checked against the file template.
 
 ERROR  breaks a rule. Fix it.
@@ -19,7 +19,7 @@ from pathlib import Path
 
 RULES = Path(__file__).resolve().parent.parent / "references" / "ears-rules.md"
 
-LINE_RE = re.compile(r"^(- )?((REQ|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
+LINE_RE = re.compile(r"^(- )?((REQ|NFR|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
 COMMENT_RE = re.compile(r"\s*<!--.*?-->")
 QUOTED_RE = re.compile(r'"[^"]*"|“[^”]*”|`[^`]*`')
 CLAUSE_RE = re.compile(r"(?:^|, )(Where|where|While|while|When|when|If|if) ")
@@ -39,6 +39,8 @@ MODALS = r"\b(should|may|might|will|can|must|needs to|has to|is required to)\b"
 QUESTION_WORDS = r"(what|which|how|when|where|who|whom|whether|does|do|is|are|must|should|can)"
 DAYS = r"(monday|tuesday|wednesday|thursday|friday|saturday|sunday)s?"
 SCHEDULE = rf"\b(every|each) (\d[\d.,]* )?(seconds?|minutes?|hours?|days?|weeks?|months?|years?|{DAYS})\b|\b(daily|hourly|weekly|monthly|nightly)\b"
+TIME_UNITS = r"(ms|milliseconds?|seconds?|minutes?|hours?|days?|weeks?)"
+THRESHOLD = rf"\bwithin \d[\d.,]*\s*{TIME_UNITS} of\b|\bfor \d[\d.,]*\s*% of\b"
 DAY_BOUNDARY = rf"\b(midnight|noon|\d{{1,2}}(st|nd|rd|th) (day )?of|{DAYS}|each day|every day|new day)\b"
 FILE_HEADINGS = [
     "## 1. Summary", "## 2. Scope", "## 3. Functional Requirements", "## 4. Non-Functional Requirements",
@@ -71,7 +73,10 @@ class Linter:
         self.findings.append((where, level, ident, message))
 
     def requirement(self, where, ident, text):
-        if text == "Withdrawn.":
+        if text == "Withdrawn." or text.startswith("Withdrawn. Moved to "):
+            return
+        if text.startswith("Withdrawn"):
+            self.add(where, "ERROR", ident, "a withdrawn line is `Withdrawn.` or `Withdrawn. Moved to <ID>.`")
             return
         bare = QUOTED_RE.sub('""', text)
         head, _, response = bare.partition(" shall ")
@@ -96,6 +101,9 @@ class Linter:
             self.add(where, "CHECK", ident, "a schedule after `shall` is a trigger: put it in a When clause")
         if re.search(r"\b(when|if|while|where)\b", response, re.I):
             self.add(where, "CHECK", ident, "condition after `shall`? Conditions go before the system")
+        if ident.startswith("REQ") and re.search(THRESHOLD, response, re.I):
+            self.add(where, "CHECK", ident, "a threshold on how fast the response happens is an NFR: "
+                     "split it into a REQ for the behaviour and an NFR for the threshold")
 
         systems = SYSTEM_RE.findall(bare)
         system = systems[-1].strip() if systems else ""
@@ -175,7 +183,7 @@ class Linter:
                 run_reported = True
             seen.setdefault(ident, []).append(n)
             body = COMMENT_RE.sub("", body).strip()
-            (self.requirement if kind == "REQ" else self.question)(where, ident, body)
+            (self.question if kind == "Q" else self.requirement)(where, ident, body)
             prev_is_id = True
 
         first_heading = next((l for l in lines if l.startswith("# ")), "")
@@ -200,7 +208,7 @@ class Linter:
             listed = {s.strip().lower().removeprefix("the ") for s in systems_line.group(1).split(",")}
             for line in text.splitlines():
                 m = LINE_RE.match(line)
-                if m and m.group(3) == "REQ":
+                if m and m.group(3) != "Q":
                     found = SYSTEM_RE.findall(QUOTED_RE.sub('""', COMMENT_RE.sub("", m.group(4))))
                     if found and found[-1].strip().lower() not in listed:
                         self.add(name, "ERROR", m.group(2), f"system `{found[-1]}` is not on the Systems line")
@@ -211,6 +219,19 @@ class Linter:
                 line = line.strip()
                 if line and not LINE_RE.match(line) and not re.fullmatch(r"None given\.|None\.|Pending: .+", line):
                     self.add(name, "ERROR", "file", f"`{heading}` holds a line that is not an ID line: `{line[:60]}`")
+
+        sections = {h: text.split(h, 1)[-1].split("\n## ", 1)[0] if h in text else "" for h in FILE_HEADINGS[2:4]}
+        for line in sections[FILE_HEADINGS[2]].splitlines():
+            m = LINE_RE.match(line)
+            if m and m.group(3) != "REQ":
+                self.add(name, "ERROR", m.group(2), f"only REQ lines belong in `{FILE_HEADINGS[2]}`")
+        for line in sections[FILE_HEADINGS[3]].splitlines():
+            m = LINE_RE.match(line)
+            if m and m.group(3) == "REQ":
+                self.add(name, "CHECK", m.group(2), f"a REQ line in `{FILE_HEADINGS[3]}` is allowed only for a "
+                         "requirement saved before NFR IDs existed; new ones are NFR")
+            elif m and m.group(3) == "Q":
+                self.add(name, "ERROR", m.group(2), f"only NFR lines belong in `{FILE_HEADINGS[3]}`")
 
         open_questions = re.findall(r"^Q-\d{3,}: (?!Closed\.)", text, re.M)
         for heading in FILE_HEADINGS[2:4]:

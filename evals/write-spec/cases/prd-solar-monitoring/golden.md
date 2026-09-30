@@ -24,7 +24,7 @@ REQ-012: The installer portal shall display to each installer every solar system
 
 REQ-013: While a homeowner has not granted an installer access to the phone number of the homeowner, the installer portal shall not display the phone number of the homeowner to that installer.
 
-REQ-014: The mobile app shall comply with WCAG 2.2 level AA.
+NFR-001: The mobile app shall comply with WCAG 2.2 level AA.
 
 Q-001: Which system archives production readings older than 5 years?
 
