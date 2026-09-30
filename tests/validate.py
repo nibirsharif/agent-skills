@@ -53,6 +53,26 @@ def parse_frontmatter(text):
     return fields
 
 
+def unsafe_plain_fields(text):
+    """Names of frontmatter fields whose unquoted value YAML parsers reject or cut short.
+
+    In a plain (unquoted, non-block) value, `: ` starts a nested mapping and ` #` starts a comment.
+    Quote the value, or rephrase it, to fix.
+    """
+    m = re.match(r"^---\n(.*?)\n---\n", text.replace("\r\n", "\n"), re.DOTALL)
+    values, key = {}, None
+    for line in (m.group(1).splitlines() if m else []):
+        if key and (line.startswith((" ", "\t")) or not line.strip()):
+            values[key] += " " + line.strip()
+            continue
+        k, sep, v = line.partition(":")
+        key = None if not sep or line.startswith((" ", "\t", "#")) else k.strip()
+        if key:
+            values[key] = v.strip()
+    plain = {k: v for k, v in values.items() if v[:1] not in ("|", ">", '"', "'")}
+    return [k for k, v in plain.items() if re.search(r": | #", v)]
+
+
 def visible_markdown(text):
     """Markdown with code blocks, inline code, and HTML comments removed."""
     text = FENCE_RE.sub("", text)
@@ -93,6 +113,9 @@ def check_skill(skill_dir, seen_names):
         errors.append(f"{label}: missing description")
     elif len(desc) > MAX_DESCRIPTION:
         errors.append(f"{label}: description is {len(desc)} characters (limit {MAX_DESCRIPTION})")
+
+    for field in unsafe_plain_fields(skill_md.read_text()):
+        errors.append(f"{label}: frontmatter `{field}` has `: ` or ` #` in an unquoted value, which YAML parsers reject; rephrase it or quote it")
 
     if fm.get("disable-model-invocation", "true") not in ("true", "false"):
         errors.append(f"{label}: disable-model-invocation must be true or false")
