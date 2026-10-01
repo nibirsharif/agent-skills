@@ -1,0 +1,29 @@
+{
+  "description": "Two phases. Task IDs are numbered per phase from the plan's phase numbers, each phase ends with a verify task, every ID is covered by a building task, and Phase 1 tasks depend on nothing in Phase 2.",
+  "counts": {
+    "phase headings": { "pattern": "^### Phase \\d+: ", "min": 2, "max": 2 },
+    "phase 1 tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 4 },
+    "phase 2 tasks": { "pattern": "^#### T-2\\.\\d+: ", "min": 2 },
+    "done lines": { "pattern": "^\\*\\*Done when:\\*\\*", "min": 6 },
+    "REQ-003 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-003\\b", "min": 2 },
+    "REQ-004 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-004\\b", "min": 2 },
+    "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
+    "verify tasks": { "pattern": "^#### T-\\d\\.\\d+: Verify", "min": 2 },
+    "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
+    "phase over 12 tasks": { "pattern": "^#### T-\\d\\.(1[3-9]|[2-9]\\d): ", "max": 0 }
+  },
+  "must_match": [
+    { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" }
+  ],
+  "must_not_match": [
+    { "pattern": "^\\*\\*Covers:\\*\\*.*\\b(REQ-00[34])\\b(?=[\\s\\S]*\\n### Phase 1)", "why": "REQ-003 and REQ-004 are not covered in Phase 1" },
+    { "pattern": "\\A[\\s\\S]*?### Phase 1[\\s\\S]*?^\\*\\*Depends on:\\*\\*.*T-2\\.[\\s\\S]*?### Phase 2", "why": "a Phase 1 task never depends on a Phase 2 task" },
+    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(REQ|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
+    { "pattern": "^#### T-\\d\\.\\d+: (Database|Data model|API|UI|Frontend|Backend)\\s*$", "why": "tasks follow behaviour, not layers" },
+    { "pattern": "^```", "why": "tasks hold no code" }
+  ],
+  "expectations": [
+    "No task depends on a later task, and Phase 2 tasks depend only on Phase 1 tasks or earlier Phase 2 tasks.",
+    "Each phase's last task runs that phase's Verify list."
+  ]
+}

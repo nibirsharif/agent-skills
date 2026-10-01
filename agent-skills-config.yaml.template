@@ -20,3 +20,10 @@ plan_max_requirements_per_phase:
 # write-plan: the largest estimated number of files a phase may add or change, tests included.
 # A phase with more is split, however few requirements it has. Default 10.
 plan_max_files_per_phase:
+
+# write-tasks: the most files one task may add or change, tests included. Default 3.
+tasks_max_files_per_task:
+
+# write-tasks: the most tasks one phase may have. A phase that needs more is sent back to
+# write-plan to be split, not squeezed. Default 12.
+tasks_max_per_phase:

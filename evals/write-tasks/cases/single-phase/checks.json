@@ -1,0 +1,33 @@
+{
+  "description": "One phase with REQ-001, REQ-002, NFR-001 and no codebase. Tasks have all five parts, every ID is covered, every Done when cites an ID, every file is new, and the phase ends with a verify task.",
+  "counts": {
+    "tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 4, "max": 12 },
+    "covers lines": { "pattern": "^\\*\\*Covers:\\*\\*", "min": 4 },
+    "files lines": { "pattern": "^\\*\\*Files:\\*\\*", "min": 4 },
+    "depends lines": { "pattern": "^\\*\\*Depends on:\\*\\*", "min": 4 },
+    "done lines": { "pattern": "^\\*\\*Done when:\\*\\*", "min": 4 },
+    "REQ-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-001\\b", "min": 2 },
+    "REQ-002 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-002\\b", "min": 2 },
+    "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
+    "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
+    "verify task last": { "pattern": "^#### T-1\\.\\d+: Verify", "min": 1 }
+  },
+  "must_match": [
+    { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" },
+    { "pattern": "(?i)no codebase", "why": "the Overview says there is no codebase" }
+  ],
+  "must_not_match": [
+    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(REQ|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
+    { "pattern": "^\\*\\*Done when:\\*\\*\\s*(it works|tests? pass(es)?|done|reviewed)\\.?\\s*$", "why": "a check a reviewer can run or see" },
+    { "pattern": "^\\*\\*Files:\\*\\*.*`[\\w.-]+/[\\w./-]+\\.\\w+`", "why": "with no codebase, no file path is named" },
+    { "pattern": "^```", "why": "tasks hold no code" },
+    { "pattern": "^## 4\\. Revision History|^---$|^Note:", "why": "no Revision History, closing note, or rule in a chat reply" }
+  ],
+  "expectations": [
+    "No task depends on a later task, and each requirement's check is in the task that builds it or an earlier task, not only in a final task.",
+    "No requirement is added, reworded, or split, and no task is a layer such as Database or UI."
+  ],
+  "manual": [
+    "Each task is one focused change."
+  ]
+}

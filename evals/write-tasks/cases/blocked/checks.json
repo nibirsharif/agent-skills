@@ -1,0 +1,21 @@
+{
+  "description": "The plan has a blocked requirement and two open questions. Phase 1 is tasked; nothing is tasked for rate limiting, no question is answered, and the plan's Blocked by entry is copied once.",
+  "counts": {
+    "tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 4 },
+    "blocked entry": { "pattern": "^Blocked by Q-001, Q-002: ", "min": 1, "max": 1 },
+    "blocked lines": { "pattern": "^Blocked by", "max": 1 }
+  },
+  "must_match": [
+    { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" },
+    { "pattern": "^## 3\\. Blocked Requirements\\s+Blocked by Q-001, Q-002: ", "why": "the blocked entry is carried over from the plan" }
+  ],
+  "must_not_match": [
+    { "pattern": "^#### T-\\d+\\.\\d+:.*(?i:rate|limit|throttl)", "why": "nothing is tasked for the blocked requirement" },
+    { "pattern": "^\\*\\*(Covers|Done when):\\*\\*.*\\bQ-\\d+", "why": "a task never covers an open question" },
+    { "pattern": "^Q-\\d+:", "why": "open questions are not listed in the tasks" },
+    { "pattern": "(?i)per (account|ip)\\b.*\\b(limit|allowed)|\\b\\d+ requests? per", "why": "no open question is answered or assumed" }
+  ],
+  "expectations": [
+    "The reply does not choose what the rate limit counts per, or how many requests are allowed."
+  ]
+}

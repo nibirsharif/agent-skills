@@ -10,8 +10,8 @@
     {
       "name": "nibirsharif-skills",
       "source": "./",
-      "description": "Skills for coding agents that ask instead of guessing: EARS requirements and implementation plans, with more to come.",
-      "version": "0.3.0",
+      "description": "Skills for coding agents that ask instead of guessing: EARS requirements, implementation plans, and task lists, with more to come.",
+      "version": "0.4.0",
       "license": "MIT",
       "keywords": ["skills", "requirements", "ears", "specification"]
     }

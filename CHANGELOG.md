@@ -2,6 +2,13 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.4.0
+
+- New skill `write-tasks`: reads a saved `plan.md`, explores the codebase, and writes `tasks.md`: each phase split into small tasks numbered `T-<phase>.<n>`, with the `REQ` and `NFR` IDs each covers, its files (`new:` when the file does not exist), the earlier tasks it depends on, and a one-line check that cites each ID. Each phase ends with a verify task.
+- write-tasks: blocked requirements are copied from the plan's `Blocked by` entries and never tasked; open questions are never answered. A missing plan, a plan that lists a withdrawn ID, or a phase that needs more tasks than the limit stops with one line pointing to write-plan or write-spec.
+- New config keys `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 12).
+- Known: on Haiku 4.5, write-tasks often did not fire, either on a request that did not name it or when the plan file was missing (it read the path and asked for it instead). Sonnet passed every eval case in 2 runs each.
+
 ## 0.3.0
 
 - New skill `write-plan`: reads a saved `requirements.md`, explores the codebase, and writes `plan.md`: the approach split into phases that each merge as one reviewable PR, with the `REQ` and `NFR` IDs each covers, code to reuse, interface and data changes, and how to verify.

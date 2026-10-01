@@ -1,0 +1,13 @@
+{
+  "prompt": "Use the write-tasks skill. Reply in chat only and do not save a tasks file.\n\n{input}",
+  "allowed_tools": [
+    "Read",
+    "Glob",
+    "Grep",
+    "Write",
+    "Edit",
+    "Bash(python3:*)",
+    "Bash(cat:*)",
+    "Bash(ls:*)"
+  ]
+}

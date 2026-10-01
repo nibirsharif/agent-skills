@@ -1,0 +1,7 @@
+{
+  "description": "Routing: a request to write the implementation plan from requirements, which the skill's description excludes. write-tasks must not fire.",
+  "fires": false,
+  "expectations": [
+    "The reply is a phased plan, not a task list: it has no T-n.n task IDs."
+  ]
+}
