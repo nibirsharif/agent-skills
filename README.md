@@ -6,9 +6,9 @@ My skills for coding agents such as Claude Code. Each skill is a folder with a `
 
 | Skill | What it does |
 |-------|--------------|
-| [write-spec](skills/write-spec/SKILL.md) | Writes software requirements in EARS format. Writes every requirement the input supports and asks questions for the rest instead of guessing. |
-| [write-plan](skills/write-plan/SKILL.md) | Turns a saved requirements file into an implementation plan: phases that each merge as one reviewable PR, with the requirement IDs each covers. Requirements that wait on open questions are listed as blocked, not guessed. |
-| [write-tasks](skills/write-tasks/SKILL.md) | Breaks each phase of a saved plan into small, ordered, verifiable tasks in `tasks.md`: each names the requirement IDs it covers, its files, what it depends on, and a check that shows it is done. A phase too big to task goes back to write-plan. |
+| [write-spec](skills/write-spec/SKILL.md) ([docs](docs/write-spec.md)) | Writes software requirements in EARS format. Writes every requirement the input supports and asks questions for the rest instead of guessing. |
+| [write-plan](skills/write-plan/SKILL.md) ([docs](docs/write-plan.md)) | Turns a saved requirements file into an implementation plan: phases that each merge as one reviewable PR, with the requirement IDs each covers. Requirements that wait on open questions are listed as blocked, not guessed. |
+| [write-tasks](skills/write-tasks/SKILL.md) ([docs](docs/write-tasks.md)) | Breaks each phase of a saved plan into small, ordered, verifiable tasks in `tasks.md`: each names the requirement IDs it covers, its files, what it depends on, and a check that shows it is done. A phase too big to task goes back to write-plan. |
 
 ## Install
 
@@ -72,6 +72,7 @@ See [AGENTS.md](AGENTS.md). In short: copy `examples/example-skill/` to `skills/
 
 ```
 skills/<skill-name>/     one folder per skill (SKILL.md, optional references/ and scripts/)
+docs/<skill-name>.md      what each skill does and when to use it, for people (not installed)
 examples/example-skill/  blank skeleton for new skills
 tests/validate.py        checks that apply to every skill
 tests/test_*.py          unit tests for skill scripts and eval cases
@@ -83,8 +84,3 @@ setup.sh                 installer (symlinks)
 ## License
 
 [MIT](LICENSE)
-
-## Acknowledgements
-
-- [write-spec](skills/write-spec/SKILL.md) is based on the [EARS Specification Writer prompt](https://gist.github.com/tsaqib/03080922501618c3594678551b8c3810) by [@tsaqib](https://github.com/tsaqib).
-- EARS (Easy Approach to Requirements Syntax) was created by [Alistair Mavin](https://alistairmavin.com/ears/) and colleagues at Rolls-Royce.

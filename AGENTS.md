@@ -8,6 +8,7 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
   - `SKILL.md`: required. Frontmatter plus the instructions the agent follows.
   - `references/`: optional detail files that `SKILL.md` links to and tells the agent to read.
   - `scripts/`: optional helper scripts the skill tells the agent to run. Python 3 standard library only, and the skill must still work when the agent cannot run commands.
+- `docs/<skill-name>.md`: for people, not agents: what the skill does, when to use it, what to expect, common questions. Not installed. Link to `SKILL.md` for the rules rather than repeating them.
 - `examples/example-skill/`: blank skeleton to copy when starting a new skill. Not installed.
 - `tests/validate.py`: checks that apply to every skill (see below).
 - `tests/test_*.py`: unit tests, run by `make test`: a skill's scripts, and `test_evals.py`, which checks every eval case and grades its golden and bad replies.
@@ -21,9 +22,10 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 2. Set `name` to exactly the folder name (lowercase, hyphens, at most 64 characters).
 3. Write a `description` (at most 1024 characters) that says what the skill does and when to use it. The agent decides whether to load the skill from this text alone.
 4. Keep `SKILL.md` short: workflow and output contract. Put long rules and examples in `references/` and link them with relative paths.
-5. Add evals in `evals/<skill-name>/`: a `config.json` and at least one case where the skill must fire, one where a close request must not fire it (`"fires": false`), and one or two that check its behaviour. Give each case that checks the reply a `golden.md`. See [evals/write-spec/](evals/write-spec/) for an example.
-6. Run `make test`, then `make eval SKILL=<skill-name> RUNS=1` until it passes, then once with `RUNS=3 JUDGE=1`.
-7. When the skill is ready to release, add it to the `skills` array in `.claude-plugin/plugin.json` and to `README.md`, then release (below).
+5. Write `docs/<skill-name>.md` from the existing docs' headings: Overview, When to use it, Output, FAQ, Verifying results, Related skills.
+6. Add evals in `evals/<skill-name>/`: a `config.json` and at least one case where the skill must fire, one where a close request must not fire it (`"fires": false`), and one or two that check its behaviour. Give each case that checks the reply a `golden.md`. See [evals/write-spec/](evals/write-spec/) for an example.
+7. Run `make test`, then `make eval SKILL=<skill-name> RUNS=1` until it passes, then once with `RUNS=3 JUDGE=1`.
+8. When the skill is ready to release, add it to the `skills` array in `.claude-plugin/plugin.json` and to `README.md`, then release (below).
 
 `make test` fails a skill when: `SKILL.md` or its frontmatter is missing; `name` is not kebab-case, is longer than 64 characters, differs from the folder name, or duplicates another skill's name; `description` is missing or longer than 1024 characters; the frontmatter has fields other than `name`, `description`, and `disable-model-invocation`, or `disable-model-invocation` is not `true` or `false`; or a relative link in any `.md` file is broken or points outside the skill folder. It also fails when an entry in `plugin.json`'s `skills` array is not a folder directly under `skills/` with a `SKILL.md`.
 
