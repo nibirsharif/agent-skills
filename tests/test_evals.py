@@ -96,7 +96,7 @@ class Transcript(unittest.TestCase):
             tool_use("c", "Bash", {"command": "ls"}), tool_result("c", False),
             {"type": "system", "subtype": "permission_denied", "message": "Redirect target is runtime-determined"},
             {"type": "user", "message": {"content": "plain text"}},
-            {"type": "result", "result": "REQ-001: ...", "num_turns": 4},
+            {"type": "result", "result": "FR-001: ...", "num_turns": 4},
         ]
         trace = grading.summarize(events, ["lint.py"])
         self.assertEqual((trace["result"]["num_turns"], trace["watch_ran"], trace["watch_blocked"]), (4, 1, 1))

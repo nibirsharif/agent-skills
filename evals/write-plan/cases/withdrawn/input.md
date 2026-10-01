@@ -26,13 +26,13 @@ None given.
 
 ## 3. Functional Requirements
 
-REQ-001: When a guest submits the booking form, the booking service shall send a confirmation email to the guest's email address. <!-- Source: "a guest submits the booking form, the booking service sends a confirmation email" -->
+FR-001: When a guest submits the booking form, the booking service shall send a confirmation email to the guest's email address. <!-- Source: "a guest submits the booking form, the booking service sends a confirmation email" -->
 
-REQ-002: Withdrawn.
+FR-002: Withdrawn.
 
-REQ-003: Withdrawn. Moved to NFR-001.
+FR-003: Withdrawn. Moved to NFR-001.
 
-REQ-004: If a guest submits the booking form for a room that is already booked for any of the requested dates, then the booking service shall reject the booking. <!-- Source: "No double bookings." -->
+FR-004: If a guest submits the booking form for a room that is already booked for any of the requested dates, then the booking service shall reject the booking. <!-- Source: "No double bookings." -->
 
 ## 4. Non-Functional Requirements
 
@@ -47,8 +47,8 @@ None.
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-03-02 | Not given. | Initial draft |
-| 1.1 | 2026-03-04 | Not given. | Withdrew REQ-002 |
-| 1.2 | 2026-03-05 | Not given. | Moved REQ-003 to NFR-001 |
+| 1.1 | 2026-03-04 | Not given. | Withdrew FR-002 |
+| 1.2 | 2026-03-05 | Not given. | Moved FR-003 to NFR-001 |
 
 ## 7. References
 

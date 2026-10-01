@@ -3,7 +3,7 @@
 
 Usage: python3 lint.py FILE [FILE ...]    (use - to read standard input)
 
-Checks every `REQ-NNN:`, `NFR-NNN:`, and `Q-NNN:` line. A file whose first heading is
+Checks every `FR-NNN:`, `NFR-NNN:`, and `Q-NNN:` line. A file whose first heading is
 `# Requirements Specification` is also checked against the file template.
 
 ERROR  breaks a rule. Fix it.
@@ -19,7 +19,7 @@ from pathlib import Path
 
 RULES = Path(__file__).resolve().parent.parent / "references" / "ears-rules.md"
 
-LINE_RE = re.compile(r"^(- )?((REQ|NFR|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
+LINE_RE = re.compile(r"^(- )?((FR|NFR|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
 COMMENT_RE = re.compile(r"\s*<!--.*?-->")
 QUOTED_RE = re.compile(r'"[^"]*"|“[^”]*”|`[^`]*`')
 CLAUSE_RE = re.compile(r"(?:^|, )(Where|where|While|while|When|when|If|if) ")
@@ -101,9 +101,9 @@ class Linter:
             self.add(where, "CHECK", ident, "a schedule after `shall` is a trigger: put it in a When clause")
         if re.search(r"\b(when|if|while|where)\b", response, re.I):
             self.add(where, "CHECK", ident, "condition after `shall`? Conditions go before the system")
-        if ident.startswith("REQ") and re.search(THRESHOLD, response, re.I):
+        if ident.startswith("FR") and re.search(THRESHOLD, response, re.I):
             self.add(where, "CHECK", ident, "a threshold on how fast the response happens is an NFR: "
-                     "split it into a REQ for the behaviour and an NFR for the threshold")
+                     "split it into an FR for the behaviour and an NFR for the threshold")
 
         systems = SYSTEM_RE.findall(bare)
         system = systems[-1].strip() if systems else ""
@@ -168,6 +168,7 @@ class Linter:
     def lint(self, name, text):
         lines = text.splitlines()
         seen, prev_is_id, run_reported = {}, False, False
+        is_file = next((l for l in lines if l.startswith("# ")), "").startswith("# Requirements Specification")
         for n, line in enumerate(lines, 1):
             where = f"{name}:{n}"
             m = LINE_RE.match(line)
@@ -186,8 +187,7 @@ class Linter:
             (self.question if kind == "Q" else self.requirement)(where, ident, body)
             prev_is_id = True
 
-        first_heading = next((l for l in lines if l.startswith("# ")), "")
-        if first_heading.startswith("# Requirements Specification"):
+        if is_file:
             self.lint_file(name, text, seen)
 
     def lint_file(self, name, text, seen):
@@ -223,14 +223,11 @@ class Linter:
         sections = {h: text.split(h, 1)[-1].split("\n## ", 1)[0] if h in text else "" for h in FILE_HEADINGS[2:4]}
         for line in sections[FILE_HEADINGS[2]].splitlines():
             m = LINE_RE.match(line)
-            if m and m.group(3) != "REQ":
-                self.add(name, "ERROR", m.group(2), f"only REQ lines belong in `{FILE_HEADINGS[2]}`")
+            if m and m.group(3) != "FR":
+                self.add(name, "ERROR", m.group(2), f"only FR lines belong in `{FILE_HEADINGS[2]}`")
         for line in sections[FILE_HEADINGS[3]].splitlines():
             m = LINE_RE.match(line)
-            if m and m.group(3) == "REQ":
-                self.add(name, "CHECK", m.group(2), f"a REQ line in `{FILE_HEADINGS[3]}` is allowed only for a "
-                         "requirement saved before NFR IDs existed; new ones are NFR")
-            elif m and m.group(3) == "Q":
+            if m and m.group(3) in ("FR", "Q"):
                 self.add(name, "ERROR", m.group(2), f"only NFR lines belong in `{FILE_HEADINGS[3]}`")
 
         open_questions = re.findall(r"^Q-\d{3,}: (?!Closed\.)", text, re.M)

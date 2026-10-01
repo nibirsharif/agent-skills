@@ -1,4 +1,4 @@
-REQ-001: When a user requests a password reset, the account service shall email a reset link to the registered email address of the user.
+FR-001: When a user requests a password reset, the account service shall email a reset link to the registered email address of the user.
 
 Q-001: How many minutes after it is sent does a reset link expire?
 

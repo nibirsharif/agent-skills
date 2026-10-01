@@ -10,7 +10,7 @@ Build it in layers.
 
 #### T-1.1: Build password reset
 
-**Covers:** REQ-001, REQ-002, NFR-001
+**Covers:** FR-001, FR-002, NFR-001
 
 **Files:** `src/auth/reset.ts`, `src/auth/tokens.ts`, `src/mail/mailer.ts`, `migrations/001.sql`
 
@@ -20,7 +20,7 @@ Build it in layers.
 
 #### T-1.2: Add tests
 
-**Covers:** REQ-001
+**Covers:** FR-001
 
 **Files:** `test/reset.test.ts`
 

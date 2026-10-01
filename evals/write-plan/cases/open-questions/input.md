@@ -26,9 +26,9 @@ None given.
 
 ## 3. Functional Requirements
 
-REQ-001: When a registered user requests a password reset, the authentication service shall email a reset link to the user's registered email address. <!-- Source: "When a registered user requests a password reset, the authentication service emails a reset link to their registered address." -->
+FR-001: When a registered user requests a password reset, the authentication service shall email a reset link to the user's registered email address. <!-- Source: "When a registered user requests a password reset, the authentication service emails a reset link to their registered address." -->
 
-REQ-002: If a user opens a reset link more than 15 minutes after the reset link was sent, then the authentication service shall reject the reset link. <!-- Source: "The link expires 15 minutes after it is sent." -->
+FR-002: If a user opens a reset link more than 15 minutes after the reset link was sent, then the authentication service shall reject the reset link. <!-- Source: "The link expires 15 minutes after it is sent." -->
 
 Pending: Q-001, Q-002.
 
@@ -42,7 +42,7 @@ Q-001: What does the reset rate limit count per: account, IP address, or both? <
 
 Q-002: How many reset requests are allowed in how long a period? <!-- Source: "Reset requests should be rate limited." -->
 
-Q-003: Closed. Answer: send no email for an unregistered address. <!-- Source: coverage gap in REQ-001 -->
+Q-003: Closed. Answer: send no email for an unregistered address. <!-- Source: coverage gap in FR-001 -->
 
 ## 6. Revision History
 

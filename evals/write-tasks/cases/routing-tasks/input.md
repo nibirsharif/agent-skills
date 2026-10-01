@@ -5,7 +5,7 @@ Here is the implementation plan for our password reset feature. Can you break Ph
 
 **Scope:** Send the reset link and reject an expired link.
 
-**Requirements:** REQ-001, REQ-002
+**Requirements:** FR-001, FR-002
 
 **Size:** about 5 files
 
@@ -18,8 +18,8 @@ Here is the implementation plan for our password reset feature. Can you break Ph
 
 **Verify:**
 
-- REQ-001: integration test that a reset request for a registered user sends one email with a link
-- REQ-002: unit test that a link opened 15 minutes and 1 second after `sent_at` is rejected
+- FR-001: integration test that a reset request for a registered user sends one email with a link
+- FR-002: unit test that a link opened 15 minutes and 1 second after `sent_at` is rejected
 
 **Open questions:** None.
 ```

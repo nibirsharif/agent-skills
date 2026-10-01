@@ -4,7 +4,7 @@ There is no existing code in this folder, so the feature is planned from the req
 
 | Phase | Delivers | Requirements |
 |-------|----------|--------------|
-| 1 | Reset link email and expiry | REQ-001, REQ-002, NFR-001 |
+| 1 | Reset link email and expiry | FR-001, FR-002, NFR-001 |
 
 ## 2. Phases
 
@@ -12,7 +12,7 @@ There is no existing code in this folder, so the feature is planned from the req
 
 **Scope:** Send the reset link to a registered user and reject a link that is older than 15 minutes. Rate limiting is not part of this phase.
 
-**Requirements:** REQ-001, REQ-002, NFR-001
+**Requirements:** FR-001, FR-002, NFR-001
 
 **Size:** about 6 files
 
@@ -25,8 +25,8 @@ There is no existing code in this folder, so the feature is planned from the req
 
 **Verify:**
 
-- REQ-001: integration test that a reset request for a registered user sends one email with a reset link to the registered address
-- REQ-002: unit test that a link opened 15 minutes and 1 second after it was sent is rejected, and one opened at 14 minutes is accepted
+- FR-001: integration test that a reset request for a registered user sends one email with a reset link to the registered address
+- FR-002: unit test that a link opened 15 minutes and 1 second after it was sent is rejected, and one opened at 14 minutes is accepted
 - NFR-001: load test that 99% of reset emails are sent within 2 minutes of receiving the request
 
 **Open questions:** None.

@@ -4,7 +4,7 @@ These rules are authoritative for `write-tasks`. A task list is checked against 
 
 ## Reading the plan
 
-`plan.md` has phases (section 2), blocked requirements (section 3), and open questions (section 4). Each phase lists its `REQ` and `NFR` IDs, the code to reuse, the interface and data changes, and how to verify each ID.
+`plan.md` has phases (section 2), blocked requirements (section 3), and open questions (section 4). Each phase lists its `FR` and `NFR` IDs, the code to reuse, the interface and data changes, and how to verify each ID.
 
 - **Tasked:** every phase in section 2, and only those. Phase numbers come from the plan and are never renumbered.
 - **Blocked:** a `Blocked by Q-…: <topic>` entry in the plan's section 3. It gets no task. Copy each entry word for word, on one line, into the tasks file's Blocked section, or write `None.` only when the plan's section 3 is `None.`. A plan entry is never dropped. Never replace an entry with the text of its questions, and never split one into one line per question.
@@ -29,7 +29,7 @@ A task is one focused change that can be finished and committed on its own, with
 Every task has five parts, in this order:
 
 - **Title:** `#### T-<phase>.<n>: <imperative title>`, numbered from 1 in each phase, in build order.
-- **Covers:** the `REQ` and `NFR` IDs the task builds or proves. At least one, and only IDs from its own phase.
+- **Covers:** the `FR` and `NFR` IDs the task builds or proves. At least one, and only IDs from its own phase.
 - **Files:** each file the task adds or changes, as `` `path` `` for an existing file or `new: <what it is>`, tests included. At most `tasks_max_files_per_task` (default 3).
 - **Depends on:** the IDs of earlier tasks it needs, or `None.`. A task depends only on tasks that come before it in the file.
 - **Done when:** one line: for each ID in Covers, `<ID>: <a test to add, command to run, or behaviour to observe>`. A check a reviewer can run or see, not "works" or "reviewed".
@@ -48,7 +48,7 @@ A task holds no code and no steps inside it: the title and its check are the tas
 
 Run every item on the task list before returning it.
 
-1. Every `REQ` and `NFR` of a phase is in the Covers of at least one task of that phase other than its verify task, and no task covers an ID from another phase.
+1. Every `FR` and `NFR` of a phase is in the Covers of at least one task of that phase other than its verify task, and no task covers an ID from another phase.
 2. No blocked requirement, withdrawn ID, or open question has a task; each plan `Blocked by` entry is copied once.
 3. No task depends on a later task, and no task of one phase depends on a later phase.
 4. No task has more files than the limit, and no phase has more tasks than the limit.

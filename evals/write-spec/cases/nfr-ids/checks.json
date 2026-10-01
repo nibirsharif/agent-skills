@@ -1,8 +1,8 @@
 {
-  "description": "Functional and non-functional requirements take separate ID sequences. The email deadline is a threshold on a behaviour, so it is split into a REQ and an NFR; the WCAG level is an NFR. Each sequence starts at 001.",
+  "description": "Functional and non-functional requirements take separate ID sequences. The email deadline is a threshold on a behaviour, so it is split into an FR and an NFR; the WCAG level is an NFR. Each sequence starts at 001.",
   "counts": {
     "requirements": {
-      "pattern": "^REQ-\\d+",
+      "pattern": "^FR-\\d+",
       "min": 2,
       "max": 2
     },
@@ -19,12 +19,12 @@
   },
   "must_match": [
     {
-      "pattern": "^REQ-001: When a guest submits the booking form, the booking service shall send a confirmation email",
-      "why": "the behaviour is functional and the REQ sequence starts at 001"
+      "pattern": "^FR-001: When a guest submits the booking form, the booking service shall send a confirmation email",
+      "why": "the behaviour is functional and the FR sequence starts at 001"
     },
     {
       "pattern": "^NFR-001: ",
-      "why": "the NFR sequence starts at 001, not after the last REQ"
+      "why": "the NFR sequence starts at 001, not after the last FR"
     },
     {
       "pattern": "^NFR-\\d+: [^\\n]*the booking service shall send a confirmation email[^\\n]*within 2 minutes of the submission",
@@ -37,20 +37,20 @@
   ],
   "must_not_match": [
     {
-      "pattern": "^REQ-\\d+:[^\\n]*within 2 minutes",
-      "why": "the deadline is a threshold on the response: an NFR, not part of the REQ"
+      "pattern": "^FR-\\d+:[^\\n]*within 2 minutes",
+      "why": "the deadline is a threshold on the response: an NFR, not part of the FR"
     },
     {
-      "pattern": "^REQ-\\d+:[^\\n]*WCAG",
+      "pattern": "^FR-\\d+:[^\\n]*WCAG",
       "why": "an accessibility level is non-functional"
     },
     {
-      "pattern": "^(REQ|NFR)-00[3-9]",
+      "pattern": "^(FR|NFR)-00[3-9]",
       "why": "each sequence counts its own requirements: two of each"
     }
   ],
   "manual": [
     "The NFR for the email deadline names the event its 2 minutes start from.",
-    "REQ lines come before NFR lines, and questions come last."
+    "FR lines come before NFR lines, and questions come last."
   ]
 }

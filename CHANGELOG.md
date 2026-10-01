@@ -2,6 +2,12 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.5.0
+
+- write-spec: functional requirement IDs are now `FR-001`, `FR-002`, … instead of `REQ-001`, so they pair with `NFR-` (the three sequences are `FR-`, `NFR-`, `Q-`). A behaviour with a threshold is split into an `FR` and an `NFR`.
+- write-plan and write-tasks: read `FR-` and `NFR-` IDs. The `REQ-` legacy handling is removed: files saved by earlier versions are not supported.
+- Evals, examples, and templates use `FR-`; the `legacy-ids` plan case is removed.
+
 ## 0.4.0
 
 - New skill `write-tasks`: reads a saved `plan.md`, explores the codebase, and writes `tasks.md`: each phase split into small tasks numbered `T-<phase>.<n>`, with the `REQ` and `NFR` IDs each covers, its files (`new:` when the file does not exist), the earlier tasks it depends on, and a one-line check that cites each ID. Each phase ends with a verify task.

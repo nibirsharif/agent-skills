@@ -146,17 +146,17 @@ Performance, capacity, availability, accessibility, and other quality requiremen
 
 ## Functional or non-functional
 
-Classify each requirement before giving it an ID. Functional requirements get `REQ` IDs, non-functional ones `NFR` IDs.
+Classify each requirement before giving it an ID. Functional requirements get `FR` IDs, non-functional ones `NFR` IDs.
 
 - **Non-functional:** it sets a measurable threshold on how fast or how well a system performs a response (a deadline, a latency with the percentage of cases it holds for, throughput, capacity, availability, an accessibility level), or it is a constraint the user confirmed (a mandated technology, platform, standard, or regulation). A service-level objective is non-functional.
 - **Functional:** everything else: what a system does, including security behaviour such as rejecting, locking, or logging.
 
-A statement that gives both a behaviour and a threshold on that behaviour becomes two requirements: a `REQ` for the behaviour, with no threshold, and an `NFR` for the threshold. The `NFR` keeps the conditions it needs to be tested. The pair is not a duplicate.
+A statement that gives both a behaviour and a threshold on that behaviour becomes two requirements: an `FR` for the behaviour, with no threshold, and an `NFR` for the threshold. The `NFR` keeps the conditions it needs to be tested. The pair is not a duplicate.
 
-- **Wrong:** `REQ-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report within 5 minutes of the click.`
-- **Right:** `REQ-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report.` and `NFR-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report within 5 minutes of the click.`
+- **Wrong:** `FR-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report within 5 minutes of the click.`
+- **Right:** `FR-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report.` and `NFR-001: When an admin clicks "Export CSV" on the Reports page, the export service shall email the report within 5 minutes of the click.`
 
-A threshold in a condition, such as a timeout that triggers the response, is part of the stimulus and stays functional: `If the payment gateway returns no response within 10 seconds of a charge request, then the checkout service shall cancel the charge request.` is a `REQ`.
+A threshold in a condition, such as a timeout that triggers the response, is part of the stimulus and stays functional: `If the payment gateway returns no response within 10 seconds of a charge request, then the checkout service shall cancel the charge request.` is an `FR`.
 
 A technology, product, or vendor in the input ("store sessions in Redis") is an implementation choice until the user confirms it is a constraint. Ask first; write it only after the user confirms.
 
@@ -168,7 +168,7 @@ A technology, product, or vendor in the input ("store sessions in Redis") is an 
 Fix these yourself; they do not need the user:
 
 - Several requirements in one sentence: split them.
-- A behaviour with a threshold on how fast or how well it happens: split it into a `REQ` and an `NFR`, as [Functional or non-functional](#functional-or-non-functional) says.
+- A behaviour with a threshold on how fast or how well it happens: split it into an `FR` and an `NFR`, as [Functional or non-functional](#functional-or-non-functional) says.
 - Clauses out of order: reorder them.
 - A modal verb other than `shall`: change it to `shall`.
 - A passive response: make the named system the subject.
@@ -216,11 +216,11 @@ Each requirement:
 10. Keeps every `only` in the input as a `shall not` for the other case.
 11. Names no technology, product, or vendor unless the user confirmed it as a constraint.
 12. Contains no system, value, name, or behaviour that the input, the user's answers, or the target file did not give.
-13. Has the ID prefix of its class: `REQ` for functional, `NFR` for non-functional, with no threshold on how fast or how well its response happens in a `REQ`.
+13. Has the ID prefix of its class: `FR` for functional, `NFR` for non-functional, with no threshold on how fast or how well its response happens in an `FR`.
 
 The whole set:
 
 - Uses one term for one thing, matching the input and the target file.
-- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other. An `NFR` that sets the threshold on a `REQ`'s response is not a duplicate of it.
-- Uses IDs that are unique and continue each sequence (`REQ`, `NFR`, `Q`) from its own highest existing ID.
+- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other. An `NFR` that sets the threshold on an `FR`'s response is not a duplicate of it.
+- Uses IDs that are unique and continue each sequence (`FR`, `NFR`, `Q`) from its own highest existing ID.
 - Has a question for every statement that could not be written.

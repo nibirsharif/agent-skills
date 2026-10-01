@@ -2,7 +2,7 @@
   "description": "A made-up PRD with about 40 statements. It mixes clean requirements with the traps a real PRD run hit: misuse written with When, a runtime setting written with Where, a response that needs judgement, or between responses, a contradiction, a statement with no system, an implementation choice, business decisions, open limits, a time with no time zone, the system as subject, a so-that clause, and project dates.",
   "counts": {
     "requirements": {
-      "pattern": "^(REQ|NFR)-\\d+",
+      "pattern": "^(FR|NFR)-\\d+",
       "min": 10,
       "max": 20
     },
@@ -18,19 +18,19 @@
       "why": "more than 10 gaps: the reply must batch questions and say how many remain"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: If [^\\n]*rated capacity[^\\n]*, then the monitoring service shall",
+      "pattern": "^(FR|NFR)-\\d+: If [^\\n]*rated capacity[^\\n]*, then the monitoring service shall",
       "why": "FR-2.2: invalid input is unwanted, so If ... then, even though the PRD writes When"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: While [^\\n]*sunrise[^\\n]*, if [^\\n]*, then the monitoring service shall",
+      "pattern": "^(FR|NFR)-\\d+: While [^\\n]*sunrise[^\\n]*, if [^\\n]*, then the monitoring service shall",
       "why": "FR-2.3: daylight is a state (While) and the missing reading is an unwanted event (if ... then)"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: While [^\\n]*quiet hours",
+      "pattern": "^(FR|NFR)-\\d+: While [^\\n]*quiet hours",
       "why": "FR-3.5: quiet hours can change at runtime, so While, not Where"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: Where the battery add-on is installed[^,]*, the mobile app shall",
+      "pattern": "^(FR|NFR)-\\d+: Where the battery add-on is installed[^,]*, the mobile app shall",
       "why": "FR-4.4: an installed add-on is a feature, so Where"
     },
     {
@@ -38,57 +38,57 @@
       "why": "NFR-3: a named standard is a complete non-functional requirement"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: The inverter gateway shall timestamp [^\\n]*UTC",
+      "pattern": "^(FR|NFR)-\\d+: The inverter gateway shall timestamp [^\\n]*UTC",
       "why": "FR-1.4: a passive statement is rewritten with the gateway as subject"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\bshall not display[^\\n]*phone number",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\bshall not display[^\\n]*phone number",
       "why": "FR-5.3: \"only after access is granted\" is a prohibition: the portal shall not show the number before"
     }
   ],
   "must_not_match": [
     {
-      "pattern": "^(REQ|NFR)-\\d+: Where [^\\n]*quiet hours",
+      "pattern": "^(FR|NFR)-\\d+: Where [^\\n]*quiet hours",
       "why": "FR-3.5 written with Where"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: When [^\\n]*rated capacity",
+      "pattern": "^(FR|NFR)-\\d+: When [^\\n]*rated capacity",
       "why": "FR-2.2 written with When"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\bfriendly\\b",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\bfriendly\\b",
       "why": "FR-4.3: a friendly message cannot be tested; ask for the text"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\bpush or (an )?email\\b",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\bpush or (an )?email\\b",
       "why": "FR-3.2: or between responses hides the condition that picks one"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*alert email[^\\n]*\\b(5|15) minutes",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*alert email[^\\n]*\\b(5|15) minutes",
       "why": "FR-3.3 (5 minutes) and FR-3.4 (15 minutes) contradict each other; ask before writing either"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*TimescaleDB",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*TimescaleDB",
       "why": "FR-2.5 is an implementation choice; ask whether it is a constraint first"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*accountant",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*accountant",
       "why": "FR-4.5: a so-that clause is not a requirement"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\bup to\\b",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\bup to\\b",
       "why": "NFR-5: up to leaves the boundary open"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\b(real time|reasonable|clean|modern|secure|immediately)\\b",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\b(real time|reasonable|clean|modern|secure|immediately)\\b",
       "why": "a banned word from the PRD reached a requirement"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*08:00",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*08:00",
       "why": "FR-5.4 gives no time zone; ask"
     },
     {
-      "pattern": "^(REQ|NFR|Q)-\\d+:[^\\n]*\\bQ[34]\\b",
+      "pattern": "^(FR|NFR|Q)-\\d+:[^\\n]*\\bQ[34]\\b",
       "why": "project dates are neither requirements nor questions"
     },
     {
@@ -96,11 +96,11 @@
       "why": "buffer time and alert limits are business decisions: no proposal"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:[^\\n]*\\barchive",
+      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\barchive",
       "why": "FR-2.6 names no system (\"The system archives\"); ask which system instead of picking one"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+: The inverter gateway shall[^\\n]*\\bevery 5 minutes",
+      "pattern": "^(FR|NFR)-\\d+: The inverter gateway shall[^\\n]*\\bevery 5 minutes",
       "why": "FR-1.1: a schedule is a When trigger, not part of the response"
     },
     {
@@ -108,7 +108,7 @@
       "why": "a time of day is a business decision: no proposal"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+:(?![^\\n]*(UTC|time zone))[^\\n]*\\b1st\\b",
+      "pattern": "^(FR|NFR)-\\d+:(?![^\\n]*(UTC|time zone))[^\\n]*\\b1st\\b",
       "why": "FR-6.1: the 1st of the month needs a time zone; ask"
     }
   ],

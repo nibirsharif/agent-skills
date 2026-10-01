@@ -32,7 +32,7 @@ Use the template below the line for every new `tasks.md`. Everything above the l
 
 | Phase | Tasks | Requirements |
 |-------|-------|--------------|
-| 1 | T-1.1 to T-1.4 | REQ-001, REQ-002, NFR-001 |
+| 1 | T-1.1 to T-1.4 | FR-001, FR-002, NFR-001 |
 
 ## 2. Tasks
 
@@ -40,13 +40,13 @@ Use the template below the line for every new `tasks.md`. Everything above the l
 
 #### T-1.1: [Imperative title]
 
-**Covers:** REQ-001
+**Covers:** FR-001
 
 **Files:** `[path]`, new: [what it is]
 
 **Depends on:** None.
 
-**Done when:** REQ-001: [the test to add, command to run, or behaviour to observe]
+**Done when:** FR-001: [the test to add, command to run, or behaviour to observe]
 
 ## 3. Blocked Requirements
 

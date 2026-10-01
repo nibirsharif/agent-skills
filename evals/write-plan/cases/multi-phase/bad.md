@@ -6,7 +6,7 @@ Build it in layers.
 
 ### Phase 1: Database
 
-**Requirements:** REQ-001, REQ-002, REQ-003, REQ-004, REQ-005, REQ-006, REQ-007, REQ-008, REQ-009, REQ-010, REQ-011, REQ-012, REQ-013, REQ-014, REQ-015, REQ-016
+**Requirements:** FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010, FR-011, FR-012, FR-013, FR-014, FR-015, FR-016
 
 **Size:** about 14 files
 
@@ -14,7 +14,7 @@ Build it in layers.
 
 ### Phase 2: UI
 
-**Requirements:** REQ-015, REQ-016, NFR-001, NFR-002
+**Requirements:** FR-015, FR-016, NFR-001, NFR-002
 
 **Size:** about 5 files
 

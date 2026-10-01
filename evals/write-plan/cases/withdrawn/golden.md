@@ -4,15 +4,15 @@ There is no existing code in this folder, so the feature is planned from the req
 
 | Phase | Delivers | Requirements |
 |-------|----------|--------------|
-| 1 | Booking and confirmation | REQ-001, REQ-004, NFR-001 |
+| 1 | Booking and confirmation | FR-001, FR-004, NFR-001 |
 
 ## 2. Phases
 
 ### Phase 1: Booking and confirmation
 
-**Scope:** Accept a booking and send its confirmation email within 2 minutes, and reject a double booking. NFR-001 is the deadline on REQ-001, so it is met in the same phase.
+**Scope:** Accept a booking and send its confirmation email within 2 minutes, and reject a double booking. NFR-001 is the deadline on FR-001, so it is met in the same phase.
 
-**Requirements:** REQ-001, REQ-004, NFR-001
+**Requirements:** FR-001, FR-004, NFR-001
 
 **Size:** about 6 files
 
@@ -25,8 +25,8 @@ There is no existing code in this folder, so the feature is planned from the req
 
 **Verify:**
 
-- REQ-001: integration test that a submitted booking form sends one confirmation email to the guest's email address
-- REQ-004: integration test that a booking for an already booked date is rejected
+- FR-001: integration test that a submitted booking form sends one confirmation email to the guest's email address
+- FR-004: integration test that a booking for an already booked date is rejected
 - NFR-001: timing test that the confirmation email is sent within 2 minutes of the submission
 
 **Open questions:** None.

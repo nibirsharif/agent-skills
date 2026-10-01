@@ -1,13 +1,13 @@
 {
-  "description": "One phase with REQ-001, REQ-002, NFR-001 and no codebase. Tasks have all five parts, every ID is covered, every Done when cites an ID, every file is new, and the phase ends with a verify task.",
+  "description": "One phase with FR-001, FR-002, NFR-001 and no codebase. Tasks have all five parts, every ID is covered, every Done when cites an ID, every file is new, and the phase ends with a verify task.",
   "counts": {
     "tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 4, "max": 12 },
     "covers lines": { "pattern": "^\\*\\*Covers:\\*\\*", "min": 4 },
     "files lines": { "pattern": "^\\*\\*Files:\\*\\*", "min": 4 },
     "depends lines": { "pattern": "^\\*\\*Depends on:\\*\\*", "min": 4 },
     "done lines": { "pattern": "^\\*\\*Done when:\\*\\*", "min": 4 },
-    "REQ-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-001\\b", "min": 2 },
-    "REQ-002 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-002\\b", "min": 2 },
+    "FR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-001\\b", "min": 2 },
+    "FR-002 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-002\\b", "min": 2 },
     "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
     "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
     "verify task last": { "pattern": "^#### T-1\\.\\d+: Verify", "min": 1 }
@@ -17,7 +17,7 @@
     { "pattern": "(?i)no codebase", "why": "the Overview says there is no codebase" }
   ],
   "must_not_match": [
-    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(REQ|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
+    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(FR|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
     { "pattern": "^\\*\\*Done when:\\*\\*\\s*(it works|tests? pass(es)?|done|reviewed)\\.?\\s*$", "why": "a check a reviewer can run or see" },
     { "pattern": "^\\*\\*Files:\\*\\*.*`[\\w.-]+/[\\w./-]+\\.\\w+`", "why": "with no codebase, no file path is named" },
     { "pattern": "^```", "why": "tasks hold no code" },

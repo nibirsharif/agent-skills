@@ -8,13 +8,13 @@ No codebase.
 
 #### T-1.1: Add rate limiting per IP address
 
-**Covers:** REQ-001
+**Covers:** FR-001
 
 **Files:** new: limiter
 
 **Depends on:** None.
 
-**Done when:** REQ-001: more than 5 requests per hour from one IP are rejected
+**Done when:** FR-001: more than 5 requests per hour from one IP are rejected
 
 ## 3. Blocked Requirements
 

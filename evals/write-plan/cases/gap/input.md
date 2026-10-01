@@ -26,9 +26,9 @@ None given.
 
 ## 3. Functional Requirements
 
-REQ-001: When a user changes a record, the audit log service shall record the user, the record, and the time of the change. <!-- Source: "Every change to a record is logged with who, what, and when." -->
+FR-001: When a user changes a record, the audit log service shall record the user, the record, and the time of the change. <!-- Source: "Every change to a record is logged with who, what, and when." -->
 
-REQ-002: When an administrator opens the audit log, the audit log service shall display the recorded changes of the administrator's own tenant. <!-- Source: "Admins see their own tenant's log." -->
+FR-002: When an administrator opens the audit log, the audit log service shall display the recorded changes of the administrator's own tenant. <!-- Source: "Admins see their own tenant's log." -->
 
 Pending: Q-001.
 

@@ -6,8 +6,8 @@ Use the template below the line for every new requirements file. Everything abov
 - Fill Summary, Scope, and References only with what the input states. Write `None given.` under any heading or subheading the input leaves empty.
 - Write the Author only when the user gave a name; otherwise write `Not given.` Do not ask for it.
 - The requirement lines in sections 3 and 4 show the pattern shapes. Replace them with the real requirements and keep no line the input does not support. When requirements the input states for a section wait on open questions, end the section with `Pending: Q-011, Q-020.`, naming those questions; update it as questions close and remove it when none are left. A section with no requirements and nothing pending holds `None given.`
-- Put each requirement in section 3 or 4 as the rules' [Functional or non-functional](ears-rules.md#functional-or-non-functional) section says: `REQ` lines in section 3, `NFR` lines in section 4. A file saved before `NFR` IDs existed keeps its `REQ` lines in section 4.
-- End each requirement and question line with `<!-- Source: <the input statement or answer it comes from> -->`. For a coverage-gap question, name the requirement: `<!-- Source: coverage gap in REQ-001 -->`.
+- Put each requirement in section 3 or 4 as the rules' [Functional or non-functional](ears-rules.md#functional-or-non-functional) section says: `FR` lines in section 3, `NFR` lines in section 4.
+- End each requirement and question line with `<!-- Source: <the input statement or answer it comes from> -->`. For a coverage-gap question, name the requirement: `<!-- Source: coverage gap in FR-001 -->`.
 - Keep one requirement or question per line, with a blank line between lines. No priority, dependencies, user story, or titled subsections.
 - The Systems line lists every system the requirements name, spelled as they spell it.
 - Section 5 holds `None.` while there has never been a question. Closed questions stay in it, in the form [IDs](../SKILL.md#ids) gives.
@@ -40,15 +40,15 @@ Use the template below the line for every new requirements file. Everything abov
 
 ## 3. Functional Requirements
 
-REQ-001: The <system> shall <response>. <!-- Source: [...] -->
+FR-001: The <system> shall <response>. <!-- Source: [...] -->
 
-REQ-002: When <trigger>, the <system> shall <response>. <!-- Source: [...] -->
+FR-002: When <trigger>, the <system> shall <response>. <!-- Source: [...] -->
 
-REQ-003: While <precondition>, the <system> shall <response>. <!-- Source: [...] -->
+FR-003: While <precondition>, the <system> shall <response>. <!-- Source: [...] -->
 
-REQ-004: Where <feature is included>, the <system> shall <response>. <!-- Source: [...] -->
+FR-004: Where <feature is included>, the <system> shall <response>. <!-- Source: [...] -->
 
-REQ-005: If <unwanted event>, then the <system> shall <response>. <!-- Source: [...] -->
+FR-005: If <unwanted event>, then the <system> shall <response>. <!-- Source: [...] -->
 
 ## 4. Non-Functional Requirements
 

@@ -14,8 +14,8 @@ There is no codebase in this folder. Phase 1 sends the link; Phase 2 accepts the
 
 | Phase | Delivers | Requirements |
 |-------|----------|--------------|
-| 1 | Reset link email and expiry | REQ-001, REQ-002, NFR-001 |
-| 2 | Set a new password | REQ-003, REQ-004 |
+| 1 | Reset link email and expiry | FR-001, FR-002, NFR-001 |
+| 2 | Set a new password | FR-003, FR-004 |
 
 ## 2. Phases
 
@@ -23,7 +23,7 @@ There is no codebase in this folder. Phase 1 sends the link; Phase 2 accepts the
 
 **Scope:** Send the reset link and reject an expired link.
 
-**Requirements:** REQ-001, REQ-002, NFR-001
+**Requirements:** FR-001, FR-002, NFR-001
 
 **Size:** about 6 files
 
@@ -36,8 +36,8 @@ There is no codebase in this folder. Phase 1 sends the link; Phase 2 accepts the
 
 **Verify:**
 
-- REQ-001: integration test that a reset request for a registered user sends one email with a link
-- REQ-002: unit test that a link opened 15 minutes and 1 second after `sent_at` is rejected
+- FR-001: integration test that a reset request for a registered user sends one email with a link
+- FR-002: unit test that a link opened 15 minutes and 1 second after `sent_at` is rejected
 - NFR-001: load test that 99% of emails are sent within 2 minutes of the request
 
 **Open questions:** None.
@@ -46,7 +46,7 @@ There is no codebase in this folder. Phase 1 sends the link; Phase 2 accepts the
 
 **Scope:** Accept a new password through a valid reset link. Builds on the tokens from Phase 1.
 
-**Requirements:** REQ-003, REQ-004
+**Requirements:** FR-003, FR-004
 
 **Size:** about 4 files
 
@@ -58,8 +58,8 @@ There is no codebase in this folder. Phase 1 sends the link; Phase 2 accepts the
 
 **Verify:**
 
-- REQ-003: integration test that a valid token and a new password update the password and the token cannot be used again
-- REQ-004: unit test that a password of 11 characters is rejected and one of 12 is accepted
+- FR-003: integration test that a valid token and a new password update the password and the token cannot be used again
+- FR-004: unit test that a password of 11 characters is rejected and one of 12 is accepted
 
 **Open questions:** None.
 

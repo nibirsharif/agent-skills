@@ -9,7 +9,7 @@
   ],
   "must_not_match": [
     { "pattern": "^\\*\\*(Covers|Files|Done when):\\*\\*", "why": "no tasks are written from a feature name" },
-    { "pattern": "^(REQ|NFR)-\\d+", "why": "it never invents requirements" }
+    { "pattern": "^(FR|NFR)-\\d+", "why": "it never invents requirements" }
   ],
   "manual": [
     "The reply invents no task and no requirement for invoice export."

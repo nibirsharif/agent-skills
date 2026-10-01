@@ -33,7 +33,7 @@ Use the template below the line for every new `plan.md`. Everything above the li
 
 | Phase | Delivers | Requirements |
 |-------|----------|--------------|
-| 1 | [title] | REQ-001, REQ-002, NFR-001 |
+| 1 | [title] | FR-001, FR-002, NFR-001 |
 
 ## 2. Phases
 
@@ -41,7 +41,7 @@ Use the template below the line for every new `plan.md`. Everything above the li
 
 **Scope:** [What this phase delivers, and what it leaves for later phases.]
 
-**Requirements:** REQ-001, REQ-002, NFR-001
+**Requirements:** FR-001, FR-002, NFR-001
 
 **Size:** about [n] files
 
@@ -55,7 +55,7 @@ Use the template below the line for every new `plan.md`. Everything above the li
 
 **Verify:**
 
-- REQ-001: [the test to add, command to run, or behaviour to observe]
+- FR-001: [the test to add, command to run, or behaviour to observe]
 
 **Open questions:** None.
 

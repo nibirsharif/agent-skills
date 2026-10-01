@@ -1,83 +1,83 @@
 {
-  "description": "Nineteen written requirements exceed the phase limit of 8, so the plan splits them into phases by flow. Every ID lands in exactly one phase, no phase has more than 8 IDs or more than 10 files, and the label-email deadline NFR-001 sits with REQ-005, the requirement it constrains.",
+  "description": "Nineteen written requirements exceed the phase limit of 8, so the plan splits them into phases by flow. Every ID lands in exactly one phase, no phase has more than 8 IDs or more than 10 files, and the label-email deadline NFR-001 sits with FR-005, the requirement it constrains.",
   "counts": {
-    "REQ-001 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-001\\b",
+    "FR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-001\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-002 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-002\\b",
+    "FR-002 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-002\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-003 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-003\\b",
+    "FR-003 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-003\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-004 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-004\\b",
+    "FR-004 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-004\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-005 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-005\\b",
+    "FR-005 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-005\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-006 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-006\\b",
+    "FR-006 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-006\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-007 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-007\\b",
+    "FR-007 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-007\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-008 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-008\\b",
+    "FR-008 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-008\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-009 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-009\\b",
+    "FR-009 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-009\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-010 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-010\\b",
+    "FR-010 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-010\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-011 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-011\\b",
+    "FR-011 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-011\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-012 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-012\\b",
+    "FR-012 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-012\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-013 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-013\\b",
+    "FR-013 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-013\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-014 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-014\\b",
+    "FR-014 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-014\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-015 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-015\\b",
+    "FR-015 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-015\\b",
       "min": 1,
       "max": 1
     },
-    "REQ-016 once": {
-      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bREQ-016\\b",
+    "FR-016 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-016\\b",
       "min": 1,
       "max": 1
     },
@@ -101,7 +101,7 @@
       "min": 3
     },
     "phase over 8 requirements": {
-      "pattern": "^\\*\\*Requirements:\\*\\*(?:[^\\n]*?(?:REQ|NFR)-\\d+){9}",
+      "pattern": "^\\*\\*Requirements:\\*\\*(?:[^\\n]*?(?:FR|NFR)-\\d+){9}",
       "max": 0
     },
     "size stated": {
@@ -123,8 +123,8 @@
       "why": "the reply is the plan alone: it starts at the Approach heading, with no preamble"
     },
     {
-      "pattern": "^\\*\\*Requirements:\\*\\*(?=.*\\bREQ-005\\b)(?=.*\\bNFR-001\\b)",
-      "why": "NFR-001 is a deadline on REQ-005's response: same phase"
+      "pattern": "^\\*\\*Requirements:\\*\\*(?=.*\\bFR-005\\b)(?=.*\\bNFR-001\\b)",
+      "why": "NFR-001 is a deadline on FR-005's response: same phase"
     }
   ],
   "must_not_match": [
@@ -151,7 +151,7 @@
     "No requirement is added, reworded, or split."
   ],
   "manual": [
-    "NFR-002 (accessibility) sits with REQ-015, or has a stated reason for a later phase.",
+    "NFR-002 (accessibility) sits with FR-015, or has a stated reason for a later phase.",
     "No phase name is a layer such as Database or UI."
   ]
 }

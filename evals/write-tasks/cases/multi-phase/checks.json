@@ -5,8 +5,8 @@
     "phase 1 tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 4 },
     "phase 2 tasks": { "pattern": "^#### T-2\\.\\d+: ", "min": 2 },
     "done lines": { "pattern": "^\\*\\*Done when:\\*\\*", "min": 6 },
-    "REQ-003 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-003\\b", "min": 2 },
-    "REQ-004 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bREQ-004\\b", "min": 2 },
+    "FR-003 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-003\\b", "min": 2 },
+    "FR-004 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-004\\b", "min": 2 },
     "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
     "verify tasks": { "pattern": "^#### T-\\d\\.\\d+: Verify", "min": 2 },
     "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
@@ -16,9 +16,9 @@
     { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" }
   ],
   "must_not_match": [
-    { "pattern": "^\\*\\*Covers:\\*\\*.*\\b(REQ-00[34])\\b(?=[\\s\\S]*\\n### Phase 1)", "why": "REQ-003 and REQ-004 are not covered in Phase 1" },
+    { "pattern": "^\\*\\*Covers:\\*\\*.*\\b(FR-00[34])\\b(?=[\\s\\S]*\\n### Phase 1)", "why": "FR-003 and FR-004 are not covered in Phase 1" },
     { "pattern": "\\A[\\s\\S]*?### Phase 1[\\s\\S]*?^\\*\\*Depends on:\\*\\*.*T-2\\.[\\s\\S]*?### Phase 2", "why": "a Phase 1 task never depends on a Phase 2 task" },
-    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(REQ|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
+    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(FR|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
     { "pattern": "^#### T-\\d\\.\\d+: (Database|Data model|API|UI|Frontend|Backend)\\s*$", "why": "tasks follow behaviour, not layers" },
     { "pattern": "^```", "why": "tasks hold no code" }
   ],

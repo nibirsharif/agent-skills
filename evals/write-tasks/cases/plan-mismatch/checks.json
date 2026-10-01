@@ -1,17 +1,17 @@
 {
-  "description": "The plan puts REQ-003 in Phase 2, but requirements.md withdraws it. The skill stops in one line that names the ID and sends the user to write-plan or write-spec, and writes no tasks.",
+  "description": "The plan puts FR-003 in Phase 2, but requirements.md withdraws it. The skill stops in one line that names the ID and sends the user to write-plan or write-spec, and writes no tasks.",
   "counts": {
     "lines": { "pattern": "^\\S", "min": 1, "max": 3 },
     "tasks": { "pattern": "^#+ T-\\d", "max": 0 }
   },
   "must_match": [
-    { "pattern": "REQ-003", "why": "it names the conflicting ID" },
+    { "pattern": "FR-003", "why": "it names the conflicting ID" },
     { "pattern": "write-plan|write-spec", "why": "it says where the fix belongs" }
   ],
   "must_not_match": [
     { "pattern": "^\\*\\*(Covers|Files|Done when):\\*\\*", "why": "no tasks are written around the conflict" }
   ],
   "expectations": [
-    "The reply does not choose whether the plan or the requirements is right, and does not task REQ-004 alone."
+    "The reply does not choose whether the plan or the requirements is right, and does not task FR-004 alone."
   ]
 }

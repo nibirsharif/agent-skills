@@ -1,6 +1,6 @@
 ---
 name: write-plan
-description: Write an implementation plan from a saved EARS requirements file (requirements.md from write-spec). Explores the codebase first, then splits the approach into phases that are each independently mergeable as one reviewable PR, lists the REQ and NFR IDs each phase covers, and saves plan.md next to the requirements. Open questions are never answered here; requirements that wait on them are listed as blocked. Use when the user asks to plan, break down, phase, or sequence the implementation of a feature that has written requirements, or asks how to build it in reviewable steps. Not for writing requirements, the per-phase task breakdown, or code.
+description: Write an implementation plan from a saved EARS requirements file (requirements.md from write-spec). Explores the codebase first, then splits the approach into phases that are each independently mergeable as one reviewable PR, lists the FR and NFR IDs each phase covers, and saves plan.md next to the requirements. Open questions are never answered here; requirements that wait on them are listed as blocked. Use when the user asks to plan, break down, phase, or sequence the implementation of a feature that has written requirements, or asks how to build it in reviewable steps. Not for writing requirements, the per-phase task breakdown, or code.
 ---
 
 # Write Plan
@@ -34,7 +34,7 @@ Never invent a requirement, a file, or a utility. A plan line names only what th
 Work silently. Write no text between tool calls and no text before the reply: no "confirmed", "the folder is empty", or "planning from…" lines. The only text you write is the reply that [Output](#output) describes.
 
 1. **Find and read the requirements.** Find them as [Saving to a file](#saving-to-a-file) says. If none were pasted and the file is missing or holds no requirement, reply with one line that names the path and suggests `write-spec`, and stop. Do not ask about the feature, draft requirements, or offer to run `write-spec` yourself. If a `plan.md` already exists beside the file, read it too: you are updating it.
-2. **Sort the requirements**, as the rules' "Reading the requirements file" section says: written `REQ` and `NFR` requirements, withdrawn lines, and open `Q-` questions with the requirements that wait on them.
+2. **Sort the requirements**, as the rules' "Reading the requirements file" section says: written `FR` and `NFR` requirements, withdrawn lines, and open `Q-` questions with the requirements that wait on them.
 3. **Check the approach.** If an open question would change the core approach (the architecture, a data model, a system boundary), stop and ask it in chat, and say the answer belongs in the requirements through `write-spec`. Do not plan around a guess. Otherwise go on.
 4. **Explore the codebase** as the rules' "Exploring the code" section says.
 5. **Choose the approach and the phases** as the rules say: group, order, split, and place each `NFR`.

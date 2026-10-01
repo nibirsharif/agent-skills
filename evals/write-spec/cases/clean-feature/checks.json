@@ -2,7 +2,7 @@
   "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and real ambiguities (whether \"every export\" includes rejected ones, and which instant \"the export time\" is). The 5-minute deadline is a threshold on the email, so it is split off as an NFR.",
   "counts": {
     "requirements": {
-      "pattern": "^REQ-\\d+",
+      "pattern": "^FR-\\d+",
       "min": 3,
       "max": 3
     },
@@ -19,7 +19,7 @@
   },
   "must_match": [
     {
-      "pattern": "^REQ-\\d+: (While [^\\n]*, when|When) an admin clicks \"Export CSV\" on the Reports page, the export service shall email the report",
+      "pattern": "^FR-\\d+: (While [^\\n]*, when|When) an admin clicks \"Export CSV\" on the Reports page, the export service shall email the report",
       "why": "the event-driven behaviour keeps the input's terms"
     },
     {
@@ -27,11 +27,11 @@
       "why": "the deadline is a non-functional requirement with its starting point"
     },
     {
-      "pattern": "^REQ-\\d+: If [^\\n]*more than 100,000 rows, then the export service shall reject the export and display \"Report too large to export\"\\.",
+      "pattern": "^FR-\\d+: If [^\\n]*more than 100,000 rows, then the export service shall reject the export and display \"Report too large to export\"\\.",
       "why": "the unwanted case uses If ... then with the exact message"
     },
     {
-      "pattern": "^REQ-\\d+: Where the audit module is installed, [^\\n]*the export service shall log",
+      "pattern": "^FR-\\d+: Where the audit module is installed, [^\\n]*the export service shall log",
       "why": "an installed module is a feature, so Where"
     }
   ],
@@ -41,8 +41,8 @@
       "why": "asked for a value the input already gives"
     },
     {
-      "pattern": "^REQ-\\d+:[^\\n]*within 5 minutes",
-      "why": "the deadline is a threshold on the response: an NFR, not part of the REQ"
+      "pattern": "^FR-\\d+:[^\\n]*within 5 minutes",
+      "why": "the deadline is a threshold on the response: an NFR, not part of the FR"
     }
   ],
   "manual": [

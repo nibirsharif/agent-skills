@@ -23,7 +23,7 @@
       "why": "no plan is written from a feature name"
     },
     {
-      "pattern": "^(REQ|NFR)-\\d+",
+      "pattern": "^(FR|NFR)-\\d+",
       "why": "it never invents requirements"
     }
   ],

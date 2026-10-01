@@ -13,7 +13,7 @@
 # Example: docs/specs
 spec_output_dir:
 
-# write-plan: the largest number of requirement IDs (REQ and NFR together) in one phase.
+# write-plan: the largest number of requirement IDs (FR and NFR together) in one phase.
 # A phase with more is split. Default 8.
 plan_max_requirements_per_phase:
 

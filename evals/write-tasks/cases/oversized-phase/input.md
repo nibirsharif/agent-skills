@@ -14,7 +14,7 @@ There is no codebase in this folder. One phase delivers everything that is writt
 
 | Phase | Delivers | Requirements |
 |-------|----------|--------------|
-| 1 | Reset link email and expiry | REQ-001, REQ-002, NFR-001 |
+| 1 | Reset link email and expiry | FR-001, FR-002, NFR-001 |
 
 ## 2. Phases
 
@@ -22,7 +22,7 @@ There is no codebase in this folder. One phase delivers everything that is writt
 
 **Scope:** Send the reset link and reject an expired link.
 
-**Requirements:** REQ-001, REQ-002, NFR-001
+**Requirements:** FR-001, FR-002, NFR-001
 
 **Size:** about 6 files
 
@@ -35,8 +35,8 @@ There is no codebase in this folder. One phase delivers everything that is writt
 
 **Verify:**
 
-- REQ-001: integration test that a reset request for a registered user sends one email with a link
-- REQ-002: unit test that a link opened 15 minutes and 1 second after `sent_at` is rejected
+- FR-001: integration test that a reset request for a registered user sends one email with a link
+- FR-002: unit test that a link opened 15 minutes and 1 second after `sent_at` is rejected
 - NFR-001: load test that 99% of emails are sent within 2 minutes of the request
 
 **Open questions:** None.

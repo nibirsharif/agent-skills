@@ -6,7 +6,7 @@ Build the reset flow and rate limit it to 5 requests per hour per account.
 
 ### Phase 1: Reset flow
 
-**Requirements:** REQ-001, REQ-002, NFR-001
+**Requirements:** FR-001, FR-002, NFR-001
 
 **Size:** about 6 files
 
@@ -14,7 +14,7 @@ Build the reset flow and rate limit it to 5 requests per hour per account.
 
 ### Phase 2: Rate limiting
 
-**Requirements:** REQ-003
+**Requirements:** FR-003
 
 **Size:** about 2 files
 
