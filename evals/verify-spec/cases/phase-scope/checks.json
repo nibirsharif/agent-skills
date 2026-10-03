@@ -1,0 +1,88 @@
+{
+  "description": "Phase 1 of plan.md lists FR-001, FR-002, FR-005. Those are checked; every other ID is skipped, FR-004 because it is blocked, the rest because they are outside phase 1. FR-003, which is unmet, is not reported as unmet.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 12,
+      "max": 12
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A\\| ID \\| Verdict \\| Evidence \\|$",
+      "why": "the reply is the report, starting with the table header"
+    },
+    {
+      "pattern": "^\\| FR-001 \\| met \\|",
+      "why": "FR-001 is met"
+    },
+    {
+      "pattern": "^\\| FR-002 \\| untested \\|",
+      "why": "FR-002 is untested"
+    },
+    {
+      "pattern": "^\\| FR-005 \\| met \\|",
+      "why": "FR-005 is met"
+    },
+    {
+      "pattern": "^\\| FR-003 \\| skipped \\|.*outside phase 1",
+      "why": "FR-003 is skipped"
+    },
+    {
+      "pattern": "^\\| NFR-001 \\| skipped \\|.*outside phase 1",
+      "why": "NFR-001 is skipped"
+    },
+    {
+      "pattern": "^\\| NFR-002 \\| skipped \\|.*outside phase 1",
+      "why": "NFR-002 is skipped"
+    },
+    {
+      "pattern": "^\\| FR-004 \\| skipped \\|.*Q-001",
+      "why": "FR-004 is skipped"
+    },
+    {
+      "pattern": "(?s)\\| FR-001 .*\\| FR-002 .*\\| FR-003 .*\\| FR-004 .*\\| FR-005 .*\\| NFR-001 .*\\| NFR-002 ",
+      "why": "rows are in file order"
+    },
+    {
+      "pattern": "^Tally: 2 met, 1 untested, 4 skipped$",
+      "why": "the tally matches the rows"
+    },
+    {
+      "pattern": "^Drift: not checked \\(no feature branch\\)$",
+      "why": "on main with nothing uncommitted there is nothing to compare"
+    },
+    {
+      "pattern": "^Bash .*python3 -m (unittest|pytest)",
+      "why": "the project's tests are run",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "(?i)^(the |i |note|summary|overall|next|most )",
+      "why": "nothing but the table and the three lines"
+    },
+    {
+      "pattern": "^```",
+      "why": "the report has no code fence"
+    },
+    {
+      "pattern": "^\\| FR-003 \\| unmet",
+      "why": "a requirement outside the phase is not judged"
+    },
+    {
+      "pattern": "^(Edit|Write|NotebookEdit) ",
+      "why": "nothing is edited or created",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit|push|stash|switch|checkout|reset|merge)",
+      "why": "git is only read",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "The skipped rows' evidence says outside phase 1, and FR-004's says it is blocked."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "description": "The named ID is not in requirements.md: a one-line stop, no table.",
+  "must_match": [
+    {
+      "pattern": "\\ANo requirement FR-009 in docs/specs/reading-time/requirements\\.md\\.\\s*\\Z",
+      "why": "the exact stop line is the whole reply"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^\\|",
+      "why": "no table"
+    },
+    {
+      "pattern": "^(Edit|Write|NotebookEdit) ",
+      "why": "nothing is edited or created",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit|push|stash|switch|checkout|reset|merge)",
+      "why": "git is only read",
+      "target": "trace"
+    }
+  ]
+}

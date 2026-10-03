@@ -1,0 +1,4 @@
+{
+  "description": "Routing: a request to check code against requirements, without naming the skill. verify-spec must fire.",
+  "fires": true
+}

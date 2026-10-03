@@ -1,0 +1,21 @@
+{
+  "prompt": "Use the verify-spec skill.\n\n{input}",
+  "fixture": "fixture",
+  "allowed_tools": [
+    "Read",
+    "Glob",
+    "Grep",
+    "Bash(python3:*)",
+    "Bash(cat:*)",
+    "Bash(ls:*)",
+    "Bash(git status:*)",
+    "Bash(git diff:*)",
+    "Bash(git log:*)",
+    "Bash(git branch:*)"
+  ],
+  "watch": [
+    "python3 -m unittest",
+    "git commit",
+    "git push"
+  ]
+}

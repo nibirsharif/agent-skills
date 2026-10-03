@@ -1,0 +1,30 @@
+{
+  "description": "No requirements.md exists for the feature: a one-line stop that points to write-spec, and no review of the code.",
+  "must_match": [
+    {
+      "pattern": "\\ANo requirements file found at docs/specs/invoice-export/requirements\\.md\\. Run write-spec first, then run verify-spec again\\.\\s*\\Z",
+      "why": "the exact stop line for invoice-export is the whole reply"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^\\|",
+      "why": "no table"
+    },
+    {
+      "pattern": "^Bash .*python3 -m unittest",
+      "why": "no tests are run",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write|NotebookEdit) ",
+      "why": "nothing is edited or created",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit|push|stash|switch|checkout|reset|merge)",
+      "why": "git is only read",
+      "target": "trace"
+    }
+  ]
+}

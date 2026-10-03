@@ -1,0 +1,4 @@
+{
+  "description": "Routing: a general code review. The skill's description excludes it, so verify-spec must not fire.",
+  "fires": false
+}

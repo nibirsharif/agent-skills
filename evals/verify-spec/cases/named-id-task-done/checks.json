@@ -1,0 +1,64 @@
+{
+  "description": "Only the named ID gets a row. tasks.md says T-2.1 is Done but reading_time takes no words-per-minute argument: unmet. A task Status is never evidence.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 6,
+      "max": 6
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A\\| ID \\| Verdict \\| Evidence \\|$",
+      "why": "the reply is the report, starting with the table header"
+    },
+    {
+      "pattern": "^\\| FR-003 \\| unmet \\|.*(no implementation|no words-per-minute|takes no)",
+      "why": "FR-003 is unmet"
+    },
+    {
+      "pattern": "^Tally: 1 unmet$",
+      "why": "one row, one verdict"
+    },
+    {
+      "pattern": "^Drift: not checked \\(no feature branch\\)$",
+      "why": "nothing to compare on main"
+    },
+    {
+      "pattern": "^Bash .*python3 -m (unittest|pytest)",
+      "why": "the project's tests are run",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "(?i)^(the |i |note|summary|overall|next|most )",
+      "why": "nothing but the table and the three lines"
+    },
+    {
+      "pattern": "^```",
+      "why": "the report has no code fence"
+    },
+    {
+      "pattern": "^\\| FR-00[1245] ",
+      "why": "only the named requirement is reported"
+    },
+    {
+      "pattern": "^\\| FR-003 \\| met",
+      "why": "a Done task does not make a requirement met"
+    },
+    {
+      "pattern": "^(Edit|Write|NotebookEdit) ",
+      "why": "nothing is edited or created",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit|push|stash|switch|checkout|reset|merge)",
+      "why": "git is only read",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "The reply does not say how to fix FR-003."
+  ]
+}

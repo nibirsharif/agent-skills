@@ -1,0 +1,97 @@
+{
+  "description": "Code with planted gaps, and an uncommitted file no requirement covers. Verdicts: FR-001 and FR-005 met; FR-002 untested (code, no test); FR-003 unmet although tasks.md says Done; FR-004 skipped (blocked); NFR-001 cannot tell; NFR-002 untested. Drift names formatting.py. Nothing is edited or committed.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 12,
+      "max": 12
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A\\| ID \\| Verdict \\| Evidence \\|$",
+      "why": "the reply is the report, starting with the table header"
+    },
+    {
+      "pattern": "^\\| FR-001 \\| met \\|.*textstats/counts\\.py:\\d+.*test_rounds_up_at_default_speed",
+      "why": "FR-001 is met"
+    },
+    {
+      "pattern": "^\\| FR-002 \\| untested \\|",
+      "why": "FR-002 is untested"
+    },
+    {
+      "pattern": "^\\| FR-003 \\| unmet \\|.*no implementation found",
+      "why": "FR-003 is unmet"
+    },
+    {
+      "pattern": "^\\| FR-004 \\| skipped \\|.*Q-001",
+      "why": "FR-004 is skipped"
+    },
+    {
+      "pattern": "^\\| FR-005 \\| met \\|.*test_empty_text_is_zero",
+      "why": "FR-005 is met"
+    },
+    {
+      "pattern": "^\\| NFR-001 \\| cannot tell \\|.*write-spec",
+      "why": "NFR-001 is cannot tell"
+    },
+    {
+      "pattern": "^\\| NFR-002 \\| untested \\|",
+      "why": "NFR-002 is untested"
+    },
+    {
+      "pattern": "(?s)\\| FR-001 .*\\| FR-002 .*\\| FR-003 .*\\| FR-004 .*\\| FR-005 .*\\| NFR-001 .*\\| NFR-002 ",
+      "why": "rows are in file order"
+    },
+    {
+      "pattern": "^Tests: python3 -m (unittest|pytest)\\b.*: .*4 (tests OK|passed)",
+      "why": "the tests line names the command that ran"
+    },
+    {
+      "pattern": "^Tally: 2 met, 1 unmet, 2 untested, 1 cannot tell, 1 skipped$",
+      "why": "the tally matches the rows"
+    },
+    {
+      "pattern": "^Drift: textstats/formatting\\.py$",
+      "why": "the uncommitted file no requirement covers is listed as drift"
+    },
+    {
+      "pattern": "^Bash .*python3 -m (unittest|pytest)",
+      "why": "the project's tests are run",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "(?i)^(the |i |note|summary|overall|next|most )",
+      "why": "nothing but the table and the three lines"
+    },
+    {
+      "pattern": "^```",
+      "why": "the report has no code fence"
+    },
+    {
+      "pattern": "^\\| (FR-002|FR-003|NFR-001|NFR-002) \\| met \\|",
+      "why": "nothing without code and a passing test is met"
+    },
+    {
+      "pattern": "^(Edit|Write|NotebookEdit) ",
+      "why": "nothing is edited or created",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit|push|stash|switch|checkout|reset|merge)",
+      "why": "git is only read",
+      "target": "trace"
+    }
+  ],
+  "expectations": [
+    "No row is justified by tasks.md or a task Status.",
+    "Evidence cites only files and lines that exist in the project."
+  ],
+  "manual": [
+    "Every cited line is the line where the behaviour is.",
+    "Git status after the run is the same as before: formatting.py still uncommitted, nothing staged."
+  ]
+}

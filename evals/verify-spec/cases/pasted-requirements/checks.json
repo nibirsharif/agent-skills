@@ -1,0 +1,61 @@
+{
+  "description": "Requirements pasted into the chat, not a file: verified as given. The vague NFR is cannot tell, and no other requirement from the project's files is added.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 7,
+      "max": 7
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A\\| ID \\| Verdict \\| Evidence \\|$",
+      "why": "the reply is the report, starting with the table header"
+    },
+    {
+      "pattern": "^\\| FR-001 \\| met \\|.*test_rounds_up_at_default_speed",
+      "why": "FR-001 is met"
+    },
+    {
+      "pattern": "^\\| NFR-001 \\| cannot tell \\|.*write-spec",
+      "why": "NFR-001 is cannot tell"
+    },
+    {
+      "pattern": "^Tally: 1 met, 1 cannot tell$",
+      "why": "two rows"
+    },
+    {
+      "pattern": "^Bash .*python3 -m (unittest|pytest)",
+      "why": "the project's tests are run",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "(?i)^(the |i |note|summary|overall|next|most )",
+      "why": "nothing but the table and the three lines"
+    },
+    {
+      "pattern": "^```",
+      "why": "the report has no code fence"
+    },
+    {
+      "pattern": "^\\| (FR-00[2-5]|NFR-002) ",
+      "why": "only the pasted requirements are reported"
+    },
+    {
+      "pattern": "docs/specs",
+      "why": "the pasted requirements are not compared with the project's file"
+    },
+    {
+      "pattern": "^(Edit|Write|NotebookEdit) ",
+      "why": "nothing is edited or created",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit|push|stash|switch|checkout|reset|merge)",
+      "why": "git is only read",
+      "target": "trace"
+    }
+  ]
+}
