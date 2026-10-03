@@ -2,6 +2,12 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.7.0
+
+- New skill `verify-spec`: checks the code against a saved `requirements.md` and replies with one table: a verdict per `FR` and `NFR` (`met`, `partial`, `unmet`, `untested`, `cannot tell`, `skipped`) with `file:line` and test evidence, then `Tests:`, `Tally:`, and `Drift:` lines. `met` needs the code and a test that ran and passed in this run, and the weaker verdict wins when two fit. Can be limited to one phase of `plan.md` or one ID, or run on pasted requirements. Blocked requirements are `skipped`, and `tasks.md` is never read. Read-only: runs the project's test command once, edits nothing, commits nothing. A missing requirements file, an unknown ID or phase stops with one line.
+- Evals: `evals/verify-spec/` has a fixture with planted gaps (a missing implementation, a missing test, a vague NFR, a blocked requirement, an uncommitted stray file) and nine cases; `hooks.py` checks the reply's shape, the tally against the rows, and the evidence a `met` row needs.
+- Known: in eval runs (Sonnet, 27 runs) about 85% passed. About one reply in ten opens with a sentence before the table or the stop line, and the drift line is occasionally wrong when the only changed file is an uncommitted one.
+
 ## 0.6.0
 
 - New skill `implement-task`: implements one task from a saved `tasks.md`, the named `T-` ID or the next `Todo` task whose dependencies are `Done`. Changes only the task's files, adds the test its Done when names, runs the full suite, sets the task's Status to `Done`, and commits it on the feature branch (created from the default branch when needed), staging by path. Never pushes. On its first run it first commits the feature's own spec files (requirements, plan, tasks) as `Add <feature-name> spec`, so the chain can run straight after write-tasks. A missing tasks file, an unfinished dependency, blocked work, a task that does not fit the code, changes outside the feature's folder, or a failing check stops with one line.

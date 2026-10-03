@@ -1,7 +1,7 @@
 {
   "name": "nibirsharif-skills",
-  "version": "0.6.0",
-  "description": "Skills for coding agents that ask instead of guessing: EARS requirements, implementation plans, task lists, and implementing them one task at a time.",
+  "version": "0.7.0",
+  "description": "Skills for coding agents that ask instead of guessing: EARS requirements, implementation plans, task lists, implementing them one task at a time, and verifying the result against the requirements.",
   "author": {
     "name": "Shariful Nibir",
     "url": "https://github.com/nibirsharif"
@@ -10,5 +10,5 @@
   "repository": "https://github.com/nibirsharif/agent-skills",
   "license": "MIT",
   "keywords": ["skills", "requirements", "ears", "specification", "implementation"],
-  "skills": ["./skills/write-spec", "./skills/write-plan", "./skills/write-tasks", "./skills/implement-task"]
+  "skills": ["./skills/write-spec", "./skills/write-plan", "./skills/write-tasks", "./skills/implement-task", "./skills/verify-spec"]
 }

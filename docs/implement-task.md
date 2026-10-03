@@ -62,4 +62,4 @@ The full list is in [the rules](../skills/implement-task/references/implement-ru
 
 ## Related skills
 
-Final step of the chain: [write-spec](write-spec.md) → [write-plan](write-plan.md) → [write-tasks](write-tasks.md) → **implement-task**. It reads all three files from `spec_output_dir`.
+Final step of the chain: [write-spec](write-spec.md) → [write-plan](write-plan.md) → [write-tasks](write-tasks.md) → **implement-task**. It reads all three files from `spec_output_dir`. When tasks are done, [verify-spec](verify-spec.md) checks the result against the requirements.
