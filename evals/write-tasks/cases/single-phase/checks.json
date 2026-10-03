@@ -6,6 +6,8 @@
     "files lines": { "pattern": "^\\*\\*Files:\\*\\*", "min": 4 },
     "depends lines": { "pattern": "^\\*\\*Depends on:\\*\\*", "min": 4 },
     "done lines": { "pattern": "^\\*\\*Done when:\\*\\*", "min": 4 },
+    "status lines": { "pattern": "^\\*\\*Status:\\*\\* Todo$", "min": 4 },
+    "status not todo": { "pattern": "^\\*\\*Status:\\*\\* (?!Todo$)", "max": 0 },
     "FR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-001\\b", "min": 2 },
     "FR-002 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-002\\b", "min": 2 },
     "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },

@@ -2,6 +2,12 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.6.0
+
+- New skill `implement-task`: implements one task from a saved `tasks.md`, the named `T-` ID or the next `Todo` task whose dependencies are `Done`. Changes only the task's files, adds the test its Done when names, runs the full suite, sets the task's Status to `Done`, and commits it on the feature branch (created from the default branch when needed), staging by path. Never pushes. On its first run it first commits the feature's own spec files (requirements, plan, tasks) as `Add <feature-name> spec`, so the chain can run straight after write-tasks. A missing tasks file, an unfinished dependency, blocked work, a task that does not fit the code, changes outside the feature's folder, or a failing check stops with one line.
+- write-tasks: every task has a sixth part, `**Status:** Todo` or `Done`. A phase with a `Done` task counts as started when `tasks.md` is updated, so write-tasks no longer has to ask. Files saved by 0.5.0 have no Status lines; re-run write-tasks to add them.
+- Evals: a skill's `config.json` can name a `"fixture"` folder that every case starts in, committed as a git repository on `main`; a case's `dirty/` folder is copied over it uncommitted.
+
 ## 0.5.0
 
 - write-spec: functional requirement IDs are now `FR-001`, `FR-002`, … instead of `REQ-001`, so they pair with `NFR-` (the three sequences are `FR-`, `NFR-`, `Q-`). A behaviour with a threshold is split into an `FR` and an `NFR`.

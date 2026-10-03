@@ -20,6 +20,8 @@ There is no codebase in this folder, so every file is new. The token store comes
 
 **Done when:** FR-001: unit test that creating a token for a registered user stores a row with `sent_at` set
 
+**Status:** Todo
+
 #### T-1.2: Reject an expired reset link
 
 **Covers:** FR-002
@@ -29,6 +31,8 @@ There is no codebase in this folder, so every file is new. The token store comes
 **Depends on:** T-1.1
 
 **Done when:** FR-002: unit test that a token checked 15 minutes and 1 second after `sent_at` is rejected, and one checked at 14 minutes 59 seconds is accepted
+
+**Status:** Todo
 
 #### T-1.3: Email the reset link
 
@@ -40,6 +44,8 @@ There is no codebase in this folder, so every file is new. The token store comes
 
 **Done when:** FR-001: integration test that a reset request for a registered user sends one email containing a link
 
+**Status:** Todo
+
 #### T-1.4: Measure the email deadline
 
 **Covers:** NFR-001
@@ -50,6 +56,8 @@ There is no codebase in this folder, so every file is new. The token store comes
 
 **Done when:** NFR-001: load test run shows 99% of reset emails sent within 2 minutes of the request
 
+**Status:** Todo
+
 #### T-1.5: Verify the phase
 
 **Covers:** FR-001, FR-002, NFR-001
@@ -59,6 +67,8 @@ There is no codebase in this folder, so every file is new. The token store comes
 **Depends on:** T-1.2, T-1.4
 
 **Done when:** FR-001: T-1.1 and T-1.3 tests pass; FR-002: T-1.2 test passes; NFR-001: T-1.4 load test passes; the full test suite is green
+
+**Status:** Todo
 
 ## 3. Blocked Requirements
 

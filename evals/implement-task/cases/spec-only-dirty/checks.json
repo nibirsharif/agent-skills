@@ -1,0 +1,98 @@
+{
+  "description": "Only the feature's plan.md is uncommitted, as right after write-tasks. The skill creates the reading-time branch, commits the spec folder as 'Add reading-time spec' first, then implements T-1.2 and commits it as 'T-1.2: ...'. The reply is still the five-line done report.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 5,
+      "max": 5
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\AT-1\\.2 done: ",
+      "why": "the reply is the done report for T-1.2, starting on its first line"
+    },
+    {
+      "pattern": "^Covers: FR-002$",
+      "why": "it covers only T-1.2's requirement"
+    },
+    {
+      "pattern": "^Changed: .*textstats/counts\\.py",
+      "why": "the changed files are listed"
+    },
+    {
+      "pattern": "^Check: .*unittest",
+      "why": "the check names the test command that ran"
+    },
+    {
+      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time$",
+      "why": "one commit on the reading-time feature branch"
+    },
+    {
+      "pattern": "^(Edit|Write) .*textstats/counts\\.py",
+      "why": "the task's code file is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*python3 -m unittest",
+      "why": "the test suite is run",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (switch -c|checkout -b) reading-time",
+      "why": "it creates the feature branch from main",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit.*T-1\\.2: ",
+      "why": "the commit subject names the task",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit.*Add reading-time spec",
+      "why": "the uncommitted spec files are committed first, with the spec subject",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^```",
+      "why": "the done report holds no code"
+    },
+    {
+      "pattern": "(?i)^(next|note|summary|i |the )",
+      "why": "nothing but the done report's lines"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add (-A|--all|\\.(\\s|\"|$))|commit [^\"]*-a)",
+      "why": "files are staged by path",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) .*(requirements|plan)\\.md",
+      "why": "requirements and plan are never changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "\\bFR-003\\b",
+      "why": "T-1.3 is not implemented"
+    },
+    {
+      "pattern": "^Bash .*git (stash|reset|checkout --|restore)",
+      "why": "the spec change is committed, not stashed or discarded",
+      "target": "trace"
+    }
+  ],
+  "expectations": [
+    "The reply reports only T-1.2: it does not implement or mention T-1.3 or T-1.4."
+  ],
+  "manual": [
+    "git log on reading-time has two new commits: 'Add reading-time spec' holding only plan.md, then 'T-1.2: ...' holding counts.py, test_counts.py, and tasks.md.",
+    "The spec commit came before any change to counts.py."
+  ]
+}

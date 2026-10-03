@@ -1,0 +1,34 @@
+{
+  "description": "The user asks to implement FR-004, which is blocked by Q-001 and has no task. A one-line stop; no code, no answer to the question.",
+  "must_match": [
+    {
+      "pattern": "^FR-004 has no task in docs/specs/reading-time/tasks\\.md\\. Add it with write-tasks, then run implement-task again\\.\\s*\\Z",
+      "why": "the exact stop line for FR-004 is the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Edit|Write) .*textstats/",
+      "why": "no code is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit",
+      "why": "nothing is committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "(?i)words per minute for|language.*\\d+ words",
+      "why": "Q-001 is not answered"
+    },
+    {
+      "pattern": "^T-\\d+\\.\\d+ done:",
+      "why": "no task is reported done"
+    }
+  ]
+}

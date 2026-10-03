@@ -13,7 +13,9 @@ Options:
 
 The default agent is `claude -p` with this repo's released skills plus the skill under test loaded
 as a plugin, and the tools from evals/<skill>/config.json allowed without prompting. Each run starts
-in an empty folder, so no project config or files affect it. All runs start at once, so a full run
+in an empty folder, so no project config or files affect it, unless config.json names a "fixture"
+folder: it is copied in and committed as a git repository on main, and a case's dirty/ folder is then
+copied over it uncommitted. All runs start at once, so a full run
 takes about as long as the slowest case.
 
 Replies, transcripts (.jsonl), stats (.json), judge results (.judge.json) and error output (.err)
@@ -108,6 +110,20 @@ def agent_error(stdout, stderr):
     return lines[-1][:300] if lines else "no output"
 
 
+def prepare_work(fixture, case_dir, work):
+    """Fill the agent's folder: the skill's fixture (config.json "fixture") becomes a git repository with
+    one commit on main, then the case's dirty/ is copied over it uncommitted. Without a fixture, the
+    folder starts empty."""
+    if fixture:
+        shutil.copytree(fixture, work, dirs_exist_ok=True)
+        git = ["git", "-c", "user.name=Eval", "-c", "user.email=eval@example.com", "-c", "commit.gpgsign=false"]
+        for cmd in (["git", "init", "-q", "-b", "main"], ["git", "add", "-A"], git + ["commit", "-q", "-m", "Initial commit"]):
+            subprocess.run(cmd, cwd=work, check=True, capture_output=True)
+    dirty = case_dir / "dirty"
+    if dirty.is_dir():
+        shutil.copytree(dirty, work, dirs_exist_ok=True)
+
+
 def run_case(skill, case_dir, config, out, args):
     """Run one case once. Returns (passed, report lines)."""
     checks = json.loads((case_dir / "checks.json").read_text())
@@ -120,6 +136,8 @@ def run_case(skill, case_dir, config, out, args):
     with tempfile.TemporaryDirectory(prefix=f"{skill}-eval-") as tmp:
         tmp = Path(tmp)
         (tmp / "work").mkdir()
+        fixture = config.get("fixture")
+        prepare_work(grading.EVALS / skill / fixture if fixture else None, case_dir, tmp / "work")
         if args.agent:
             cmd = shlex.split(args.agent) + [prompt]
         else:

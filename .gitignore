@@ -17,3 +17,6 @@ __pycache__/
 # Eval replies and transcripts, and local scratch copies of inputs (may hold private documents)
 evals/*/runs/
 scratch-*
+
+# The implement-task eval fixture needs its config
+!evals/*/fixture/.agent-skills-config.yaml

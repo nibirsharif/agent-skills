@@ -18,6 +18,9 @@ Each case folder holds:
 - `checks.json`: the checks, in the format described in [evals/grading.py](../grading.py): line counts, patterns that must and must not appear, whether the skill must fire, expectations for the LLM judge, and a checklist to review by hand.
 - `golden.md`: a hand-written reply that passes every check. `make test` grades it, so a check that no reply could pass fails the build. Required when the case checks the reply.
 - `bad.md` (optional): a reply with known faults. `make test` confirms it fails.
+- `dirty/` (optional): files copied over the skill's fixture after it is committed, and left uncommitted, for a case that needs a dirty working tree.
+
+A skill whose cases need code to work on names a folder in its `config.json` as `"fixture"`. Every case of that skill starts in a copy of it, committed as a git repository on `main`. Without one, each run starts in an empty folder.
 
 Besides each case's checks, every reply except in a `"fires": false` case must pass [hooks.py](hooks.py): the skill's lint finds no errors, and the reply holds nothing but requirement and question lines (and the "N more open questions" line).
 

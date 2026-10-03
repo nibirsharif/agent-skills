@@ -16,6 +16,8 @@ No codebase.
 
 **Done when:** FR-001: more than 5 requests per hour from one IP are rejected
 
+**Status:** Todo
+
 ## 3. Blocked Requirements
 
 Blocked by Q-001: rate limiting

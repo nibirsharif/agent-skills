@@ -4,7 +4,7 @@ Instructions the agent follows: [skills/write-tasks/SKILL.md](../skills/write-ta
 
 ## Overview
 
-Reads a saved `plan.md` and the `requirements.md` beside it, explores the codebase, and writes `tasks.md`: each phase split into small tasks numbered `T-<phase>.<n>`, in build order. Every task names the `FR` and `NFR` IDs it covers, the files it touches (`new:` for files that do not exist yet), the earlier tasks it depends on, and a one-line check that shows it is done. Each phase ends with a verify task.
+Reads a saved `plan.md` and the `requirements.md` beside it, explores the codebase, and writes `tasks.md`: each phase split into small tasks numbered `T-<phase>.<n>`, in build order. Every task names the `FR` and `NFR` IDs it covers, the files it touches (`new:` for files that do not exist yet), the earlier tasks it depends on, a one-line check that shows it is done, and a Status (`Todo` until [implement-task](implement-task.md) finishes it). Each phase ends with a verify task.
 
 Blocked requirements are copied from the plan and never tasked. Open questions are never answered.
 
@@ -35,6 +35,8 @@ Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (defaul
 
 **What is the verify task?** The last task of a phase. It ties the earlier checks together and runs the full test suite, citing each requirement ID the phase covers.
 
+**What happens to Status when I re-run it?** A phase with any `Done` task has started: its tasks keep their IDs and Status, and new work is appended as `Todo` tasks.
+
 **Can I use it on a plan I pasted?** Yes. It tasks from the pasted plan, but writes `tasks.md` only when `plan.md` exists on disk.
 
 ## Verifying results
@@ -46,4 +48,4 @@ Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (defaul
 
 ## Related skills
 
-Last step of the chain: [write-spec](write-spec.md) → [write-plan](write-plan.md) → **write-tasks**. It reads what the first two saved under `spec_output_dir` and writes `tasks.md` beside them.
+Third step of the chain: [write-spec](write-spec.md) → [write-plan](write-plan.md) → **write-tasks** → [implement-task](implement-task.md). It reads what the first two saved under `spec_output_dir` and writes `tasks.md` beside them; implement-task works through it one task at a time.

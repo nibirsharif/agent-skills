@@ -1,0 +1,30 @@
+{
+  "description": "The user names T-1.4, which depends on T-1.2 and T-1.3, both Todo. A one-line stop naming the dependencies; no code, no commit.",
+  "must_match": [
+    {
+      "pattern": "^T-1\\.4 depends on T-1\\.2, T-1\\.3, not yet Done\\. Implement those first\\.\\s*\\Z",
+      "why": "the exact stop line names T-1.4 and both unfinished dependencies and is the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Edit|Write) .*textstats/",
+      "why": "no code is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit",
+      "why": "nothing is committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^T-\\d+\\.\\d+ done:",
+      "why": "no task is reported done"
+    }
+  ]
+}

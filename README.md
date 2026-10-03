@@ -9,6 +9,7 @@ My skills for coding agents such as Claude Code. Each skill is a folder with a `
 | [write-spec](skills/write-spec/SKILL.md) ([docs](docs/write-spec.md)) | Writes software requirements in EARS format. Writes every requirement the input supports and asks questions for the rest instead of guessing. |
 | [write-plan](skills/write-plan/SKILL.md) ([docs](docs/write-plan.md)) | Turns a saved requirements file into an implementation plan: phases that each merge as one reviewable PR, with the requirement IDs each covers. Requirements that wait on open questions are listed as blocked, not guessed. |
 | [write-tasks](skills/write-tasks/SKILL.md) ([docs](docs/write-tasks.md)) | Breaks each phase of a saved plan into small, ordered, verifiable tasks in `tasks.md`: each names the requirement IDs it covers, its files, what it depends on, and a check that shows it is done. A phase too big to task goes back to write-plan. |
+| [implement-task](skills/implement-task/SKILL.md) ([docs](docs/implement-task.md)) | Implements one task from `tasks.md`: only its files, with the test its check names, then marks it `Done` and commits it on the feature branch. Stops with one line when the task cannot be done as written. Never pushes. |
 
 ## Install
 
@@ -62,7 +63,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 | `plan_max_requirements_per_phase` | write-plan | The most `FR` and `NFR` IDs in one phase before it is split. Default 8. |
 | `plan_max_files_per_phase` | write-plan | The most files a phase may add or change, tests included, before it is split. Default 10. |
 | `tasks_max_files_per_task` | write-tasks | The most files one task may add or change, tests included. Default 3. |
-| `tasks_max_per_phase` | write-tasks | The most tasks one phase may have; a phase that needs more goes back to write-plan to be split. Default 12. write-tasks reads `plan.md` from `spec_output_dir` and writes `tasks.md` beside it. |
+| `tasks_max_per_phase` | write-tasks | The most tasks one phase may have; a phase that needs more goes back to write-plan to be split. Default 12. write-tasks reads `plan.md` from `spec_output_dir` and writes `tasks.md` beside it; implement-task reads `tasks.md` from there. |
 
 ## Adding a skill
 

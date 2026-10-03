@@ -1,0 +1,20 @@
+{
+  "prompt": "Use the implement-task skill.\n\n{input}",
+  "fixture": "fixture",
+  "allowed_tools": [
+    "Read",
+    "Glob",
+    "Grep",
+    "Write",
+    "Edit",
+    "Bash(python3:*)",
+    "Bash(cat:*)",
+    "Bash(ls:*)",
+    "Bash(git:*)"
+  ],
+  "watch": [
+    "python3 -m unittest",
+    "git commit",
+    "git push"
+  ]
+}

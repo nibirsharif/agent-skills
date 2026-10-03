@@ -1,0 +1,35 @@
+{
+  "description": "The working tree has an uncommitted change to textstats/counts.py. A one-line stop before any change, so the task's commit would hold only its own work.",
+  "must_match": [
+    {
+      "pattern": "^Uncommitted changes in textstats/counts\\.py\\. Commit or stash them, then run implement-task again\\.\\s*\\Z",
+      "why": "the exact stop line names the changed file and is the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Edit|Write) .*textstats/",
+      "why": "no code is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit",
+      "why": "nothing is committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (stash|reset|checkout --|restore)",
+      "why": "the user's change is left alone",
+      "target": "trace"
+    },
+    {
+      "pattern": "^T-\\d+\\.\\d+ done:",
+      "why": "no task is reported done"
+    }
+  ]
+}

@@ -18,6 +18,8 @@ Build it in layers.
 
 **Done when:** it works
 
+**Status:** Todo
+
 #### T-1.2: Add tests
 
 **Covers:** FR-001
@@ -27,3 +29,5 @@ Build it in layers.
 **Depends on:** None.
 
 **Done when:** tests pass
+
+**Status:** Todo

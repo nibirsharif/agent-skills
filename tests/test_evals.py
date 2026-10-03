@@ -3,6 +3,7 @@ fails, and the shared runner's grading, transcript, and judge helpers work."""
 
 import json
 import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -37,6 +38,8 @@ class Config(unittest.TestCase):
                 self.assertIn("{input}", config["prompt"])
                 self.assertIsInstance(config.get("allowed_tools", []), list)
                 self.assertIsInstance(config.get("watch", []), list)
+                if "fixture" in config:
+                    self.assertTrue((skill / config["fixture"]).is_dir(), "fixture folder")
 
 
 class Cases(unittest.TestCase):
@@ -152,6 +155,32 @@ class Judge(unittest.TestCase):
         self.assertEqual(grading.parse_judgement("All passed!", self.EXPECTATIONS)[0], [])
         self.assertTrue(grading.parse_judgement("All passed!", self.EXPECTATIONS)[1])
         self.assertTrue(grading.parse_judgement({"passed": True}, self.EXPECTATIONS)[1])
+
+
+class Work(unittest.TestCase):
+    def git(self, work, *args):
+        return subprocess.run(["git", *args], cwd=work, capture_output=True, text=True, check=True).stdout
+
+    def test_fixture_is_committed_and_dirty_is_left_uncommitted(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture, case, work = Path(tmp) / "fixture", Path(tmp) / "case", Path(tmp) / "work"
+            (fixture / "src").mkdir(parents=True)
+            (fixture / "src" / "app.py").write_text("x = 1\n")
+            (case / "dirty" / "src").mkdir(parents=True)
+            (case / "dirty" / "src" / "app.py").write_text("x = 2\n")
+            work.mkdir()
+            run.prepare_work(fixture, case, work)
+            self.assertEqual(self.git(work, "branch", "--show-current").strip(), "main")
+            self.assertEqual(self.git(work, "log", "--format=%s").strip(), "Initial commit")
+            self.assertEqual(self.git(work, "status", "--porcelain").strip(), "M src/app.py")
+
+    def test_without_a_fixture_the_folder_stays_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            case, work = Path(tmp) / "case", Path(tmp) / "work"
+            case.mkdir()
+            work.mkdir()
+            run.prepare_work(None, case, work)
+            self.assertEqual(list(work.iterdir()), [])
 
 
 class Plugin(unittest.TestCase):

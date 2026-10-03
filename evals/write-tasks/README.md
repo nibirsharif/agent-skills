@@ -5,7 +5,7 @@ Made-up plan files that exercise the write-tasks skill's rules, each with automa
 | Case | Tests |
 |------|-------|
 | `missing-plan` | The plan file does not exist: one short reply that points to write-plan, and no tasks. |
-| `single-phase` | One phase, three requirements: five-part tasks in dependency order, every ID covered by a building task, a check that cites each ID, a verify task last. |
+| `single-phase` | One phase, three requirements: six-part tasks in dependency order, every ID covered by a building task, a check that cites each ID, a verify task last. |
 | `multi-phase` | Two phases: task IDs numbered per phase, each phase ends with its verify task, and no task depends on a later one. |
 | `blocked` | The plan has a blocked requirement and open questions: nothing is tasked for it, no question is answered, the `Blocked by` entry is copied once. |
 | `plan-mismatch` | The plan lists an ID that requirements.md withdraws: a one-line stop, no tasks. |

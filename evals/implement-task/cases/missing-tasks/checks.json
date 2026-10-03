@@ -1,0 +1,35 @@
+{
+  "description": "No tasks.md exists for the feature. A one-line stop that points to write-tasks; no code.",
+  "must_match": [
+    {
+      "pattern": "^No tasks file found at docs/specs/invoice-export/tasks\\.md\\. Run write-tasks first, then run implement-task again\\.\\s*\\Z",
+      "why": "the exact no-tasks-file stop line for invoice-export is the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Edit|Write) .*textstats/",
+      "why": "no code is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit",
+      "why": "nothing is committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) .*invoice",
+      "why": "no file is invented for the feature",
+      "target": "trace"
+    },
+    {
+      "pattern": "^T-\\d+\\.\\d+ done:",
+      "why": "no task is reported done"
+    }
+  ]
+}

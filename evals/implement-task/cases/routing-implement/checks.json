@@ -1,0 +1,4 @@
+{
+  "description": "Routing: a request to do the next task of a feature that has tasks.md, without naming the skill. implement-task must fire.",
+  "fires": true
+}

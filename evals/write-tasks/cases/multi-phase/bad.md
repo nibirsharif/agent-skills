@@ -16,6 +16,8 @@ Two phases.
 
 **Done when:** FR-001: emails sent
 
+**Status:** Todo
+
 ### Phase 2: Set a new password
 
 #### T-2.1: Set the password
@@ -27,3 +29,5 @@ Two phases.
 **Depends on:** None.
 
 **Done when:** FR-003: works
+
+**Status:** Todo

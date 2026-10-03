@@ -26,13 +26,14 @@ Explore before writing a task. Look for the files and modules the phase's scope 
 
 A task is one focused change that can be finished and committed on its own, with the tests green.
 
-Every task has five parts, in this order:
+Every task has six parts, in this order:
 
 - **Title:** `#### T-<phase>.<n>: <imperative title>`, numbered from 1 in each phase, in build order.
 - **Covers:** the `FR` and `NFR` IDs the task builds or proves. At least one, and only IDs from its own phase.
 - **Files:** each file the task adds or changes, as `` `path` `` for an existing file or `new: <what it is>`, tests included. At most `tasks_max_files_per_task` (default 3).
 - **Depends on:** the IDs of earlier tasks it needs, or `None.`. A task depends only on tasks that come before it in the file.
 - **Done when:** one line: for each ID in Covers, `<ID>: <a test to add, command to run, or behaviour to observe>`. A check a reviewer can run or see, not "works" or "reviewed".
+- **Status:** `Todo` in a new task. Only `implement-task` sets it to `Done`.
 
 A task holds no code and no steps inside it: the title and its check are the task.
 
@@ -52,7 +53,7 @@ Run every item on the task list before returning it.
 2. No blocked requirement, withdrawn ID, or open question has a task; each plan `Blocked by` entry is copied once.
 3. No task depends on a later task, and no task of one phase depends on a later phase.
 4. No task has more files than the limit, and no phase has more tasks than the limit.
-5. Every task has title, Covers, Files, Depends on, and Done when; Done when is one line and cites each ID in Covers.
+5. Every task has title, Covers, Files, Depends on, Done when, and Status; Done when is one line and cites each ID in Covers; every new task is `Todo`.
 6. Each requirement's check sits in the task that builds it or an earlier one.
 7. Each phase ends with its verify task.
 8. Every path in Files was seen in the code; every other file is `new:`; with no codebase, every file is `new:`.

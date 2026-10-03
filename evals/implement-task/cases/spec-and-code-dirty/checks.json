@@ -1,0 +1,49 @@
+{
+  "description": "The feature's plan.md and a code file, textstats/counts.py, are both uncommitted. Code outside the feature's folder blocks the run: a one-line stop that names only the code file, with no spec commit and no branch switch.",
+  "must_match": [
+    {
+      "pattern": "^Uncommitted changes in textstats/counts\\.py\\. Commit or stash them, then run implement-task again\\.\\s*\\Z",
+      "why": "the exact stop line names only the code file and is the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Edit|Write) .*textstats/",
+      "why": "no code is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit",
+      "why": "nothing is committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (stash|reset|checkout --|restore)",
+      "why": "the user's change is left alone",
+      "target": "trace"
+    },
+    {
+      "pattern": "^T-\\d+\\.\\d+ done:",
+      "why": "no task is reported done"
+    },
+    {
+      "pattern": "^Uncommitted changes in [^\\n]*plan\\.md",
+      "why": "the spec file is not named as blocking in the stop line"
+    },
+    {
+      "pattern": "^Bash .*git (switch|checkout -b|checkout [a-z])",
+      "why": "the branch is not switched before the stop",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git add",
+      "why": "nothing is staged",
+      "target": "trace"
+    }
+  ]
+}
