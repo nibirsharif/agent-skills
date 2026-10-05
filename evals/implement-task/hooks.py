@@ -1,7 +1,7 @@
-"""verify-spec's own reply checks, run on every case except one with "fires": false.
+"""implement-task's own reply checks, run on every case except one with "fires": false.
 
-The reply is either one stop line, or the report: the table, then the Tests, Tally, and Drift lines, and
-nothing else. The parsing is the driver's: skills/build-phase/scripts/parse_reply.py, in strict mode.
+The reply is either one stop line, or the five-line done report, and nothing else. The parsing is the driver's:
+skills/build-phase/scripts/parse_reply.py, in strict mode.
 """
 
 import importlib.util
@@ -14,5 +14,5 @@ spec.loader.exec_module(parse_reply)
 
 
 def check(reply):
-    result = parse_reply.parse_verify(reply, strict=True)
+    result = parse_reply.parse_implement(reply, strict=True)
     return result["problems"] if result["kind"] == "invalid" else []

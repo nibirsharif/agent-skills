@@ -2,6 +2,15 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## Unreleased
+
+- write-spec, write-plan, write-tasks: `disable-model-invocation: true`. They run only when the user types the skill's name, so a phrase like "break this down" no longer starts an authoring step that asks questions and saves files. Descriptions no longer carry "Use when" trigger phrases.
+- implement-task: one branch per phase, `<feature>/phase-<n>`, created from the default branch for phase 1 and from the previous phase's unmerged branch after that. A `Todo` task that already has a commit is a rework: it takes the verify rows as context and commits `T-<p>.<n>: <title> (rework)`. New stop line when a rework has nothing to fix.
+- New `skills/build-phase/scripts/parse_reply.py`: parses a verify-spec report or an implement-task reply (tolerant by default, `--strict` for evals); `evals/verify-spec/hooks.py` and the new `evals/implement-task/hooks.py` use it.
+- New draft skill `build-phase` (user-only, not yet in `plugin.json`): drives a phase through implement-task and verify-spec subagents, with a rework loop. New config key `build_max_rework_rounds`.
+- write-spec: with no path in the request and no `spec_output_dir`, it asks where to save before writing anything, instead of silently writing no file. "Chat only" is an accepted answer.
+- Evals: the three skills' prompts are slash commands, and their `fires: true` routing cases are removed, since the agent cannot call them. Not re-run.
+
 ## 0.7.0
 
 - New skill `verify-spec`: checks the code against a saved `requirements.md` and replies with one table: a verdict per `FR` and `NFR` (`met`, `partial`, `unmet`, `untested`, `cannot tell`, `skipped`) with `file:line` and test evidence, then `Tests:`, `Tally:`, and `Drift:` lines. `met` needs the code and a test that ran and passed in this run, and the weaker verdict wins when two fit. Can be limited to one phase of `plan.md` or one ID, or run on pasted requirements. Blocked requirements are `skipped`, and `tasks.md` is never read. Read-only: runs the project's test command once, edits nothing, commits nothing. A missing requirements file, an unknown ID or phase stops with one line.

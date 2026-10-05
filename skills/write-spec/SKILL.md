@@ -1,6 +1,7 @@
 ---
 name: write-spec
-description: Write software requirements in EARS (Easy Approach to Requirements Syntax) from a feature description, user story, or draft requirements. Each requirement is one `shall` sentence using the While, When, Where, and If-then patterns and naming the one system that acts. Writes every requirement the input fully supports and asks questions for the rest instead of guessing systems, values, or thresholds; can save the result to a requirements file and extend it later. Use when the user asks to write, convert, rewrite, or tighten requirements, a requirements spec, `shall` statements, or EARS acceptance criteria, or asks for the requirements of a feature without naming a format. Not for Given/When/Then (Gherkin) scenarios, PRDs, or design documents.
+description: Write software requirements in EARS (Easy Approach to Requirements Syntax) from a feature description, user story, or draft requirements. Each requirement is one `shall` sentence using the While, When, Where, and If-then patterns and naming the one system that acts. Writes every requirement the input fully supports and asks questions for the rest instead of guessing systems, values, or thresholds; can save the result to a requirements file and extend it later. Not for Given/When/Then (Gherkin) scenarios, PRDs, or design documents.
+disable-model-invocation: true
 ---
 
 # Write Spec (EARS)
@@ -19,6 +20,7 @@ This skill writes EARS requirements only. It does not write Given/When/Then (Ghe
 
 Stop and ask instead of writing when:
 
+- No target is known: the user named no path, no `spec_output_dir` is set (see [Saving to a file](#saving-to-a-file)), and the user has not said chat only. Write nothing yet. The whole reply is the one line `Where should I save the requirements? Give a path, set `spec_output_dir` in `.agent-skills-config.yaml`, or say "chat only".` It is not linted. After the user answers, go on with that answer for the rest of the conversation.
 - The input states no behaviour or property of any system. Write nothing, and ask what the system must do.
 - The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap as a question, with a proposed value where [Output](#output) allows one, and write the requirement after the user confirms.
 - The user insists on a banned word or an untestable requirement. Do not write it. Keep its question open and say once which rule blocks it.
@@ -34,7 +36,7 @@ Stop and ask instead of writing when:
 7. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
 8. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
 9. **Ask.** Give every open question an ID, and put the most important ones in this reply, as [Output](#output) says. Hold back a question whose wording depends on another's answer until that answer arrives.
-10. **Return** the requirements that passed step 7, then the open questions, then **save** if a target path is set.
+10. **Return** the requirements that passed step 7, then the open questions, then **save** if a target path is set. Chat only, when the user chose it.
 
 ## Output
 
@@ -76,7 +78,7 @@ Pick the path, in this order:
 
 1. A path the user named.
 2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the input's feature in kebab-case (for example `password-reset`). First look at the existing `<spec_output_dir>/*/requirements.md` files: if one already covers this feature, use it. Ask when the input names no feature, or when more than one existing file could match.
-3. Neither is set: write no file. If the user asked to save, ask for the path.
+3. Neither is set: ask where to save, as the "Stop and ask" list says, before writing any requirement. Write no file only when the user answers "chat only" or asked for chat only at the start.
 
 Write a file only when at least one requirement was written. A new file uses the [specification file template](references/ears-template.md).
 

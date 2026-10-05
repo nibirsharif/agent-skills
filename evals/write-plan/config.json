@@ -1,5 +1,5 @@
 {
-  "prompt": "Use the write-plan skill. Reply in chat only and do not save a plan file.\n\n{input}",
+  "prompt": "/nibirsharif-skills:write-plan Reply in chat only and do not save a plan file.\n\n{input}",
   "allowed_tools": [
     "Read",
     "Glob",

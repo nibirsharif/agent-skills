@@ -1,5 +1,5 @@
 {
-  "prompt": "Use the write-tasks skill. Reply in chat only and do not save a tasks file.\n\n{input}",
+  "prompt": "/nibirsharif-skills:write-tasks Reply in chat only and do not save a tasks file.\n\n{input}",
   "allowed_tools": [
     "Read",
     "Glob",

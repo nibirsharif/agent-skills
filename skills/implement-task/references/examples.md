@@ -30,14 +30,14 @@ Nothing else: no code from the feature name.
 **Status:** Todo
 ```
 
-User: `Do the next password reset task.` The tree is clean and the branch is `main`. The skill switches to a new `password-reset` branch, adds `is_expired` to `reset/tokens.py` and the two tests to `tests/test_tokens.py`, runs the suite, sets `**Status:** Done`, stages the three files by path, and commits `T-1.2: Reject an expired reset link`. The reply:
+User: `Do the next password reset task.` The tree is clean and the branch is `main`. The skill switches to a new `password-reset/phase-1` branch, adds `is_expired` to `reset/tokens.py` and the two tests to `tests/test_tokens.py`, runs the suite, sets `**Status:** Done`, stages the three files by path, and commits `T-1.2: Reject an expired reset link`. The reply:
 
 ```
 T-1.2 done: Reject an expired reset link
 Covers: FR-002
 Changed: reset/tokens.py, tests/test_tokens.py, docs/specs/password-reset/tasks.md
 Check: python3 -m unittest: 14 tests OK
-Commit: 3f9c2e1 on password-reset
+Commit: 3f9c2e1 on password-reset/phase-1
 ```
 
 No account of the code, no next steps.
@@ -75,6 +75,10 @@ Uncommitted changes in reset/tokens.py. Commit or stash them, then run implement
 ```
 
 No spec commit, no branch switch.
+
+## A reopened task
+
+`T-1.2` is `Todo` again, and `git log` shows `T-1.2: Reject an expired reset link`. User: `Redo T-1.2. verify-spec: FR-002 partial, the token is accepted at exactly 15 minutes.` The skill changes the boundary in `reset/tokens.py`, adds the test for it, runs the suite, sets Status `Done`, and commits `T-1.2: Reject an expired reset link (rework)`. The reply has the same five lines as any done report.
 
 ## Doing too much
 

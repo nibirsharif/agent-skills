@@ -10,6 +10,8 @@ It plans only requirements that are written. A requirement that waits on an open
 
 ## When to use it
 
+Type `/nibirsharif-skills:write-plan` (or `/write-plan` when installed from a clone). The agent never starts this skill on its own.
+
 - Requirements exist and you want to know how to build them in reviewable steps.
 - A feature is too big for one PR and you want the cut points chosen from the code, not guessed.
 
@@ -37,6 +39,8 @@ Phase size is limited by `plan_max_requirements_per_phase` (default 8) and `plan
 - No phase is over the limits, and each phase could merge without the next.
 - Reused code and files named in the plan exist in the repository.
 - Blocked requirements name the question they wait on.
+
+Each phase is meant to be one PR: [implement-task](implement-task.md) builds it on its own `<feature>/phase-<n>` branch.
 
 ## Related skills
 

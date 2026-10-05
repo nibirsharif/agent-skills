@@ -1,0 +1,33 @@
+{
+  "description": "No path in the request and no spec_output_dir. The input is sent as written, so nothing says chat only. The whole reply is the one location question: no requirement, no question ID.",
+  "raw": true,
+  "counts": {
+    "requirements": {
+      "pattern": "^(FR|NFR)-\\d+",
+      "min": 0,
+      "max": 0
+    },
+    "location question": {
+      "pattern": "^Where should I save the requirements\\?",
+      "min": 1,
+      "max": 1
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A[^\\n]*Where should I save the requirements\\?[^\\n]*\\s*\\Z",
+      "why": "the reply is that one line and nothing else"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Q-\\d+:",
+      "why": "a location question is not a numbered requirement question"
+    },
+    {
+      "pattern": "^(Write|Edit) .*requirements\\.md",
+      "why": "no file is written before the user answers",
+      "target": "trace"
+    }
+  ]
+}

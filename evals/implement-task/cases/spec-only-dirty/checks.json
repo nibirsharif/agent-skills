@@ -25,8 +25,8 @@
       "why": "the check names the test command that ran"
     },
     {
-      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time$",
-      "why": "one commit on the reading-time feature branch"
+      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time/phase-1$",
+      "why": "one commit on the reading-time/phase-1 branch"
     },
     {
       "pattern": "^(Edit|Write) .*textstats/counts\\.py",
@@ -39,8 +39,8 @@
       "target": "trace"
     },
     {
-      "pattern": "^Bash .*git (switch -c|checkout -b) reading-time",
-      "why": "it creates the feature branch from main",
+      "pattern": "^Bash .*git (switch -c|checkout -b) reading-time/phase-1",
+      "why": "it creates the phase branch from main",
       "target": "trace"
     },
     {
@@ -92,7 +92,7 @@
     "The reply reports only T-1.2: it does not implement or mention T-1.3 or T-1.4."
   ],
   "manual": [
-    "git log on reading-time has two new commits: 'Add reading-time spec' holding only plan.md, then 'T-1.2: ...' holding counts.py, test_counts.py, and tasks.md.",
+    "git log on reading-time/phase-1 has two new commits: 'Add reading-time spec' holding only plan.md, then 'T-1.2: ...' holding counts.py, test_counts.py, and tasks.md.",
     "The spec commit came before any change to counts.py."
   ]
 }

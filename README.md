@@ -12,6 +12,8 @@ My skills for coding agents such as Claude Code. Each skill is a folder with a `
 | [implement-task](skills/implement-task/SKILL.md) ([docs](docs/implement-task.md)) | Implements one task from `tasks.md`: only its files, with the test its check names, then marks it `Done` and commits it on the feature branch. Stops with one line when the task cannot be done as written. Never pushes. |
 | [verify-spec](skills/verify-spec/SKILL.md) ([docs](docs/verify-spec.md)) | Checks the code against a saved requirements file: one verdict per FR and NFR (`met`, `partial`, `unmet`, `untested`, `cannot tell`, `skipped`), each with `file:line` and test evidence from running the project's tests, plus changed files no requirement covers. Read-only: edits and commits nothing. |
 
+`write-spec`, `write-plan`, and `write-tasks` run only when you type them (`/nibirsharif-skills:write-spec`, or `/write-spec` from a clone install): they ask questions and save files, so the agent never starts them on its own. `implement-task` and `verify-spec` can also be started by the agent.
+
 ## Install
 
 In Claude Code, add this repo as a marketplace and install the plugin:
@@ -60,7 +62,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 | Key | Used by | Effect |
 |-----|---------|--------|
-| `spec_output_dir` | write-spec | Write a requirements specification to `<spec_output_dir>/<feature-name>/requirements.md`, updating the file if it exists. Empty means reply in chat only. write-plan reads `requirements.md` from there and writes `plan.md` beside it. |
+| `spec_output_dir` | write-spec | Write a requirements specification to `<spec_output_dir>/<feature-name>/requirements.md`, updating the file if it exists. Empty means write-spec asks where to save. write-plan reads `requirements.md` from there and writes `plan.md` beside it. |
 | `plan_max_requirements_per_phase` | write-plan | The most `FR` and `NFR` IDs in one phase before it is split. Default 8. |
 | `plan_max_files_per_phase` | write-plan | The most files a phase may add or change, tests included, before it is split. Default 10. |
 | `tasks_max_files_per_task` | write-tasks | The most files one task may add or change, tests included. Default 3. |

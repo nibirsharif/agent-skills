@@ -9,7 +9,7 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `nfr-ids` | Functional and non-functional requirements take separate `FR` and `NFR` sequences, and a deadline on a behaviour is split into an `FR` and an `NFR`. |
 | `vague-only` | Only impressions and no system: questions only. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
-| `routing-shall-statements` | Routing: a request for shall statements that does not name the skill. The skill must fire. |
+| `ask-location` | No path in the request, no `spec_output_dir` (the input is sent as written, not through the chat-only prompt): the reply is the one location question and no requirement. |
 | `routing-gherkin` | Routing: a Given/When/Then request, which the skill's description excludes. The skill must not fire. |
 
 Each case folder holds:

@@ -11,7 +11,12 @@ lint = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(lint)
 
 
+LOCATION = "Where should I save the requirements? Give a path, set `spec_output_dir` in `.agent-skills-config.yaml`, or say \"chat only\"."
+
+
 def check(reply):
+    if reply.strip() == LOCATION:
+        return []
     failures = []
     linter = lint.Linter(lint.banned_patterns())
     linter.lint("reply", reply)
