@@ -31,7 +31,7 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 
 ## Conventions
 
-- Frontmatter has only `name` and `description`, so the skill works in any agent. The one exception is `disable-model-invocation: true`, for a skill that should run only when the user types its name: one that takes outward or risky actions, or one the model should never pick on its own. Agents that do not know the field ignore it. Write such a skill's `description` for a person browsing commands, without "Use when" trigger phrases.
+- Frontmatter has only `name` and `description`, so the skill works in any agent. The one exception is `disable-model-invocation: true`, for a skill that should run only when the user types its name: one that takes outward or risky actions, or one the model should never pick on its own (the write-spec, write-plan, and write-tasks authoring steps: they ask questions and save files, so the user decides when they start). A user-only skill cannot be called through the Skill tool, so an eval prompt for it names it as a slash command, and it has no "fires": true routing case. Agents that do not know the field ignore it. Write such a skill's `description` for a person browsing commands, without "Use when" trigger phrases.
 - The plugin manifests live in `.claude-plugin/`, never in a skill's frontmatter.
 - A skill that needs another skill says "Call the Skill tool with `<name>`". It never links into another skill's folder.
 - Do not duplicate a rule in two files; state it once and link to it.

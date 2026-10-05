@@ -16,7 +16,7 @@ import run  # noqa: E402
 
 SKILLS = sorted(p for p in EVALS.iterdir() if (p / "cases").is_dir())
 CASES = [c for s in SKILLS for c in sorted(p for p in (s / "cases").iterdir() if p.is_dir())]
-KEYS = {"description", "counts", "must_match", "must_not_match", "fires", "expectations", "manual", "timeout_seconds"}
+KEYS = {"description", "raw", "counts", "must_match", "must_not_match", "fires", "expectations", "manual", "timeout_seconds"}
 
 
 def checks_of(case):

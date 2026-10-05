@@ -10,6 +10,8 @@ Blocked requirements are copied from the plan and never tasked. Open questions a
 
 ## When to use it
 
+Type `/nibirsharif-skills:write-tasks` (or `/write-tasks` when installed from a clone). The agent never starts this skill on its own.
+
 - You are about to implement a phase and want a checklist to work through one step at a time.
 - You want each step small enough to review and to prove with a test or command.
 

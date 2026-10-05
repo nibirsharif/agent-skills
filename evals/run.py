@@ -129,8 +129,8 @@ def run_case(skill, case_dir, config, out, args):
     checks = json.loads((case_dir / "checks.json").read_text())
     limit = checks.get("timeout_seconds", DEFAULT_TIMEOUT)
     text = (case_dir / "input.md").read_text()
-    # A routing case is sent as a user would type it: the template names the skill.
-    prompt = text if "fires" in checks else config["prompt"].replace("{input}", text)
+    # A routing case, or a case with "raw", is sent as written; the input then names the skill itself.
+    prompt = text if "fires" in checks or checks.get("raw") else config["prompt"].replace("{input}", text)
     report, rel = [], out.relative_to(ROOT)
 
     with tempfile.TemporaryDirectory(prefix=f"{skill}-eval-") as tmp:

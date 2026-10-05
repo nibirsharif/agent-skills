@@ -10,6 +10,8 @@ It writes every requirement the input fully supports and asks a question for eac
 
 ## When to use it
 
+Type `/nibirsharif-skills:write-spec` (or `/write-spec` when installed from a clone). The agent never starts this skill on its own.
+
 - You have a PRD, a story, or a paragraph and want testable requirements from it.
 - You have vague "should" statements to tighten.
 - You want to extend an existing `requirements.md` with new input or answers.
@@ -28,7 +30,7 @@ Q-001: What does the auth service do when the address is not registered? Propose
 
 Answer by ID. `accept Q-001, Q-004` takes those proposals; `accept all proposed` takes every proposal. Changed requirements come back marked `(changed)`, newly unblocked ones `(new)`.
 
-Set `spec_output_dir` in [the config](../README.md#configuration) and the result is saved to `<spec_output_dir>/<feature-name>/requirements.md`, which write-plan reads next. Without it, nothing is written.
+Set `spec_output_dir` in [the config](../README.md#configuration) and the result is saved to `<spec_output_dir>/<feature-name>/requirements.md`, which write-plan reads next. Without it, and with no path in your request, it asks where to save before writing anything; answer with a path or `chat only`, and nothing is written for `chat only`.
 
 ## FAQ
 

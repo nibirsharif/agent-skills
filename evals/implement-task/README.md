@@ -2,11 +2,11 @@
 
 Cases that exercise the implement-task skill's rules on a small made-up project, [fixture/](fixture/): a `textstats` library with a `reading-time` feature whose `requirements.md`, `plan.md`, and `tasks.md` sit under `docs/specs/`. In `tasks.md`, T-1.1 is `Done`, T-1.2 and T-1.3 depend only on it, T-1.4 is the verify task, and FR-004 is blocked by Q-001.
 
-[config.json](config.json) names it as the `"fixture"`, so every case starts in a copy committed on `main`, and a good run creates the `reading-time` branch and commits there. `dirty-tree`, `spec-only-dirty`, and `spec-and-code-dirty` have a `dirty/` folder, copied over the fixture uncommitted.
+[config.json](config.json) names it as the `"fixture"`, so every case starts in a copy committed on `main`, and a good run creates the `reading-time/phase-1` branch and commits there. `dirty-tree`, `spec-only-dirty`, and `spec-and-code-dirty` have a `dirty/` folder, copied over the fixture uncommitted.
 
 | Case | Tests |
 |------|-------|
-| `next-task` | No task named: implements T-1.2, the first `Todo` task whose dependency is `Done`, runs the tests, commits on `reading-time` with a `T-1.2:` subject, stages by path, never pushes, and replies with the five-line done report. |
+| `next-task` | No task named: implements T-1.2, the first `Todo` task whose dependency is `Done`, runs the tests, commits on `reading-time/phase-1` with a `T-1.2:` subject, stages by path, never pushes, and replies with the five-line done report. |
 | `named-task` | The user names T-1.3: implements it, not T-1.2. |
 | `dependency-not-done` | The user names T-1.4, whose dependencies are `Todo`: a one-line stop, no code, no commit. |
 | `missing-tasks` | No `tasks.md` for the feature: a one-line stop that points to write-tasks. |

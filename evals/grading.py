@@ -5,6 +5,7 @@ Each case folder (evals/<skill>/cases/<case>/) holds a checks.json with any of t
 - counts: {"<label>": {"pattern": "...", "min": n, "max": n}}, the number of lines a pattern matches.
 - must_match / must_not_match: [{"pattern": "...", "why": "...", "target": "reply" | "trace"}].
   "trace" checks the agent's tool calls instead of its reply.
+- raw: true to send input.md as written, without the prompt template in config.json (the input names the skill).
 - fires: true or false, whether the agent must call the skill (routing cases).
 - expectations: ["..."], claims an LLM judge checks against the reply (evals/run.py --judge).
 - manual: ["..."], a checklist for a person.

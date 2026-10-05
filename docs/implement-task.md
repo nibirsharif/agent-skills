@@ -6,7 +6,7 @@ Instructions the agent follows: [skills/implement-task/SKILL.md](../skills/imple
 
 Implements one task from a saved `tasks.md`: the task you name (`T-1.2`), or the next `Todo` task whose dependencies are `Done`. It reads the task's phase in `plan.md`, the requirements the task covers, and the code; changes only the files the task lists; adds the test its Done when names; and runs the full test suite. When everything passes, it sets the task's Status to `Done` and commits the change on the feature branch, one commit per task. It never pushes.
 
-Run it again for the next task. When every task is `Done`, the feature branch holds one commit per task, ready for review.
+Run it again for the next task. When every task is `Done`, each phase branch holds one commit per task, ready for review as one PR.
 
 ## When to use it
 
@@ -24,7 +24,7 @@ T-1.2 done: Reject an expired reset link
 Covers: FR-002
 Changed: reset/tokens.py, tests/test_tokens.py, docs/specs/password-reset/tasks.md
 Check: python3 -m unittest: 14 tests OK
-Commit: 3f9c2e1 on password-reset
+Commit: 3f9c2e1 on password-reset/phase-1
 ```
 
 It stops with a single line instead when:
@@ -42,11 +42,13 @@ The full list is in [the rules](../skills/implement-task/references/implement-ru
 
 ## FAQ
 
-**Which branch does it commit to?** On `main` (or your default branch) it creates or switches to a branch named after the feature folder, for example `password-reset`. On any other branch it stays where it is.
+**Which branch does it commit to?** One branch per phase, named `<feature>/phase-<n>`, for example `password-reset/phase-1`. From `main` (or your default branch), or from another phase branch of the feature, it switches to the task's phase branch, creating it when needed: phase 1 from the default branch, later phases from the previous phase's branch while that is unmerged (so they stack), else from the default branch. Each phase branch is one reviewable PR. On any other branch it stays where it is.
 
 **Why does it refuse a dirty working tree?** So each commit holds only its own task. Commit or stash your changes first.
 
-**What about the spec files that write-spec, write-plan, and write-tasks just saved?** They are the one exception. On its first run the skill commits the feature's folder as `Add <feature-name> spec` on the feature branch, then commits the task. It does this without asking, so review those files first if you want to change them; the commit is local and you can amend or drop it before merging.
+**What about the spec files that write-spec, write-plan, and write-tasks just saved?** They are the one exception. On its first run the skill commits the feature's folder as `Add <feature-name> spec` on the first phase's branch, then commits the task. It does this without asking, so review those files first if you want to change them; the commit is local and you can amend or drop it before merging.
+
+**What if [verify-spec](verify-spec.md) finds a gap in a `Done` task?** Set that task's Status back to `Todo`, commit it, and run implement-task on it with the verify rows in your message. It treats a `Todo` task that already has a commit as a rework: it fixes only what the rows show, inside the task's Files, and commits `T-1.2: <title> (rework)`. [build-phase](build-phase.md) does this loop for you.
 
 **Can it do several tasks in one run?** No. One task per run keeps each commit small and each check meaningful. Run it again for the next one.
 

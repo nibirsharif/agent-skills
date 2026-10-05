@@ -1,6 +1,7 @@
 ---
 name: write-plan
-description: Write an implementation plan from a saved EARS requirements file (requirements.md from write-spec). Explores the codebase first, then splits the approach into phases that are each independently mergeable as one reviewable PR, lists the FR and NFR IDs each phase covers, and saves plan.md next to the requirements. Open questions are never answered here; requirements that wait on them are listed as blocked. Use when the user asks to plan, break down, phase, or sequence the implementation of a feature that has written requirements, or asks how to build it in reviewable steps. Not for writing requirements, the per-phase task breakdown, or code.
+description: Write an implementation plan from a saved EARS requirements file (requirements.md from write-spec). Explores the codebase first, then splits the approach into phases that are each independently mergeable as one reviewable PR, lists the FR and NFR IDs each phase covers, and saves plan.md next to the requirements. Open questions are never answered here; requirements that wait on them are listed as blocked. Not for writing requirements, the per-phase task breakdown, or code.
+disable-model-invocation: true
 ---
 
 # Write Plan

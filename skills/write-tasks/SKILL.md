@@ -1,6 +1,7 @@
 ---
 name: write-tasks
-description: Break each phase of a saved implementation plan (plan.md from write-plan) into small, ordered, verifiable tasks and save them as tasks.md next to the plan. Explores the codebase first; every task names the requirement IDs it covers, the files it touches, the tasks it depends on, and a check that shows it is done. Blocked requirements and open questions are never tasked. Use whenever the user asks to break a plan or a phase into tasks, a task list, a checklist, small steps, or the next steps to work through one at a time, even when the plan is pasted and the skill is not named. Load it before looking for the plan file, because it says what to reply when the plan does not exist. Not for writing requirements, the plan itself, or code.
+description: Break each phase of a saved implementation plan (plan.md from write-plan) into small, ordered, verifiable tasks and save them as tasks.md next to the plan. Explores the codebase first; every task names the requirement IDs it covers, the files it touches, the tasks it depends on, and a check that shows it is done. Blocked requirements and open questions are never tasked. Not for writing requirements, the plan itself, or code.
+disable-model-invocation: true
 ---
 
 # Write Tasks

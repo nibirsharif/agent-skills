@@ -17,8 +17,8 @@
       "why": "it covers only T-1.3's requirement"
     },
     {
-      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time$",
-      "why": "one commit on the feature branch"
+      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time/phase-1$",
+      "why": "one commit on the phase branch"
     },
     {
       "pattern": "^Bash .*git commit.*T-1\\.3: ",

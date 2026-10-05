@@ -1,5 +1,5 @@
 {
-  "prompt": "Use the write-spec skill. Reply in chat only and do not save a requirements file.\n\n{input}",
+  "prompt": "/nibirsharif-skills:write-spec Reply in chat only and do not save a requirements file.\n\n{input}",
   "allowed_tools": ["Read", "Glob", "Grep", "Write", "Edit", "Bash(python3:*)", "Bash(cat:*)"],
   "watch": ["lint.py"]
 }

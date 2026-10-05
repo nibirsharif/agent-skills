@@ -20,3 +20,6 @@ scratch-*
 
 # The implement-task eval fixture needs its config
 !evals/*/fixture/.agent-skills-config.yaml
+
+# Local backlog
+TODO.md

@@ -9,7 +9,7 @@
 #   <spec_output_dir>/<feature-name>/requirements.md
 # An existing requirements.md is updated in place: IDs are kept and new ones continue its numbering.
 # A relative path is resolved against the project root; absolute and ~ paths also work.
-# Leave empty to return requirements in the chat only and write no files.
+# Leave empty and write-spec asks where to save each time (a path, or "chat only").
 # Example: docs/specs
 spec_output_dir:
 
@@ -27,3 +27,7 @@ tasks_max_files_per_task:
 # write-tasks: the most tasks one phase may have. A phase that needs more is sent back to
 # write-plan to be split, not squeezed. Default 12.
 tasks_max_per_phase:
+
+# build-phase: the most rework rounds (reopen the tasks behind a requirement that verify-spec does not
+# find met, implement them again, verify again) before the run stops. Default 2.
+build_max_rework_rounds:
