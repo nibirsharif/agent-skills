@@ -1,0 +1,21 @@
+{
+  "prompt": "/nibirsharif-skills:build-phase {input}",
+  "fixture": "fixture",
+  "allowed_tools": [
+    "Agent",
+    "Read",
+    "Glob",
+    "Grep",
+    "Write",
+    "Edit",
+    "Bash(python3:*)",
+    "Bash(cat:*)",
+    "Bash(ls:*)",
+    "Bash(git:*)"
+  ],
+  "watch": [
+    "python3 -m unittest",
+    "git commit",
+    "git push"
+  ]
+}

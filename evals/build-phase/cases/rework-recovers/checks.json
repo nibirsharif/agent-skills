@@ -1,0 +1,53 @@
+{
+  "description": "The fixture's T-1.1 is Done, but reading_time rounds down and its only test passes at 200 words, so FR-001 is unmet once verify-spec runs. build-phase implements T-1.2 and T-1.3, verifies phase 1, finds the FR-001 gap, reopens T-1.1 and the verify task with a Reopen commit, reworks them, and verifies again until every requirement in scope is met. It never pushes and edits nothing itself.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: done$",
+      "why": "the phase finished, after a rework"
+    },
+    {
+      "pattern": "^Branch: reading-time/phase-1$",
+      "why": "implement-task's phase branch"
+    },
+    {
+      "pattern": "^Tasks: [2-9] implemented, [1-9]\\d* reworked$",
+      "why": "T-1.2 and T-1.3 were implemented and at least T-1.1 was reworked"
+    },
+    {
+      "pattern": "^Verify: (Tally: )?3 met, 1 skipped$",
+      "why": "after the rework FR-001, FR-002, FR-003 are met and blocked FR-004 is skipped"
+    },
+    {
+      "pattern": "^Next: push reading-time/phase-1, open a PR titled \"reading-time phase 1: Reading time\", and run /code-review$",
+      "why": "the hand-off line with the phase title as written in tasks.md"
+    },
+    {
+      "pattern": "^Agent ",
+      "why": "work ran in subagents",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit.*Reopen T-1\\.1",
+      "why": "the reopen commit names the reopened task",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*verify-spec",
+      "why": "verify-spec ran",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "git log on reading-time/phase-1: T-1.2 and T-1.3 commits, a 'Reopen T-1.1: ...' commit that changes only Status lines of tasks.md, the T-1.1 rework commit, then T-1.4 last.",
+    "The final code rounds up (math.ceil or equivalent) and a test covers 201 words.",
+    "The verify subagent was a different one from every implementer."
+  ],
+  "timeout_seconds": 1800
+}

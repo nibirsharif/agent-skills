@@ -1,0 +1,4 @@
+{
+  "description": "Routing: one named task, which implement-task covers. build-phase must not fire.",
+  "fires": false
+}

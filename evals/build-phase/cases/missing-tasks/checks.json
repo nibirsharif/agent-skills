@@ -1,0 +1,30 @@
+{
+  "description": "No tasks.md exists for invoice-export: the run stops with the no-tasks-file line, starts no subagent, and changes nothing.",
+  "must_match": [
+    {
+      "pattern": "^Stopped: No tasks file found at docs/specs/invoice-export/tasks\\.md\\. Run write-tasks first, then run build-phase again\\.$",
+      "why": "the exact stop reason from build-rules.md"
+    },
+    {
+      "pattern": "^Phase \\S+ of invoice-export: stopped$",
+      "why": "the summary says stopped"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Agent ",
+      "why": "no subagent is started",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) ",
+      "why": "nothing is written",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (commit|push)",
+      "why": "nothing is committed or pushed",
+      "target": "trace"
+    }
+  ]
+}

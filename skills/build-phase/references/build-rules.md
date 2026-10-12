@@ -20,6 +20,8 @@ Call the Skill tool with implement-task. Implement task <T-id> of <path to tasks
 
 Name the task, so the subagent never picks one. Tasks run in file order within the phase; a task runs only when its dependencies are `Done` in `tasks.md` (re-read the file after each task).
 
+**The verify task** is the phase's task with `**Files:** None.` (it runs the plan's Verify list and changes no code). It is not a build task: skip it here, and run it only after [Verifying the phase](#verifying-the-phase) reports no gaps, as the last step before the summary. Run before the gaps are fixed, its check fails by design.
+
 Parse the reply with `python3 <this skill folder>/scripts/parse_reply.py implement`, or by the same shapes when you cannot run commands:
 
 - **done** (five lines, the first `T-<p>.<n> done: <title>`): the task is finished. Keep its commit.
@@ -37,18 +39,20 @@ Call the Skill tool with verify-spec. Verify phase <n> of <path to requirements.
 Parse its reply with `parse_reply.py verify`, with the same retry rule once for an unusable reply (a verify run changes nothing, so a retry is always safe).
 
 - **stop**: end the run with the line.
-- **report**: gaps are the rows `unmet`, `partial`, and `untested`. `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: the phase is done.
+- **report**: gaps are the rows `unmet`, `partial`, and `untested`. `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.
 
 ## Reopening and reworking
 
-For each gap row, the tasks to reopen are the build tasks of this phase whose Covers include the row's ID, plus the phase's verify task. A gap whose ID no build task of the phase covers ends the run: `Stopped: <ID> is <verdict> but no task of phase <n> covers it. Add one with write-tasks, then run build-phase again.`
+For each gap row, the tasks to reopen are the build tasks of this phase whose Covers include the row's ID. The verify task is never reopened: it has not run yet. A gap whose ID no build task of the phase covers ends the run: `Stopped: <ID> is <verdict> but no task of phase <n> covers it. Add one with write-tasks, then run build-phase again.`
 
 1. Past the round limit with gaps left: end the run, `Stopped: <IDs> still not met after <limit> rework rounds`.
 2. Check that the current branch is `<feature>/phase-<n>`; otherwise stop with `Stopped: not on the phase branch`.
 3. Set `**Status:** Todo` on each task to reopen, and nothing else in the file. Stage `tasks.md` by path and commit it with the subject `Reopen <T-ids>: <gap IDs> <verdicts>`. Nothing else is staged. Never amend, never push.
-4. Run each reopened build task in file order as in [Running a task](#running-a-task), with the gap rows for its Covers in the prompt, then the verify task, then [Verifying the phase](#verifying-the-phase) again. That is one round.
+4. Run each reopened build task in file order as in [Running a task](#running-a-task), with the gap rows for its Covers in the prompt, then [Verifying the phase](#verifying-the-phase) again. That is one round.
 
 ## The summary
+
+`Tasks: <k> implemented, <r> reworked` counts build tasks only, each reopened task once however many rounds it took; the verify task is in neither number. When the run stops before a phase is picked (no `tasks.md`, no `requirements.md`, no `Todo` task), write the phase as `?`: `Phase ? of <feature>: stopped`, `Branch:` the branch from the start, and `Tasks: 0 implemented, 0 reworked`.
 
 The phase title in the `Next:` line is the text after `### Phase <n>: ` in `tasks.md`, copied as written.
 
