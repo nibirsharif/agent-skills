@@ -29,7 +29,7 @@
       "why": "one commit on the reading-time/phase-1 branch"
     },
     {
-      "pattern": "^(Edit|Write) .*textstats/counts\\.py",
+      "pattern": "^((Edit|Write) .*textstats/counts\\.py|Bash .*textstats/counts\\.py.*(\\.write\\(|sed -i))",
       "why": "the task's code file is changed",
       "target": "trace"
     },
@@ -39,7 +39,7 @@
       "target": "trace"
     },
     {
-      "pattern": "^Bash .*git (switch -c|checkout -b) reading-time/phase-1",
+      "pattern": "^Bash .*git (switch -c|checkout (-q )?-b) reading-time/phase-1",
       "why": "it creates the phase branch from main",
       "target": "trace"
     },

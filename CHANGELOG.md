@@ -9,7 +9,8 @@ Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to d
 - New `skills/build-phase/scripts/parse_reply.py`: parses a verify-spec report or an implement-task reply (tolerant by default, `--strict` for evals); `evals/verify-spec/hooks.py` and the new `evals/implement-task/hooks.py` use it.
 - New draft skill `build-phase` (user-only, not yet in `plugin.json`): drives a phase through implement-task and verify-spec subagents, with a rework loop. New config key `build_max_rework_rounds`.
 - write-spec: with no path in the request and no `spec_output_dir`, it asks where to save before writing anything, instead of silently writing no file. "Chat only" is an accepted answer.
-- Evals: the three skills' prompts are slash commands, and their `fires: true` routing cases are removed, since the agent cannot call them. Not re-run.
+- Evals: the three skills' prompts are slash commands, and their `fires: true` routing cases are removed, since the agent cannot call them. Re-run at 3 runs each (Sonnet): write-plan 18/18, write-tasks 21/21, implement-task 26/30, write-spec 17/21 or better. The implement-task misses are all a sentence before a stop line (the rules file now shows that case as wrong); write-spec's `prd-solar-monitoring` still misses on brittle keyword checks in about half the runs.
+- implement-task evals: trace checks accept `git checkout -q -b` and a code edit made through a Python script, not only `Edit`/`Write`. write-spec's `clean-feature` input now names the instant to log (the time of the click), so it has no real ambiguity left.
 
 ## 0.7.0
 

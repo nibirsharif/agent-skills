@@ -55,6 +55,14 @@ Wrong, because a sentence comes first:
 Uncommitted changes in textstats/counts.py. Commit or stash them, then run implement-task again.
 ```
 
+Also wrong, because it says what was found before the line:
+
+```
+The user named the invoice-export feature, and its tasks.md doesn't exist.
+
+No tasks file found at docs/specs/invoice-export/tasks.md. Run write-tasks first, then run implement-task again.
+```
+
 Right, the line alone as your last message, with no backticks:
 
 ```

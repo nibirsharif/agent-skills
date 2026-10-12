@@ -1,5 +1,5 @@
 {
-  "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and real ambiguities (whether \"every export\" includes rejected ones, and which instant \"the export time\" is). The 5-minute deadline is a threshold on the email, so it is split off as an NFR.",
+  "description": "A complete input. Every statement is written and the skill does not over-ask: at most the coverage-gap question and a real ambiguity or two. The 5-minute deadline is a threshold on the email, so it is split off as an NFR.",
   "counts": {
     "requirements": {
       "pattern": "^FR-\\d+",

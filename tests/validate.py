@@ -155,8 +155,43 @@ def check_plugin():
     return errors
 
 
+def check_release(root=ROOT):
+    """Return problems with release metadata: versions agree, the README and CHANGELOG match plugin.json."""
+    plugin_json = root / ".claude-plugin" / "plugin.json"
+    market_json = root / ".claude-plugin" / "marketplace.json"
+    if not plugin_json.is_file():
+        return []
+    try:
+        plugin = json.loads(plugin_json.read_text())
+        market = json.loads(market_json.read_text()) if market_json.is_file() else None
+    except ValueError as e:
+        return [f"release metadata: not valid JSON: {e}"]
+    errors, version = [], plugin.get("version", "")
+
+    if market is not None:
+        entries = [p for p in market.get("plugins", []) if p.get("name") == plugin.get("name")]
+        if not entries:
+            errors.append(f"{market_json.relative_to(root)}: no entry for plugin '{plugin.get('name')}'")
+        elif entries[0].get("version") != version:
+            errors.append(f"{market_json.relative_to(root)}: version '{entries[0].get('version')}' differs from plugin.json '{version}'")
+
+    changelog = root / "CHANGELOG.md"
+    if changelog.is_file() and not re.search(rf"^## {re.escape(version)}\s*$", changelog.read_text(), re.MULTILINE):
+        errors.append(f"CHANGELOG.md: no '## {version}' heading for the current plugin version")
+
+    readme = root / "README.md"
+    if readme.is_file():
+        listed = {Path(s).name for s in plugin.get("skills", [])}
+        in_table = set(re.findall(r"^\| \[([a-z0-9-]+)\]\(skills/", readme.read_text(), re.MULTILINE))
+        for name in sorted(listed - in_table):
+            errors.append(f"README.md: skill '{name}' is in plugin.json but not in the skills table")
+        for name in sorted(in_table - listed):
+            errors.append(f"README.md: skill '{name}' is in the skills table but not in plugin.json")
+    return errors
+
+
 def main():
-    errors, count, seen_names = check_plugin(), 0, {}
+    errors, count, seen_names = check_plugin() + check_release(), 0, {}
     for root in SKILL_ROOTS:
         if not root.is_dir():
             continue
