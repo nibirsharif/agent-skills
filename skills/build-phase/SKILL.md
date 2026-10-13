@@ -19,7 +19,7 @@ Your last message is the summary, exactly these lines as plain text, and nothing
 - `Stopped: <the stop line or reason>`, only when stopped
 - `Next: push <branch>, open a PR titled "<feature> phase <n>: <phase title>", and run /code-review`, only when done
 
-Write no text between tool calls.
+Write no text between tool calls. The last message you write is the summary: it starts with `Phase`, never with a sentence about what you found or which rule applies.
 
 ## Before starting
 

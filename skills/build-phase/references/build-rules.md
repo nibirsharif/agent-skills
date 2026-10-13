@@ -52,6 +52,17 @@ For each gap row, the tasks to reopen are the build tasks of this phase whose Co
 
 ## The summary
 
+A stop is still the whole summary. Wrong, because a sentence comes first:
+
+```
+There is no tasks file for invoice-export.
+
+Phase ? of invoice-export: stopped
+...
+```
+
+Right: the `Phase` line is the first line.
+
 `Tasks: <k> implemented, <r> reworked` counts build tasks only, each reopened task once however many rounds it took; the verify task is in neither number. When the run stops before a phase is picked (no `tasks.md`, no `requirements.md`, no `Todo` task), write the phase as `?`: `Phase ? of <feature>: stopped`, `Branch:` the branch from the start, and `Tasks: 0 implemented, 0 reworked`.
 
 The phase title in the `Next:` line is the text after `### Phase <n>: ` in `tasks.md`, copied as written.

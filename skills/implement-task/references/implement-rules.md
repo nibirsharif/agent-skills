@@ -25,7 +25,7 @@ These rules are authoritative for `implement-task`. A change is checked against 
 
 ## Tests
 
-- Add the test Done when names, in the task's test file, before or with the code. The test must fail without the change.
+- Add the test Done when names, in the task's test file, before or with the code. The test must fail without the change: see it fail by running it before you edit the code (or by reasoning from the old code when the test is added with it), never by stashing or reverting your files.
 - Run the project's existing test command (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the done report's Check line.
 - The full suite must be green, not only the new test.
 - Never skip, delete, or weaken a test, and never change an assertion to match the code.
