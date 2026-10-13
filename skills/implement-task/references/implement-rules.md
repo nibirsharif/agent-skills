@@ -4,7 +4,7 @@ These rules are authoritative for `implement-task`. A change is checked against 
 
 ## Reading tasks.md
 
-`tasks.md` has phases (`### Phase <n>: <title>`) and tasks (`#### T-<phase>.<n>: <title>`). Each task has Covers, Files, Depends on, Done when, and Status (`Todo` or `Done`). The file's own `**Status:** Draft` line under the title is not a task's Status. Section 3 lists blocked requirements; they have no task and are never implemented.
+`tasks.md` has phases (`### Phase <n>: <title>`) and tasks (`#### T-<phase>.<n>: <title>`). Each task has Covers, Files, Depends on, Done when, and Status (`Todo` or `Done`). Section 3 lists blocked requirements; they have no task and are never implemented.
 
 ## Picking the task
 

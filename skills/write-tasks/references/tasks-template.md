@@ -6,6 +6,7 @@ Use the template below the line for every new `tasks.md`. Everything above the l
 - `tasks.md` sits next to the `plan.md` it breaks down. **Plan** names that file's version, so a reader can tell when the tasks are stale.
 - Overview is one to three sentences: how the tasks are ordered and the code they build on. Where there is no codebase, say so in its first sentence.
 - One `### Phase <n>: <title>` per phase of the plan, with the plan's number and title. Every task has all six parts; write `None.` for an empty Depends on.
+- The file has no status of its own: only each task's **Status** says where the work stands.
 - **Status** is `Todo` or `Done`. Every task of a new file is `Todo`; `implement-task` sets it to `Done`.
 - Section 3 copies each `Blocked by` entry from the plan's section 3 word for word, once, on one line (`Blocked by Q-001, Q-002: <topic>`). It never lists the questions' text. It holds `None.` when nothing is blocked.
 - A new file is version 1.0. Each update raises the minor version and adds one Revision History row naming the phases and task IDs added, changed, or removed.
@@ -25,7 +26,6 @@ Use the template below the line for every new `tasks.md`. Everything above the l
 **Version:** 1.0
 **Date:** YYYY-MM-DD
 **Plan:** plan.md, version [x.y]
-**Status:** Draft
 
 ## 1. Overview
 

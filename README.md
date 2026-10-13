@@ -11,8 +11,9 @@ My skills for coding agents such as Claude Code. Each skill is a folder with a `
 | [write-tasks](skills/write-tasks/SKILL.md) ([docs](docs/write-tasks.md)) | Breaks each phase of a saved plan into small, ordered, verifiable tasks in `tasks.md`: each names the requirement IDs it covers, its files, what it depends on, and a check that shows it is done. A phase too big to task goes back to write-plan. |
 | [implement-task](skills/implement-task/SKILL.md) ([docs](docs/implement-task.md)) | Implements one task from `tasks.md`: only its files, with the test its check names, then marks it `Done` and commits it on the feature branch. Stops with one line when the task cannot be done as written. Never pushes. |
 | [verify-spec](skills/verify-spec/SKILL.md) ([docs](docs/verify-spec.md)) | Checks the code against a saved requirements file: one verdict per FR and NFR (`met`, `partial`, `unmet`, `untested`, `cannot tell`, `skipped`), each with `file:line` and test evidence from running the project's tests, plus changed files no requirement covers. Read-only: edits and commits nothing. |
+| [build-phase](skills/build-phase/SKILL.md) ([docs](docs/build-phase.md)) | Builds one phase of `tasks.md` end to end: implement-task for each task in a fresh subagent, then verify-spec in a separate one, reopening and reworking the tasks behind any gap, up to a round limit. Stops with the phase branch ready for you to push. Never pushes or opens a PR. |
 
-`write-spec`, `write-plan`, and `write-tasks` run only when you type them (`/nibirsharif-skills:write-spec`, or `/write-spec` from a clone install): they ask questions and save files, so the agent never starts them on its own. `implement-task` and `verify-spec` can also be started by the agent.
+`write-spec`, `write-plan`, `write-tasks`, and `build-phase` run only when you type them (`/nibirsharif-skills:write-spec`, or `/write-spec` from a clone install): they ask questions, save files, or make many commits, so the agent never starts them on its own. `implement-task` and `verify-spec` can also be started by the agent.
 
 ## Install
 

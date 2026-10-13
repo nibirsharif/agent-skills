@@ -1,6 +1,6 @@
 # build-phase
 
-Instructions the agent follows: [skills/build-phase/SKILL.md](../skills/build-phase/SKILL.md). This page is for you: when to use it and what to expect. A draft: it is not yet listed in `plugin.json` or the README.
+Instructions the agent follows: [skills/build-phase/SKILL.md](../skills/build-phase/SKILL.md). This page is for you: when to use it and what to expect.
 
 ## Overview
 

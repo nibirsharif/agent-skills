@@ -3,7 +3,6 @@
 **Version:** 1.0
 **Date:** 2026-09-03
 **Plan:** plan.md, version 1.0
-**Status:** Draft
 
 ## 1. Overview
 
