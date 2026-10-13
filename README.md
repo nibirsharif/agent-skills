@@ -1,6 +1,24 @@
 # agent-skills
 
-My skills for coding agents such as Claude Code. Each skill is a folder with a `SKILL.md` that the agent loads when the task matches its description.
+Spec-driven skills for coding agents. They take a feature from a rough idea to verified code, and they stop and ask instead of guessing.
+
+Agents given a vague request tend to invent the missing details (limits, systems, error handling), build everything in one big change, and then say it works. These skills split the work into steps that each leave a file you can read and correct:
+
+```
+idea → write-spec → write-plan → write-tasks → implement-task → verify-spec
+        (EARS         (phases,      (small,       (one task,      (a verdict
+       requirements)   one PR       verifiable    one commit)     per requirement,
+                       each)        tasks)                        with evidence)
+
+                      build-phase runs implement-task and verify-spec for a whole phase
+```
+
+- **Asks, never guesses.** A missing value, unit, or threshold becomes a question. No requirement is written with a number you did not give.
+- **Traceable.** Every plan phase and task names the requirement IDs (`FR-001`, `NFR-002`) it covers, so verification can say which are `met`, `partial`, or `unmet`.
+- **Safe by default.** Nothing pushes or opens a PR. Verification is read-only.
+- **Tested.** `make test` validates every skill, and `make eval` runs each skill through an agent against graded cases: it must fire when it should, stay quiet when it should not, and keep its reply format. See [evals/](evals/).
+
+Each skill is a folder with a `SKILL.md` that the agent loads when the task matches its description. Start with `/nibirsharif-skills:write-spec` on a feature description.
 
 ## Skills
 
