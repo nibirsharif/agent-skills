@@ -2,6 +2,12 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## Unreleased
+
+- New config keys `test_command`, `base_branch`, `branch_prefix`, read by implement-task, verify-spec, and build-phase. All default to the old behaviour.
+- CI also runs `claude plugin validate`.
+- write-spec eval `prd-solar-monitoring`: the daylight/offline check accepts `daylight` as well as `sunrise` and any wording of the `if ... then` clause.
+
 ## 0.8.0
 
 - write-tasks: `tasks.md` no longer has a file-level `**Status:** Draft` line that never changed; each task's Status is the only status. Plugin keywords now include "tasks" and "verify".

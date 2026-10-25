@@ -54,7 +54,7 @@ It stops with a single line instead when there is no `requirements.md` for the f
 
 **Why is a requirement `untested` when the code is right?** `met` needs both the code and a passing test. When two verdicts fit, it takes the weaker one, so a requirement is never rounded up.
 
-**Why does it run my tests?** A test that exists is not evidence; one that passed in this run is. It runs the project's existing test command once and nothing else: no installs, no scripts that change data. When the tests cannot run, the `Tests:` line says why and no row is `met`.
+**Why does it run my tests?** A test that exists is not evidence; one that passed in this run is. It runs the project's existing test command (or `test_command` from `.agent-skills-config.yaml`) once and nothing else: no installs, no scripts that change data. When the tests cannot run, the `Tests:` line says why and no row is `met`.
 
 **Does it tell me how to fix a gap?** No. A row says what is missing. Fix code with [implement-task](implement-task.md) and requirements with [write-spec](write-spec.md).
 

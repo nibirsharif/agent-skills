@@ -43,7 +43,7 @@ Next: push reading-time/phase-1, open a PR titled "reading-time phase 1: Reading
 
 **Which branch does it use?** The one implement-task picks, `<feature>/phase-<n>`. The reopen commits go there too.
 
-**Can I raise the rework limit?** Yes: set `build_max_rework_rounds` in `.agent-skills-config.yaml`.
+**Can I raise the rework limit?** Yes: set `build_max_rework_rounds` in `.agent-skills-config.yaml`. `test_command`, `base_branch`, and `branch_prefix` there also apply to the subagents.
 
 **What does a run cost?** Each task and each verify is its own agent run. In the eval fixture (two tasks, one rework) a run took about two minutes and under a dollar.
 

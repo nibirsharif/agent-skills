@@ -42,7 +42,7 @@ The full list is in [the rules](../skills/implement-task/references/implement-ru
 
 ## FAQ
 
-**Which branch does it commit to?** One branch per phase, named `<feature>/phase-<n>`, for example `password-reset/phase-1`. From `main` (or your default branch), or from another phase branch of the feature, it switches to the task's phase branch, creating it when needed: phase 1 from the default branch, later phases from the previous phase's branch while that is unmerged (so they stack), else from the default branch. Each phase branch is one reviewable PR. On any other branch it stays where it is.
+**Which branch does it commit to?** One branch per phase, named `<feature>/phase-<n>`, for example `password-reset/phase-1` (set `branch_prefix` in `.agent-skills-config.yaml` to put a prefix such as `team/` in front). From `main` (or your default branch; set `base_branch` if it is something else), or from another phase branch of the feature, it switches to the task's phase branch, creating it when needed: phase 1 from the default branch, later phases from the previous phase's branch while that is unmerged (so they stack), else from the default branch. Each phase branch is one reviewable PR. On any other branch it stays where it is.
 
 **Why does it refuse a dirty working tree?** So each commit holds only its own task. Commit or stash your changes first.
 

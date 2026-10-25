@@ -22,7 +22,7 @@
       "why": "FR-2.2: invalid input is unwanted, so If ... then, even though the PRD writes When"
     },
     {
-      "pattern": "^(FR|NFR)-\\d+: While [^\\n]*sunrise[^\\n]*, if [^\\n]*, then the monitoring service shall",
+      "pattern": "^(FR|NFR)-\\d+: While [^\\n]*(sunrise|daylight)[^\\n]*\\b[Ii]f\\b[^\\n]*\\bthen\\b[^\\n]*\\bmonitoring service shall",
       "why": "FR-2.3: daylight is a state (While) and the missing reading is an unwanted event (if ... then)"
     },
     {

@@ -7,7 +7,7 @@ These rules are authoritative for `build-phase`. A run is checked against the [c
 - `tasks.md`: a path the user named, else `<spec_output_dir>/<feature-name>/tasks.md`, with `spec_output_dir` from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`. With no feature named and one `tasks.md` under `spec_output_dir`, use it; with several, ask which. If the file does not exist, the summary is `stopped` with `Stopped: No tasks file found at <path>. Run write-tasks first, then run build-phase again.`
 - `plan.md` and `requirements.md` are beside it. Without `requirements.md`, stop: `Stopped: No requirements file found at <path>. Run write-spec first, then run build-phase again.`
 - **Phase:** the one the user named. Otherwise the first phase of `tasks.md`, in file order, that has a `Todo` task. If none has, stop with `Every task in <path> is Done.`; that is also the stop when a named phase has no `Todo` task and no gap to find.
-- Settings from the same config files: `build_max_rework_rounds` (default 2).
+- Settings from the same config files: `build_max_rework_rounds` (default 2), and `test_command`, `base_branch`, `branch_prefix`, which the build and verify subagents read themselves.
 - Run `git branch --show-current` once at the start. Do not change branch yourself: `implement-task` does.
 
 ## Running a task
@@ -46,7 +46,7 @@ Parse its reply with `parse_reply.py verify`, with the same retry rule once for 
 For each gap row, the tasks to reopen are the build tasks of this phase whose Covers include the row's ID. The verify task is never reopened: it has not run yet. A gap whose ID no build task of the phase covers ends the run: `Stopped: <ID> is <verdict> but no task of phase <n> covers it. Add one with write-tasks, then run build-phase again.`
 
 1. Past the round limit with gaps left: end the run, `Stopped: <IDs> still not met after <limit> rework rounds`.
-2. Check that the current branch is `<feature>/phase-<n>`; otherwise stop with `Stopped: not on the phase branch`.
+2. Check that the current branch is `<branch_prefix><feature>/phase-<n>`; otherwise stop with `Stopped: not on the phase branch`.
 3. Set `**Status:** Todo` on each task to reopen, and nothing else in the file. Stage `tasks.md` by path and commit it with the subject `Reopen <T-ids>: <gap IDs> <verdicts>`. Nothing else is staged. Never amend, never push.
 4. Run each reopened build task in file order as in [Running a task](#running-a-task), with the gap rows for its Covers in the prompt, then [Verifying the phase](#verifying-the-phase) again. That is one round.
 

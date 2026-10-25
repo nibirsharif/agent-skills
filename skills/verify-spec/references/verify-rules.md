@@ -58,7 +58,7 @@ A value in the statement (200, 15 minutes, `TypeError`) is checked as written. A
 
 ## Running the tests
 
-- Run the project's existing test command once (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the `Tests:` line.
+- Run the project's test command once: `test_command` from `.agent-skills-config.yaml` in the project root, else `~/.agent-skills-config.yaml` when set, else the existing one (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the `Tests:` line.
 - Read results per test, not only the total, so each row can cite its own test.
 - Run nothing else: no installs, no builds that write outside the project's usual build output, no scripts that change data, no network calls. A command that is not the test runner or a read-only inspection is not allowed.
 - When the tests cannot run (no command found, the runner fails to start, a missing dependency), say `Tests: not run: <reason>`. No row is then `met`; rows that would have been are `untested`.
@@ -69,7 +69,7 @@ A value in the statement (200, 15 minutes, `TypeError`) is checked as written. A
 A changed file is drift when it neither implements nor tests any requirement in `requirements.md` (all of them, not only the scoped ones), and is not a spec file. A file that implements or tests a requirement is not drift, whatever that requirement's verdict: a file whose change breaks FR-001 is the evidence for an `unmet` row, not drift.
 
 - Run `git status --porcelain` every time. The branch name alone never decides drift: a change on the default branch still counts.
-- The changed files are the uncommitted ones from `git status --porcelain`, plus, on a branch other than the default (`main`, `master`, or the branch `origin/HEAD` names), `git diff --name-only <default>...HEAD`. Ignore the feature's spec folder.
+- The changed files are the uncommitted ones from `git status --porcelain`, plus, on a branch other than the default (`base_branch` from the same config files when set, else `main`, `master`, or the branch `origin/HEAD` names), `git diff --name-only <default>...HEAD`. Ignore the feature's spec folder.
 - On the default branch with nothing uncommitted, or outside a git repository, there is nothing to compare: `Drift: not checked (no feature branch)`.
 - Drift is reported, never judged: a file may be a legitimate refactor. List it and let the user decide.
 

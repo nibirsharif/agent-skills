@@ -31,3 +31,17 @@ tasks_max_per_phase:
 # build-phase: the most rework rounds (reopen the tasks behind a requirement that verify-spec does not
 # find met, implement them again, verify again) before the run stops. Default 2.
 build_max_rework_rounds:
+
+# implement-task, verify-spec, build-phase: the command that runs the project's whole test suite.
+# Leave empty and the skill finds it from the README, Makefile, package scripts, or CI config.
+# Example: make test
+test_command:
+
+# implement-task, verify-spec, build-phase: the branch phase branches start from and drift is compared against.
+# Leave empty and the skill uses main, master, or the branch origin/HEAD names.
+base_branch:
+
+# implement-task, build-phase: text put in front of each phase branch name, so
+# <feature>/phase-<n> becomes <branch_prefix><feature>/phase-<n>. Include the slash. Default empty.
+# Example: team/
+branch_prefix:
