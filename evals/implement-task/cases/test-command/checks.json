@@ -1,0 +1,88 @@
+{
+  "description": "The project config sets test_command to `python3 -m unittest discover -s tests`. The skill implements T-1.2 as usual and runs that exact command, which the done report's Check line names.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 5,
+      "max": 5
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\AT-1\\.2 done: ",
+      "why": "the reply is the done report for T-1.2, starting on its first line"
+    },
+    {
+      "pattern": "^Covers: FR-002$",
+      "why": "it covers only T-1.2's requirement"
+    },
+    {
+      "pattern": "^Changed: .*textstats/counts\\.py",
+      "why": "the changed files are listed"
+    },
+    {
+      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time/phase-1$",
+      "why": "one commit on the reading-time/phase-1 branch"
+    },
+    {
+      "pattern": "^((Edit|Write) .*textstats/counts\\.py|Bash .*textstats/counts\\.py.*(\\.write\\(|sed -i))",
+      "why": "the task's code file is changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (switch -c|checkout (-q )?-b) reading-time/phase-1",
+      "why": "it creates the phase branch from main",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit.*T-1\\.2: ",
+      "why": "the commit subject names the task",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Check: python3 -m unittest discover -s tests:",
+      "why": "the Check line names the configured test command"
+    },
+    {
+      "pattern": "^Bash .*python3 -m unittest discover -s tests",
+      "why": "the configured test command is the one that runs",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^```",
+      "why": "the done report holds no code"
+    },
+    {
+      "pattern": "(?i)^(next|note|summary|i |the )",
+      "why": "nothing but the done report's lines"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add (-A|--all|\\.(\\s|\"|$))|commit [^\"]*-a)",
+      "why": "files are staged by path",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) .*(requirements|plan)\\.md",
+      "why": "requirements and plan are never changed",
+      "target": "trace"
+    },
+    {
+      "pattern": "\\bFR-003\\b",
+      "why": "T-1.3 is not implemented"
+    }
+  ],
+  "expectations": [
+    "The reply reports only T-1.2: it does not implement or mention T-1.3 or T-1.4."
+  ],
+  "manual": [
+    "After the run, git log on reading-time/phase-1 has one new commit holding counts.py, test_counts.py, and tasks.md, and only T-1.2's Status changed.",
+    "The new test fails without the change."
+  ]
+}

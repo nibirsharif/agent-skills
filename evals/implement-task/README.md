@@ -14,6 +14,7 @@ Cases that exercise the implement-task skill's rules on a small made-up project,
 | `dirty-tree` | The working tree has an uncommitted change to code: a one-line stop before any change, and the change is left alone. |
 | `spec-only-dirty` | Only the feature's `plan.md` is uncommitted, as after write-tasks: commits it as `Add reading-time spec`, then implements T-1.2 and commits it. |
 | `spec-and-code-dirty` | The spec and a code file are both uncommitted: a one-line stop naming only the code file, no spec commit, no branch switch. |
+| `test-command` | The project config sets `test_command`: the skill runs that exact command, and the done report's Check line names it. |
 | `routing-implement` | Routing: a request to do the next task, without naming the skill. The skill must fire. |
 | `routing-tasks` | Routing: a request to write the task list, which the skill's description excludes. The skill must not fire. |
 

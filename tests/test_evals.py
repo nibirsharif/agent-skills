@@ -174,6 +174,18 @@ class Work(unittest.TestCase):
             self.assertEqual(self.git(work, "log", "--format=%s").strip(), "Initial commit")
             self.assertEqual(self.git(work, "status", "--porcelain").strip(), "M src/app.py")
 
+    def test_committed_overlays_the_fixture_before_the_commit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture, case, work = Path(tmp) / "fixture", Path(tmp) / "case", Path(tmp) / "work"
+            fixture.mkdir()
+            (fixture / "config.yaml").write_text("a: 1\n")
+            (case / "committed").mkdir(parents=True)
+            (case / "committed" / "config.yaml").write_text("a: 2\n")
+            work.mkdir()
+            run.prepare_work(fixture, case, work)
+            self.assertEqual(self.git(work, "status", "--porcelain").strip(), "")
+            self.assertEqual(self.git(work, "show", "HEAD:config.yaml"), "a: 2\n")
+
     def test_without_a_fixture_the_folder_stays_empty(self):
         with tempfile.TemporaryDirectory() as tmp:
             case, work = Path(tmp) / "case", Path(tmp) / "work"

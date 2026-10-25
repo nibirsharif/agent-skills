@@ -14,8 +14,8 @@ Options:
 The default agent is `claude -p` with this repo's released skills plus the skill under test loaded
 as a plugin, and the tools from evals/<skill>/config.json allowed without prompting. Each run starts
 in an empty folder, so no project config or files affect it, unless config.json names a "fixture"
-folder: it is copied in and committed as a git repository on main, and a case's dirty/ folder is then
-copied over it uncommitted. All runs start at once, so a full run
+folder: it is copied in (with the case's committed/ folder over it) and committed as a git repository on
+main, and a case's dirty/ folder is then copied over it uncommitted. All runs start at once, so a full run
 takes about as long as the slowest case.
 
 Replies, transcripts (.jsonl), stats (.json), judge results (.judge.json) and error output (.err)
@@ -112,10 +112,13 @@ def agent_error(stdout, stderr):
 
 def prepare_work(fixture, case_dir, work):
     """Fill the agent's folder: the skill's fixture (config.json "fixture") becomes a git repository with
-    one commit on main, then the case's dirty/ is copied over it uncommitted. Without a fixture, the
-    folder starts empty."""
+    one commit on main, then the case's dirty/ is copied over it uncommitted. A case's committed/ folder is
+    copied over the fixture before that commit, for a case that needs its own committed config. Without a
+    fixture, the folder starts empty."""
     if fixture:
         shutil.copytree(fixture, work, dirs_exist_ok=True)
+        if (case_dir / "committed").is_dir():
+            shutil.copytree(case_dir / "committed", work, dirs_exist_ok=True)
         git = ["git", "-c", "user.name=Eval", "-c", "user.email=eval@example.com", "-c", "commit.gpgsign=false"]
         for cmd in (["git", "init", "-q", "-b", "main"], ["git", "add", "-A"], git + ["commit", "-q", "-m", "Initial commit"]):
             subprocess.run(cmd, cwd=work, check=True, capture_output=True)

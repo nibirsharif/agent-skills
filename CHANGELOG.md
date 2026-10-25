@@ -5,6 +5,7 @@ Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to d
 ## Unreleased
 
 - New config keys `test_command`, `base_branch`, `branch_prefix`, read by implement-task, verify-spec, and build-phase. All default to the old behaviour.
+- Evals: a case's `committed/` folder is copied over the fixture before it is committed; the new implement-task case `test-command` uses it to set `test_command` and checks that the configured command runs and is named in the Check line (3 of 3 runs).
 - CI also runs `claude plugin validate`.
 - write-spec eval `prd-solar-monitoring`: the daylight/offline check accepts `daylight` as well as `sunrise` and any wording of the `if ... then` clause.
 
