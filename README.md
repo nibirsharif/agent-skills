@@ -89,14 +89,13 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 ## Adding a skill
 
-See [AGENTS.md](AGENTS.md). In short: copy `examples/example-skill/` to `skills/<name>/`, fill it in, run `make test`.
+See [AGENTS.md](AGENTS.md). In short: create `skills/<name>/SKILL.md` modelled on an existing skill, add its docs and evals, run `make test`.
 
 ## Layout
 
 ```
 skills/<skill-name>/     one folder per skill (SKILL.md, optional references/ and scripts/)
 docs/<skill-name>.md      what each skill does and when to use it, for people (not installed)
-examples/example-skill/  blank skeleton for new skills
 tests/validate.py        checks that apply to every skill
 tests/test_*.py          unit tests for skill scripts and eval cases
 evals/                   eval runner and checks; evals/<skill-name>/ holds a skill's cases (not installed)

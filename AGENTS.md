@@ -9,7 +9,6 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
   - `references/`: optional detail files that `SKILL.md` links to and tells the agent to read.
   - `scripts/`: optional helper scripts the skill tells the agent to run. Python 3 standard library only, and the skill must still work when the agent cannot run commands.
 - `docs/<skill-name>.md`: for people, not agents: what the skill does, when to use it, what to expect, common questions. Not installed. Link to `SKILL.md` for the rules rather than repeating them.
-- `examples/example-skill/`: blank skeleton to copy when starting a new skill. Not installed.
 - `tests/validate.py`: checks that apply to every skill (see below).
 - `tests/test_*.py`: unit tests, run by `make test`: a skill's scripts, and `test_evals.py`, which checks every eval case and grades its golden and bad replies.
 - `evals/`: eval cases, not installed. `run.py` runs a skill's cases through an agent and grades the replies (`make eval SKILL=<name>`); `grading.py` holds the checks and describes the `checks.json` format. Each `evals/<skill-name>/` has a `config.json` (prompt template, allowed tools, commands to count), `cases/<case>/`, an optional `hooks.py` for the skill's own reply rules, and a README.
@@ -18,7 +17,7 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 
 ## Adding a skill
 
-1. Copy `examples/example-skill/` to `skills/<skill-name>/`.
+1. Create `skills/<skill-name>/SKILL.md`. Model its sections on an existing skill such as `implement-task`: Reply contract, Before starting, Scope, Workflow.
 2. Set `name` to exactly the folder name (lowercase, hyphens, at most 64 characters).
 3. Write a `description` (at most 1024 characters) that says what the skill does and when to use it. The agent decides whether to load the skill from this text alone.
 4. Keep `SKILL.md` short: workflow and output contract. Put long rules and examples in `references/` and link them with relative paths.

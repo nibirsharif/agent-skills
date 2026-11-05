@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Checks that apply to every skill under skills/ and examples/, and to the plugin manifest."""
+"""Checks that apply to every skill under skills/, and to the plugin manifest."""
 
 import json
 import re
@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL_ROOTS = [ROOT / "skills", ROOT / "examples"]
+SKILL_ROOTS = [ROOT / "skills"]
 
 KEBAB_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 LINK_RE = re.compile(r"\]\((?!https?://|#|mailto:)([^)\s]+)\)")
