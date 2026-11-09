@@ -1,6 +1,6 @@
 {
   "name": "nibirsharif-skills",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Skills for coding agents that ask instead of guessing: EARS requirements, implementation plans, task lists, implementing them one task at a time, verifying the result against the requirements, and building a whole phase with a rework loop.",
   "author": {
     "name": "Shariful Nibir",
