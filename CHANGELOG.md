@@ -2,6 +2,11 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.10.0
+
+- write-spec: a closed question keeps its question: `Q-NNN: Closed. <question> Answer: <answer>`, not `Closed. Answer: <answer>`, which read as `Answer: Yes.` with nothing to say what was asked. The lint fails a closed line without the question. Files saved earlier: re-add the question to each closed line, or the lint flags it when write-spec next updates the file.
+- AGENTS.md: when to bump MINOR or PATCH.
+
 ## 0.9.0
 
 - README: a Prerequisites section (Claude Code, git, Python 3; `build-phase` needs Claude Code), the four config keys the table was missing, an Eval results table from the latest recorded runs, a link to EARS, and a CI badge.

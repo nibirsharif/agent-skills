@@ -38,7 +38,7 @@ Set `spec_output_dir` in [the config](../README.md#configuration) and the result
 
 **Why so many questions?** Each is one decision you would otherwise find out about in code review. Accept the proposals you agree with and answer the rest.
 
-**Can I renumber?** No. IDs are never reused: withdrawn requirements keep their line as `Withdrawn.`, and answered questions become `Closed. Answer: ...`.
+**Can I renumber?** No. IDs are never reused: withdrawn requirements keep their line as `Withdrawn.`, and answered questions become `Closed. <the question> Answer: ...`, so the file keeps both what was asked and what you decided.
 
 ## Verifying results
 

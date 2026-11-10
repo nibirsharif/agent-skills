@@ -22,4 +22,4 @@ No codebase.
 
 Blocked by Q-001: rate limiting
 Blocked by Q-002: rate limiting
-Q-003: Closed. Answer: send no email.
+Q-003: Closed. What does the reset endpoint do when the address is not registered? Answer: send no email.

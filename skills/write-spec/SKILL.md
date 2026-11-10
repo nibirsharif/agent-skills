@@ -69,7 +69,7 @@ When the user answers questions or adds input, return the requirements the answe
 - A requirement's prefix is fixed when it is first written. When an answer or new input changes a requirement but not its class, rewrite it under its existing ID.
 - When an answer shows that a requirement belongs to the other class, replace its text with `Withdrawn. Moved to <new ID>.` and write it under the next free ID of the other sequence.
 - When the user withdraws or deletes a requirement, replace its text with `Withdrawn.` and keep the line, so its ID is never reused.
-- An answered question is closed and drops out of the open questions in chat. In the file it becomes `Q-NNN: Closed. Answer: <the user's answer>`, so its ID is never reused and the answer stays on record.
+- An answered question is closed and drops out of the open questions in chat. In the file it becomes `Q-NNN: Closed. <the question as asked, without its Proposed: part> Answer: <the user's answer>`, so its ID is never reused and a reader sees what was asked and what was decided. Never drop the question: `Closed. Answer: Yes.` means nothing on its own.
 - Never renumber.
 
 ## Saving to a file

@@ -39,6 +39,12 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 
 ## Releasing
 
+Versions are `MAJOR.MINOR.PATCH`. While MAJOR is 0:
+
+- MINOR: a new skill, a new config key, or any change to what a skill writes or reads (file formats, IDs, reply lines). Users or their saved files may need to adjust.
+- PATCH: fixes and wording changes that leave every format the same.
+- 1.0.0 means the file formats are stable; after it, a format change is MAJOR.
+
 1. Bump `version` in `.claude-plugin/plugin.json` and in the plugin's entry in `.claude-plugin/marketplace.json`. Claude Code uses it to decide when installed users get an update, so a change without a bump never reaches them.
 2. Add the changes to `CHANGELOG.md`.
 3. Run `make test` and `claude plugin validate .claude-plugin/plugin.json`. Its one warning, that `CLAUDE.md` at the root is not loaded, is expected: that file is for working on this repo, not shipped with the plugin.

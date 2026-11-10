@@ -62,7 +62,7 @@ NFR-003: The <system> shall <constraint the user confirmed>. <!-- Source: [...] 
 
 Q-001: <one direct question>? Proposed: <value>. <!-- Source: [...] -->
 
-Q-002: Closed. Answer: <the user's answer> <!-- Source: [...] -->
+Q-002: Closed. <the question as asked>? Answer: <the user's answer> <!-- Source: [...] -->
 
 ## 6. Revision History
 

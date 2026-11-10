@@ -42,7 +42,7 @@ Q-001: What does the reset rate limit count per: account, IP address, or both? <
 
 Q-002: How many reset requests are allowed in how long a period? <!-- Source: "Reset requests should be rate limited." -->
 
-Q-003: Closed. Answer: send no email for an unregistered address. <!-- Source: coverage gap in FR-001 -->
+Q-003: Closed. What does the reset endpoint do when the address is not registered? Answer: send no email for an unregistered address. <!-- Source: coverage gap in FR-001 -->
 
 ## 6. Revision History
 

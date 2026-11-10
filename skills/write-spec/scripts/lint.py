@@ -146,8 +146,11 @@ class Linter:
 
     def question(self, where, ident, text):
         if text.startswith("Closed."):
-            if not text.startswith("Closed. Answer: "):
-                self.add(where, "ERROR", ident, "a closed question keeps its answer: `Closed. Answer: <answer>`")
+            asked, sep, _ = text[len("Closed."):].partition(" Answer: ")
+            if not sep:
+                self.add(where, "ERROR", ident, "a closed question keeps its answer: `Closed. <question> Answer: <answer>`")
+            elif not asked.strip().endswith("?"):
+                self.add(where, "ERROR", ident, "a closed question keeps the question it answered: `Closed. <question> Answer: <answer>`")
             return
         asked, sep, proposed = text.partition(" Proposed:")
         if not asked.endswith("?"):

@@ -182,11 +182,11 @@ NFR-001: When a registered user requests a password reset, the authentication se
 
 ## 5. Open Questions
 
-Q-001: Closed. Answer: per account. <!-- Source: "Reset requests should be rate limited." -->
+Q-001: Closed. Is the password-reset rate limit counted per account or per IP address? Answer: per account. <!-- Source: "Reset requests should be rate limited." -->
 
-Q-002: Closed. Answer: at most 5 in any rolling 60 minutes. <!-- Source: "Reset requests should be rate limited." -->
+Q-002: Closed. How many password-reset requests does the rate limit allow, and in what time window? Answer: at most 5 in any rolling 60 minutes. <!-- Source: "Reset requests should be rate limited." -->
 
-Q-003: Closed. Answer: send no email. <!-- Source: coverage gap in FR-001 -->
+Q-003: Closed. What does the authentication service do when a password-reset request names an email address that is not registered? Answer: send no email. <!-- Source: coverage gap in FR-001 -->
 
 ## 6. Revision History
 

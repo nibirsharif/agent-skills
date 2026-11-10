@@ -99,6 +99,8 @@ class LintCatches(unittest.TestCase):
         self.assertCaught("Q-001: What is the limit? What is the window?", "more than one question")
         self.assertCaught("Q-001: What is the limit", "does not end with `?`")
         self.assertCaught("Q-001: Closed.", "keeps its answer")
+        self.assertCaught("Q-001: Closed. Answer: Yes.", "keeps the question")
+        self.assertEqual(run("Q-001: Closed. Do owner clicks count? Answer: Yes."), [])
         self.assertCaught("Q-001: Which fields are required, and does the agent ask for each?", "two things", "CHECK")
         self.assertCaught("Q-001: Which alert preferences can a homeowner change, and in which system?", "two things", "CHECK")
         self.assertEqual(run("Q-001: How many alerts does the limit allow, and in what time window?"), [])
