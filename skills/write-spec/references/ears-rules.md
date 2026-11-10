@@ -55,6 +55,10 @@ An event that does not happen within a time limit ("no reply within 30 seconds")
 
 A schedule or interval ("every 6 hours", "every Monday at 06:00 UTC") is a trigger at the instant it fires. Put it in a `When` clause, never in the response.
 
+An `If ... then` requirement is an exception to the `When` requirement with the same trigger: it applies in place of the `When` requirement whenever its condition holds, so the pair is not a contradiction. Never repeat the opposite of that condition in the `When` requirement. Two expected behaviours that a condition chooses between are different: each states its own condition.
+
+- **Wrong:** `When a user uploads a file of at most 25 MB, the upload service shall store the file.` beside `If a user uploads a file larger than 25 MB, then the upload service shall reject the upload.` (the exception's condition repeated)
+- **Right:** `When a user uploads a file, the upload service shall store the file.` beside the same `If ... then` requirement.
 - **Wrong:** `The backup service shall copy the database every 6 hours.` (a schedule in the response)
 - **Right:** `When 6 hours have passed since the previous database copy, the backup service shall copy the database.`
 - **Wrong:** `Where an account is on the Enterprise plan, ...` (a plan can change at runtime)
@@ -198,6 +202,18 @@ Ask when:
 
 Never invent a system, value, name, or behaviour that the input does not give, even a plausible one. Ask one direct question per gap: no padding, no hedging, no apologies.
 
+## Coverage gaps
+
+A set of requirements can pass every rule above and still leave a case undecided. A coverage gap is a case that the requirements themselves make possible and that no requirement, no answer, and no statement in the input decides. Check every requirement of the set in every reply: those the reply writes, those written earlier in the conversation, and those in the target file. An answer can open a gap in an earlier requirement, and a gap missed in an earlier reply is still a gap.
+
+For each requirement, look at:
+
+- **The trigger failing:** its input is missing or not valid, it times out, or a system or device it depends on fails.
+- **The other side of a condition:** the requirement applies only under a condition, which may be a `While` state, a limit, or a qualifier on the actor or the thing it acts on. What does the same trigger do when the condition does not hold?
+- **A refusal:** the response is a `shall not` that withholds what a requester asked for. What does the requester receive instead?
+
+Ask one question for each gap, unless another requirement decides the case or a question about it is open or closed. Never write the requirement for a gap yourself. Take gaps only from the words of the requirements and the input: a case that needs an actor, a thing, or a state that none of them mentions is not a gap.
+
 ## Validation checklist
 
 Check every requirement against every item. If an item fails, fix it when [Rewrite, or ask](#rewrite-or-ask) says to rewrite. Otherwise leave the requirement out and ask a question. A requirement that fails any item is never output.
@@ -221,6 +237,7 @@ Each requirement:
 The whole set:
 
 - Uses one term for one thing, matching the input and the target file.
-- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other. An `NFR` that sets the threshold on an `FR`'s response is not a duplicate of it.
+- Has no duplicates, and no two requirements, or a requirement and an existing one, that contradict each other. An `NFR` that sets the threshold on an `FR`'s response is not a duplicate of it, and an `If ... then` exception to a `When` requirement with the same trigger does not contradict it.
 - Uses IDs that are unique and continue each sequence (`FR`, `NFR`, `Q`) from its own highest existing ID.
 - Has a question for every statement that could not be written.
+- Has a question for every [coverage gap](#coverage-gaps).

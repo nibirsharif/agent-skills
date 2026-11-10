@@ -10,7 +10,7 @@ Turn a feature description, user story, or draft requirements into EARS requirem
 
 ## Before writing
 
-- Always read [references/ears-rules.md](references/ears-rules.md) in full before producing anything: sentence structure, the five patterns, choosing a keyword, system and response rules, testability, banned words, functional versus non-functional, what to rewrite versus ask, and the validation checklist. This file is authoritative.
+- Always read [references/ears-rules.md](references/ears-rules.md) in full before producing anything: sentence structure, the five patterns, choosing a keyword, system and response rules, testability, banned words, functional versus non-functional, what to rewrite versus ask, coverage gaps, and the validation checklist. This file is authoritative.
 - Before writing or updating a file, read [references/ears-template.md](references/ears-template.md): the specification file template and how to fill it.
 - Read [references/examples.md](references/examples.md) before your first reply in a conversation, and again whenever you are unsure of a keyword, a question, a follow-up reply, or a saved file.
 
@@ -34,7 +34,7 @@ Stop and ask instead of writing when:
 5. **Write the sentence** in the fixed clause order.
 6. **Classify** each requirement as functional or non-functional, as the rules' "Functional or non-functional" section says. The class sets the ID: `FR` for functional, `NFR` for non-functional (see [IDs](#ids)). A statement that gives a behaviour and a threshold on how fast or how well it happens becomes two requirements: an `FR` for the behaviour and an `NFR` for the threshold.
 7. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
-8. **Look for coverage gaps.** For each `When` requirement whose trigger has an evident failure case that the input does not cover (invalid or missing input, a timeout, a failure of another system), ask what the system does in that case. Never write the `If ... then` requirement for it yourself.
+8. **Look for coverage gaps** in the whole set, as the rules' [Coverage gaps](references/ears-rules.md#coverage-gaps) section says, and ask about each one.
 9. **Ask.** Give every open question an ID, and put the most important ones in this reply, as [Output](#output) says. Hold back a question whose wording depends on another's answer until that answer arrives.
 10. **Return** the requirements that passed step 7, then the open questions, then **save** if a target path is set. Chat only, when the user chose it.
 
@@ -54,11 +54,11 @@ Q-001: <one direct question>? Proposed: <value>.
 
 Put a blank line between lines so each renders on its own.
 
-Ask one gap per question, on one line, for exactly what is missing: a system, value, unit, limit, threshold, name, or the response to an evident failure case. One gap is one decision the user makes. A value with its parts is one gap: a number with its unit, a time with the percentage of cases it holds for. Two things the user could decide separately are two questions: what a limit counts per, and how high it is. No padding, hedging, or apologies.
+Ask one gap per question, on one line, for exactly what is missing: a system, value, unit, limit, threshold, name, or the response to a [coverage gap](references/ears-rules.md#coverage-gaps). One gap is one decision the user makes. A value with its parts is one gap: a number with its unit, a time with the percentage of cases it holds for. Two things the user could decide separately are two questions: what a limit counts per, and how high it is. No padding, hedging, or apologies.
 
 Add `Proposed:` only when the input suggests the value, or a named standard or common practice sets it (for example SPF, DKIM, and DMARC for email sender authentication, or WCAG 2.2 level AA). Never propose a business decision: a target, limit, retry count, retention period, price, or schedule that the business must choose. When there is nothing to propose, leave `Proposed:` out; never write `Proposed: none`. Never write the requirement until the user confirms the value.
 
-Ask at most 10 questions in one reply. Put first the questions that unblock the most requirements, then the rest in input order. When more are open, end with one line: `<N> more open questions after these.` The user can answer by ID, or accept proposals with `accept Q-001, Q-004` or `accept all proposed`. Treat an accepted proposal as the user's answer.
+Ask at most 10 questions in one reply. Put first the questions that unblock the most requirements, then the rest in input order, then the coverage-gap questions. When more are open, end with one line: `<N> more open questions after these.` The user can answer by ID, or accept proposals with `accept Q-001, Q-004` or `accept all proposed`. Treat an accepted proposal as the user's answer.
 
 When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the next open questions, at most 10. In every reply after the first, each requirement line carries one of the two markers: a requirement written for the first time is `(new)`, also when the earlier replies held only questions. A requirement that did not change is not returned.
 

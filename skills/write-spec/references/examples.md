@@ -96,7 +96,7 @@ Q-003: What does the authentication service do when a password-reset request nam
 
 The user answers the previous example: "Q-001: per account. Q-002: at most 5 in any rolling 60 minutes. Q-003: yes. Also, make the link expire after 15 minutes, and the reset email must go out within 2 minutes of the request for 99% of requests."
 
-The answers unblock two requirements, and the new input changes FR-002. The email deadline is a threshold on FR-001's response, so it is a new non-functional requirement: NFR-001, the first in its own sequence, while FR-001 stays as it is. No questions remain open, so the reply ends after the requirements.
+The answers unblock two requirements, and the new input changes FR-002. The email deadline is a threshold on FR-001's response, so it is a new non-functional requirement: NFR-001, the first in its own sequence, while FR-001 stays as it is. FR-004 withholds the email the user asked for, so the [coverage-gap](ears-rules.md#coverage-gaps) check asks what the user gets instead.
 
 ```
 FR-002 (changed): If a user opens a reset link more than 15 minutes after the reset link was sent, then the authentication service shall reject the reset link.
@@ -106,6 +106,8 @@ FR-003 (new): If a password-reset request is received for an account that alread
 FR-004 (new): If a password-reset request names an email address that is not registered, then the authentication service shall not send an email.
 
 NFR-001 (new): When a registered user requests a password reset, the authentication service shall email a reset link to the user's registered email address within 2 minutes of receiving the request for 99% of requests.
+
+Q-004: What does the authentication service display to a user whose password-reset request names an email address that is not registered?
 ```
 
 ## Nothing can be written yet
@@ -188,12 +190,14 @@ Q-002: Closed. How many password-reset requests does the rate limit allow, and i
 
 Q-003: Closed. What does the authentication service do when a password-reset request names an email address that is not registered? Answer: send no email. <!-- Source: coverage gap in FR-001 -->
 
+Q-004: What does the authentication service display to a user whose password-reset request names an email address that is not registered? <!-- Source: coverage gap in FR-004 -->
+
 ## 6. Revision History
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-03-02 | Not given. | Initial draft: FR-001, FR-002, Q-001 to Q-003 |
-| 1.1 | 2026-03-03 | Not given. | Added FR-003, FR-004, NFR-001; changed FR-002; closed Q-001 to Q-003 |
+| 1.1 | 2026-03-03 | Not given. | Added FR-003, FR-004, NFR-001; changed FR-002; closed Q-001 to Q-003; added Q-004 |
 
 ## 7. References
 
