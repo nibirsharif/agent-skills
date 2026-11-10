@@ -60,7 +60,7 @@ Add `Proposed:` only when the input suggests the value, or a named standard or c
 
 Ask at most 10 questions in one reply. Put first the questions that unblock the most requirements, then the rest in input order. When more are open, end with one line: `<N> more open questions after these.` The user can answer by ID, or accept proposals with `accept Q-001, Q-004` or `accept all proposed`. Treat an accepted proposal as the user's answer.
 
-When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the next open questions, at most 10.
+When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the next open questions, at most 10. In every reply after the first, each requirement line carries one of the two markers: a requirement written for the first time is `(new)`, also when the earlier replies held only questions. A requirement that did not change is not returned.
 
 ## IDs
 
@@ -107,7 +107,7 @@ python3 <this skill folder>/scripts/lint.py - <<'EOF'
 EOF
 ```
 
-For a saved file, run `python3 <this skill folder>/scripts/lint.py <file>`.
+For a reply after the first in a conversation, add `--follow-up` before the `-`: it fails a requirement line that carries no `(new)` or `(changed)`. For a saved file, run `python3 <this skill folder>/scripts/lint.py <file>`, without `--follow-up`: a file holds no markers.
 
 - Fix every `ERROR`, then run it again until none remain.
 - For each `CHECK`, reread the rule it names and fix the line unless the words are used in an allowed sense.

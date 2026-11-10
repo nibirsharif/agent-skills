@@ -2,6 +2,11 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## Unreleased
+
+- write-spec: every requirement in a follow-up reply carries `(new)` or `(changed)`. Before, a follow-up to a first reply that held only questions often left the marker out. The lint has a `--follow-up` option that fails an unmarked requirement line.
+- write-spec evals: new cases `followup-answers` and `followup-first-requirements`, and a benchmark in `evals/write-spec/benchmark/` with a recorded 0.10.0 baseline.
+
 ## 0.10.0
 
 - write-spec: a closed question keeps its question: `Q-NNN: Closed. <question> Answer: <answer>`, not `Closed. Answer: <answer>`, which read as `Answer: Yes.` with nothing to say what was asked. The lint fails a closed line without the question. Files saved earlier: re-add the question to each closed line, or the lint flags it when write-spec next updates the file.

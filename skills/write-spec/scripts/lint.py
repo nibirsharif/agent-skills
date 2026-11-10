@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Check EARS requirement and question lines against the mechanical rules in ears-rules.md.
 
-Usage: python3 lint.py FILE [FILE ...]    (use - to read standard input)
+Usage: python3 lint.py [--follow-up] FILE [FILE ...]    (use - to read standard input)
+
+--follow-up  the text is a chat reply after the first one in a conversation: every requirement line
+             must carry `(new)` or `(changed)`.
 
 Checks every `FR-NNN:`, `NFR-NNN:`, and `Q-NNN:` line. A file whose first heading is
 `# Requirements Specification` is also checked against the file template.
@@ -20,6 +23,7 @@ from pathlib import Path
 RULES = Path(__file__).resolve().parent.parent / "references" / "ears-rules.md"
 
 LINE_RE = re.compile(r"^(- )?((FR|NFR|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
+MARKED_RE = re.compile(r"^(- )?(FR|NFR)-\d{3,} \((new|changed)\): ")
 COMMENT_RE = re.compile(r"\s*<!--.*?-->")
 QUOTED_RE = re.compile(r'"[^"]*"|“[^”]*”|`[^`]*`')
 CLAUSE_RE = re.compile(r"(?:^|, )(Where|where|While|while|When|when|If|if) ")
@@ -168,7 +172,7 @@ class Linter:
             self.add(where, "CHECK", ident, "a number or time in a proposal: propose it only if the input suggests it "
                      "or a named standard sets it, never for a business decision")
 
-    def lint(self, name, text):
+    def lint(self, name, text, follow_up=False):
         lines = text.splitlines()
         seen, prev_is_id, run_reported = {}, False, False
         is_file = next((l for l in lines if l.startswith("# ")), "").startswith("# Requirements Specification")
@@ -185,6 +189,9 @@ class Linter:
                 self.add(where, "ERROR", ident, "needs a blank line before it and before each ID line after it, "
                          "or the lines render as one paragraph")
                 run_reported = True
+            if follow_up and not is_file and kind != "Q" and not MARKED_RE.match(line):
+                self.add(where, "ERROR", ident, "a reply after the first marks every requirement: "
+                         "`(new)` when it is written for the first time, `(changed)` when it was rewritten")
             seen.setdefault(ident, []).append(n)
             body = COMMENT_RE.sub("", body).strip()
             (self.question if kind == "Q" else self.requirement)(where, ident, body)
@@ -245,10 +252,12 @@ def main(argv):
     if not argv:
         print(__doc__.strip())
         return 2
+    follow_up = "--follow-up" in argv
+    argv = [a for a in argv if a != "--follow-up"]
     linter = Linter(banned_patterns())
     for arg in argv:
         text = sys.stdin.read() if arg == "-" else Path(arg).read_text()
-        linter.lint("stdin" if arg == "-" else arg, text)
+        linter.lint("stdin" if arg == "-" else arg, text, follow_up)
     for where, level, ident, message in linter.findings:
         print(f"{where}: {level} {ident}: {message}")
     errors = sum(1 for f in linter.findings if f[1] == "ERROR")

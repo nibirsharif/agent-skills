@@ -127,6 +127,20 @@ class LintCatches(unittest.TestCase):
         self.assertEqual(run("FR-001: Withdrawn. Moved to NFR-002."), [])
         self.assertCaught("FR-001: Withdrawn because it moved.", "withdrawn line")
 
+    def test_follow_up_reply_needs_markers(self):
+        plain = "FR-001: The billing service shall send a receipt."
+        marked = "FR-001 (new): The billing service shall send a receipt.\n\nQ-002: What is the limit?"
+
+        def follow_up(text):
+            linter = lint.Linter(PATTERNS)
+            linter.lint("t.md", text, follow_up=True)
+            return [f[3] for f in linter.findings if f[1] == "ERROR"]
+
+        self.assertEqual(errors(plain), [])
+        self.assertEqual(follow_up(marked), [])
+        self.assertTrue(any("marks every requirement" in m for m in follow_up(plain)))
+        self.assertTrue(any("marks every requirement" in m for m in follow_up(plain.replace("FR", "NFR"))))
+
     def test_layout(self):
         self.assertCaught("FR-001: The billing service shall send a receipt.\n"
                           "FR-002: The billing service shall log the receipt.", "blank line")
