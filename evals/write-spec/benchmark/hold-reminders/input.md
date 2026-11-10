@@ -1,0 +1,1 @@
+Reminder emails for appointments (clinic booking service). Patients get a reminder 24h before their appointment and another 2h before. Don't send reminders for cancelled appointments. Patients can opt out of reminders. If the appointment was booked less than 24h ahead, skip the first reminder.

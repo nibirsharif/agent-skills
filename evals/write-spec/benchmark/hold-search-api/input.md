@@ -1,0 +1,1 @@
+Public search endpoint for the catalogue API: GET /products?q= returns matching products, 20 per page, sorted by relevance. Clients page with a cursor. Anonymous clients are limited to 60 requests per minute; clients with an API key get more. Over the limit returns 429.

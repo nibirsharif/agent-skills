@@ -1,0 +1,1 @@
+Team workspaces in the notes service: a workspace has members and one or more admins. Admins invite people by email; an invite is valid for 72 hours. Members can read and edit every note in the workspace. Only admins can delete notes. When the last admin leaves, the oldest member becomes admin.

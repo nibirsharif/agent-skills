@@ -1,0 +1,1 @@
+Requirements for the thermostat controller: when the room temperature falls 0.5 °C below the setpoint, the thermostat controller switches the heating relay on. When the room temperature reaches the setpoint, it switches the heating relay off. While the window sensor reports an open window, the heating relay stays off. The user sets the setpoint with the dial, between 5 and 30 °C.
