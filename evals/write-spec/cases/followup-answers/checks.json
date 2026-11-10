@@ -1,0 +1,59 @@
+{
+  "description": "A follow-up turn that answers three of six questions and adds a deadline. The unblocked requirements are marked (new) and continue the FR sequence, the deadline starts the NFR sequence, FR-001 is unchanged and is not repeated, the answered questions are not asked again, and the three unanswered questions stay open under their own IDs.",
+  "counts": {
+    "new functional requirements": {
+      "pattern": "^FR-00[23] \\(new\\): ",
+      "min": 2,
+      "max": 2
+    },
+    "open questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 3,
+      "max": 7
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^FR-00[23] \\(new\\): [^\\n]*14 days[^\\n]*the ticket service shall close",
+      "why": "Q-001 and Q-002 unblock the closing requirement"
+    },
+    {
+      "pattern": "^FR-00[23] \\(new\\): If [^\\n]*not valid[^\\n]*, then the ticket service shall reject the submission",
+      "why": "an accepted proposal is the user's answer, and invalid input is unwanted: If ... then"
+    },
+    {
+      "pattern": "^NFR-001 \\(new\\): [^\\n]*the ticket service shall email[^\\n]*within 1 minute of the submission",
+      "why": "the deadline is a threshold on FR-001's response: a new NFR, the first in its own sequence"
+    },
+    {
+      "pattern": "^Q-003: ",
+      "why": "an unanswered question stays open under its own ID"
+    },
+    {
+      "pattern": "^Q-004: ",
+      "why": "an unanswered question stays open under its own ID"
+    },
+    {
+      "pattern": "^Q-005: ",
+      "why": "an unanswered question stays open under its own ID"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(FR|NFR)-\\d+: ",
+      "why": "every requirement in a follow-up reply is marked (new) or (changed)"
+    },
+    {
+      "pattern": "^FR-001",
+      "why": "the deadline does not change FR-001: an unchanged requirement is not returned"
+    },
+    {
+      "pattern": "^Q-00[126]: ",
+      "why": "answered questions are closed, not asked again"
+    },
+    {
+      "pattern": "^FR-\\d+[^\\n]*within 1 minute",
+      "why": "the deadline is an NFR, not part of an FR"
+    }
+  ]
+}

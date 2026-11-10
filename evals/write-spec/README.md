@@ -7,6 +7,8 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `prd-solar-monitoring` | A 40-statement PRD full of traps: misuse written with When, a runtime setting written with Where, a response that needs judgement, `or` between responses, a contradiction, a statement with no system, an `only` that must stay a prohibition, a schedule, an implementation choice, business decisions, open limits, a time with no time zone, project dates. Also batching: more than 10 gaps. |
 | `clean-feature` | A complete input: everything is written, and at most the coverage-gap question is asked. |
 | `nfr-ids` | Functional and non-functional requirements take separate `FR` and `NFR` sequences, and a deadline on a behaviour is split into an `FR` and an `NFR`. |
+| `followup-answers` | A follow-up turn: three of six questions are answered and a deadline is added. New requirements are marked `(new)` and continue the sequences, the unchanged requirement is not repeated, answered questions are not asked again, and unanswered ones keep their IDs. |
+| `followup-first-requirements` | A follow-up turn after a first reply of questions only: the first requirements are still marked `(new)`, start at `FR-001`, and new questions continue after the highest `Q` ID. |
 | `vague-only` | Only impressions and no system: questions only. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
 | `ask-location` | No path in the request, no `spec_output_dir` (the input is sent as written, not through the chat-only prompt): the reply is the one location question and no requirement. |

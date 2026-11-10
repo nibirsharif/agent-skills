@@ -1,0 +1,43 @@
+{
+  "description": "A follow-up turn after a first reply that held only questions. The answers unblock the first requirements: each is marked (new), the FR sequence starts at 001, the answered questions are not asked again, and a new question continues the Q sequence after Q-005.",
+  "counts": {
+    "new requirements": {
+      "pattern": "^FR-\\d+ \\(new\\): ",
+      "min": 2,
+      "max": 5
+    },
+    "open questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 0,
+      "max": 6
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^FR-001 \\(new\\): ",
+      "why": "the FR sequence starts at 001, and a first-written requirement in a follow-up reply is marked (new)"
+    },
+    {
+      "pattern": "^FR-\\d+ \\(new\\): (While [^\\n]*, when|When) (a|the) member[^\\n]* scans a book at the kiosk, the loan service shall record",
+      "why": "Q-001 unblocks the loan requirement"
+    },
+    {
+      "pattern": "^FR-\\d+ \\(new\\): [^\\n]*5 books on loan[^\\n]*the loan service shall reject the loan and display \"Loan limit reached\"",
+      "why": "Q-002 unblocks the limit requirement, with the user's response and text"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(FR|NFR)-\\d+: ",
+      "why": "every requirement in a follow-up reply is marked (new) or (changed)"
+    },
+    {
+      "pattern": "^Q-00[1-5]: ",
+      "why": "answered questions are closed, not asked again, and a new question takes the next free ID"
+    },
+    {
+      "pattern": "^(FR|NFR)-\\d+[^\\n]*\\bup to\\b",
+      "why": "up to leaves the boundary open: the answer to Q-002 fixed it"
+    }
+  ]
+}
