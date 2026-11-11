@@ -7,7 +7,8 @@ Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to d
 - write-spec: every requirement in a follow-up reply carries `(new)` or `(changed)`. Before, a follow-up to a first reply that held only questions often left the marker out. The lint has a `--follow-up` option that fails an unmarked requirement line.
 - write-spec: a new "Coverage gaps" section in the rules replaces the one-line failure-case check. Every reply now checks the whole set, not only the requirements it writes: a trigger failing, the other side of a condition, and what a requester receives when a `shall not` refuses the request. A follow-up reply can therefore ask new questions about earlier requirements.
 - write-spec: an `If ... then` requirement is an exception to the `When` requirement with the same trigger, and the `When` requirement no longer repeats the opposite of its condition (`for a report of at most 100,000 rows`).
-- write-spec evals: new cases `followup-answers` and `followup-first-requirements`, and a benchmark in `evals/write-spec/benchmark/` with a recorded 0.10.0 baseline.
+- write-spec: when a statement names no system, the skill now looks in the project (the Systems lines of saved requirements files, the root README, and the top-level folder names) and, if they name exactly one candidate, asks with `Proposed: the <name>`. The name is written into a requirement only after you accept it. Before, the question came with no proposal.
+- write-spec evals: new cases `followup-answers`, `followup-first-requirements`, and `propose-system`, and a benchmark in `evals/write-spec/benchmark/` with a recorded 0.10.0 baseline.
 
 ## 0.10.0
 

@@ -1,0 +1,22 @@
+{
+  "description": "The input names no system. The project's README names one, the meter service, so the system question proposes it. The name comes from the project, not from the user, so no requirement is written until the user confirms.",
+  "counts": {
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 1,
+      "max": 3
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^Q-\\d+: Which (system|service|component)[^\\n]*\\? Proposed: the meter service\\.$",
+      "why": "the project names one candidate, so the system question proposes it"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(FR|NFR)-\\d+",
+      "why": "a system name found in the project is not written into a requirement before the user confirms it"
+    }
+  ]
+}

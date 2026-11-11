@@ -36,6 +36,8 @@ Set `spec_output_dir` in [the config](../README.md#configuration) and the result
 
 **Why does it ask new questions after I answer?** Every reply checks the whole set of requirements for cases nothing decides yet: a trigger that fails, the other side of a condition, and what a user receives when a `shall not` refuses a request. Your answers add requirements, and those can open such cases.
 
+**Why does it ask which system, when my project has only one?** A requirement must name the system that acts, and the skill never writes a name you did not give. It does look at your saved requirements files, the root README, and the top-level folder names, and when they point to one system it asks with that name as `Proposed:`. Reply `accept Q-001` to use it.
+
 **A behaviour with a deadline became two requirements. Why?** The behaviour is an `FR` and the threshold is an `NFR`, so the plan can place the threshold with the behaviour it constrains. A timeout that triggers a response stays functional.
 
 **Why so many questions?** Each is one decision you would otherwise find out about in code review. Accept the proposals you agree with and answer the rest.

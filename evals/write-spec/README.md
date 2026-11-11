@@ -9,6 +9,7 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `nfr-ids` | Functional and non-functional requirements take separate `FR` and `NFR` sequences, and a deadline on a behaviour is split into an `FR` and an `NFR`. |
 | `followup-answers` | A follow-up turn: three of six questions are answered and a deadline is added. New requirements are marked `(new)` and continue the sequences, the unchanged requirement is not repeated, answered questions are not asked again, and unanswered ones keep their IDs. |
 | `followup-first-requirements` | A follow-up turn after a first reply of questions only: the first requirements are still marked `(new)`, start at `FR-001`, and new questions continue after the highest `Q` ID. |
+| `propose-system` | The input names no system and the project's README names one: the question carries it as `Proposed:`, and no requirement is written before the user confirms. The project is in the case's `dirty/` folder. |
 | `vague-only` | Only impressions and no system: questions only. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
 | `ask-location` | No path in the request, no `spec_output_dir` (the input is sent as written, not through the chat-only prompt): the reply is the one location question and no requirement. |
