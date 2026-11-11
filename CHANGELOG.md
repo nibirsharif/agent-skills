@@ -2,7 +2,7 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
-## Unreleased
+## 0.11.0
 
 - write-spec: every requirement in a follow-up reply carries `(new)` or `(changed)`. Before, a follow-up to a first reply that held only questions often left the marker out. The lint has a `--follow-up` option that fails an unmarked requirement line.
 - write-spec: a new "Coverage gaps" section in the rules replaces the one-line failure-case check. Every reply now checks the whole set, not only the requirements it writes: a trigger failing, the other side of a condition, and what a requester receives when a `shall not` refuses the request. A follow-up reply can therefore ask new questions about earlier requirements.
