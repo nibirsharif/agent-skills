@@ -13,7 +13,7 @@ Cases that run build-phase on the made-up `textstats` project in [fixture/](fixt
 
 [hooks.py](hooks.py) checks that the reply is only the summary, in the contract's line order. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
 
-Known, at 3 runs each (Sonnet): `missing-tasks` puts a sentence before the summary in about two runs in three, and one `rework-recovers` run had its implement-task subagent use `git stash`, which implement-task's rules forbid.
+Known, at 3 runs each (Sonnet): 7 of 12 on 15 November 2026, every miss a sentence before a correct summary (`manual-check-done` 1 of 3, `rework-recovers` 1 of 3, `missing-tasks` 3 of 3). `missing-tasks` does this in most runs, on 0.11.0 as well: 16 of 20 runs that day across both versions. Earlier, one `rework-recovers` run had its implement-task subagent use `git stash`, which implement-task's rules forbid.
 
 Case folders, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).
 

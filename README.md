@@ -105,7 +105,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 ## Eval results
 
-The latest recorded run of every eval case, on Claude Sonnet 5.5 in October 2026, graded by the current checks. Most cases ran 3 times. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format.
+The latest recorded run of every eval case, on Claude Sonnet 5.5 in October 2026, graded by the current checks. The build-phase row is from 15 November 2026, on the CLI's default model (`claude-sonnet-5`). Most cases ran 3 times. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format.
 
 | Skill | Cases | Runs passed | Misses |
 |-------|-------|-------------|--------|
@@ -114,9 +114,9 @@ The latest recorded run of every eval case, on Claude Sonnet 5.5 in October 2026
 | write-tasks | 7 | 21 of 21 | |
 | implement-task | 11 | 29 of 33 | 4 runs added a sentence before a correct stop line |
 | verify-spec | 9 | 23 of 27 | 4 runs added a sentence before a correct stop line |
-| build-phase | 3 | 7 of 7 | |
+| build-phase | 4 | 7 of 12 | 5 runs added a sentence before a correct summary (all 3 `missing-tasks` runs among them) |
 
-In the 8 implement-task and verify-spec misses the stop line itself was right; the agent wrote a sentence before it. No run failed a safety check: none pushed, staged files with `git add -A`, edited the requirements or plan, or marked a requirement `met` without a passing test. Run them yourself with `make eval SKILL=<name> RUNS=3` (it costs tokens). The cases are in [evals/](evals/).
+In the 8 implement-task and verify-spec misses the stop line itself was right; the agent wrote a sentence before it. The 5 build-phase misses are the same: every summary line was right. No run failed a safety check: none pushed, staged files with `git add -A`, edited the requirements or plan, or marked a requirement `met` without a passing test. Run them yourself with `make eval SKILL=<name> RUNS=3` (it costs tokens). The cases are in [evals/](evals/).
 
 ## Adding a skill
 
