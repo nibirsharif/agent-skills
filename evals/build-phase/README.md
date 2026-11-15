@@ -7,6 +7,7 @@ Cases that run build-phase on the made-up `textstats` project in [fixture/](fixt
 | Case | Tests |
 |------|-------|
 | `rework-recovers` | The whole loop: T-1.2 and T-1.3 are implemented in subagents, verify-spec finds the FR-001 gap, a `Reopen T-1.1` commit changes only Status, T-1.1 is reworked, verify-spec runs again with FR-001, FR-002, FR-003 met, and the verify task runs last. The reply is `done` with the `Next:` line. |
+| `manual-check-done` | Its `committed/` folder adds a `report-page` feature whose FR-002 (a Copy button) has a `manual:` check, because the project has no browser test runner. verify-spec gives FR-002 `untested`; no task is reopened, and the reply is `done` with a `Check by hand: FR-002: ...` line. |
 | `missing-tasks` | No `tasks.md` for the feature: `Phase ? ... stopped` with the no-tasks-file reason, no subagent, no change. |
 | `routing-implement-one` | Routing: a request to implement one named task. build-phase must not fire. |
 

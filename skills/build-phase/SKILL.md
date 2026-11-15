@@ -1,6 +1,6 @@
 ---
 name: build-phase
-description: Build one phase of a saved tasks.md end to end. Runs implement-task for each task in a fresh subagent, then verify-spec for the phase in a separate subagent, and reopens and reworks the tasks behind any requirement that is not met, up to a round limit. Stops at the phase boundary with the phase branch ready for you to push and review. Never pushes, never opens a PR, never changes requirements, the plan, or the task list's contents. Run it by typing its name, with the feature and optionally the phase.
+description: Build one phase of a saved tasks.md end to end. Runs implement-task for each task in a fresh subagent, then verify-spec for the phase in a separate subagent, and reopens and reworks the tasks behind any requirement that is not met, up to a round limit. A requirement only a person can check is listed for you instead of reworked. Stops at the phase boundary with the phase branch ready for you to push and review. Never pushes, never opens a PR, never changes requirements, the plan, or the task list's contents. Run it by typing its name, with the feature and optionally the phase.
 disable-model-invocation: true
 ---
 
@@ -16,6 +16,7 @@ Your last message is the summary, exactly these lines as plain text, and nothing
 - `Branch: <branch>`
 - `Tasks: <k> implemented, <r> reworked`
 - `Verify: <the Tally line of the last report>`, or `Verify: not run`
+- `Check by hand: <ID>: <check>`, one line for each requirement a person must check, only when there are any
 - `Stopped: <the stop line or reason>`, only when stopped
 - `Next: push <branch>, open a PR titled "<feature> phase <n>: <phase title>", and run /code-review`, only when done
 
@@ -34,6 +35,6 @@ This skill only schedules work and reopens tasks. It never edits code, tests, or
 1. **Find the files and the phase**, as the rules say. No `tasks.md`: stop.
 2. **Implement:** for each build task of the phase in order (not the verify task), start a subagent that calls the Skill tool with `implement-task` for that task. Parse its reply with [scripts/parse_reply.py](scripts/parse_reply.py) (or by the same shapes when you cannot run commands). A done report goes on; anything else is handled as the rules say.
 3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report.
-4. **Rework:** a row that is `unmet`, `partial`, or `untested` reopens the build tasks behind it and sends them through step 2 again, then step 3, up to `build_max_rework_rounds` rounds (default 2).
+4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to `build_max_rework_rounds` rounds (default 2).
 5. **Close:** with no gaps, run the phase's verify task through `implement-task`.
 6. **Finish** with the summary.

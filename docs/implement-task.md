@@ -4,7 +4,7 @@ Instructions the agent follows: [skills/implement-task/SKILL.md](../skills/imple
 
 ## Overview
 
-Implements one task from a saved `tasks.md`: the task you name (`T-1.2`), or the next `Todo` task whose dependencies are `Done`. It reads the task's phase in `plan.md`, the requirements the task covers, and the code; changes only the files the task lists; adds the test its Done when names; and runs the full test suite. When everything passes, it sets the task's Status to `Done` and commits the change on the feature branch, one commit per task. It never pushes.
+Implements one task from a saved `tasks.md`: the task you name (`T-1.2`), or the next `Todo` task whose dependencies are `Done`. It reads the task's phase in `plan.md`, the requirements the task covers, and the code; changes only the files the task lists; adds the test its Done when names; and runs the full test suite. A check marked `manual:` is for a person: the skill builds the behaviour, adds no test for it, and does not make the check ([rule](../skills/implement-task/references/implement-rules.md#tests)). When everything passes, it sets the task's Status to `Done` and commits the change on the feature branch, one commit per task. It never pushes.
 
 Run it again for the next task. When every task is `Done`, each phase branch holds one commit per task, ready for review as one PR.
 

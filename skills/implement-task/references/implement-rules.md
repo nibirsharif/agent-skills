@@ -29,7 +29,8 @@ These rules are authoritative for `implement-task`. A change is checked against 
 - Run the project's test command: `test_command` from `.agent-skills-config.yaml` in the project root, else `~/.agent-skills-config.yaml` when set, else the existing one (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the done report's Check line.
 - The full suite must be green, not only the new test.
 - Never skip, delete, or weaken a test, and never change an assertion to match the code.
-- **Verify task:** runs the phase's Verify list from `plan.md` and the full suite. It changes no code. Any failure is the failed-check stop line.
+- **Manual check:** a Done when check that starts with `manual:` after its ID (`FR-007: manual: ...`) is made by a person, later. Build the behaviour it describes, add no test for it, and never make the check yourself or report it as made. The task's other checks and the full suite still run. A check without the word is never treated as manual.
+- **Verify task:** runs the phase's Verify list from `plan.md` and the full suite, leaving out each ID whose check in its Done when starts with `manual:`. It changes no code. Any failure is the failed-check stop line.
 - A failure you cannot fix within the task's Files is the failed-check stop line. Leave the change uncommitted for the user to see and leave Status `Todo`.
 
 ## Git
@@ -86,7 +87,7 @@ Uncommitted changes in textstats/counts.py. Commit or stash them, then run imple
 Run every item before setting Status and committing.
 
 1. Every changed file is in the task's Files (or is the path chosen for one of its `new:` files), plus `tasks.md`.
-2. The test Done when names exists and passed; the full suite passed.
+2. The test Done when names exists and passed (a `manual:` check names none and was not made); the full suite passed.
 3. No test was skipped, deleted, or weakened.
 4. `requirements.md`, `plan.md`, and every other task are unchanged; only this task's Status line changed in `tasks.md`.
 5. No blocked requirement or open question was implemented or answered.

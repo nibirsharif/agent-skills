@@ -32,10 +32,22 @@ Every task has six parts, in this order:
 - **Covers:** the `FR` and `NFR` IDs the task builds or proves. At least one, and only IDs from its own phase.
 - **Files:** each file the task adds or changes, as `` `path` `` for an existing file or `new: <what it is>`, tests included. At most `tasks_max_files_per_task` (default 3).
 - **Depends on:** the IDs of earlier tasks it needs, or `None.`. A task depends only on tasks that come before it in the file.
-- **Done when:** one line: for each ID in Covers, `<ID>: <a test to add, command to run, or behaviour to observe>`. A check a reviewer can run or see, not "works" or "reviewed".
+- **Done when:** one line: for each ID in Covers, `<ID>: <a test to add or command to run>`, or `<ID>: manual: <what a person does and sees>` where [Manual checks](#manual-checks) allows it. A check a reviewer can run or see, not "works" or "reviewed".
 - **Status:** `Todo` in a new task. Only `implement-task` sets it to `Done`.
 
 A task holds no code and no steps inside it: the title and its check are the task.
+
+## Manual checks
+
+A check is a test or a command whenever a test runner the project already has can drive the requirement's trigger and check its response. Only when none can is the check one a person makes: something seen on a screen, a device, or paper, a message arriving in a real inbox, a judgement. That check starts with the word `manual:`.
+
+- **The word is fixed:** `<ID>: manual: <check>`, lowercase, directly after the ID. Other skills read the word, not the wording of the check, so a check for a person without it is treated as a test that is missing.
+- **The check says what to do and what to see,** exactly enough for a person who did not write the code: `FR-007: manual: in the browser, open a link older than 24 hours: the page shows "Expired"`.
+- **Per ID, not per task.** A task may prove one ID with a test and another with a manual check, separated by `;`.
+- **Never to save work.** A test that is hard or slow to write is still a test. A behaviour that part of a test can reach gets that test.
+- **Never add a runner to avoid one.** Which tools the project uses belongs to the plan: a task names no test tool that neither the plan nor the code has.
+- **The task still builds the behaviour:** its Files list the code it changes.
+- **The verify task** repeats each `manual:` check of its phase, word for word, beside the automated ones.
 
 ## Size and order
 
@@ -58,3 +70,4 @@ Run every item on the task list before returning it.
 7. Each phase ends with its verify task.
 8. Every path in Files was seen in the code; every other file is `new:`; with no codebase, every file is `new:`.
 9. No code, no new requirement, no change to the plan's phases, and no open question answered.
+10. Every check a person must make starts with `manual:` after its ID, no other check does, and none is manual where a test runner in the project can make it.

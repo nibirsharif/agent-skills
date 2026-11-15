@@ -2,6 +2,15 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.12.0
+
+- build-phase: a phase with a requirement only a person can check can now finish. An `untested` row is a gap only when a test can close it. When every build task that covers the ID marks its check `manual:`, the tasks are not reopened and the phase can end as done. Before, every `untested` row was reworked, the rework could not succeed, and the run ended in `Stopped`. `unmet` and `partial` rows are reworked as before, and verify-spec's verdicts are unchanged.
+- build-phase: the summary has a new line after `Verify:`, `Check by hand: <ID>: <check>`, one per requirement with a manual check, copied from the task's Done when.
+- write-tasks: a Done when check is a test or a command whenever a test runner the project has can make it. A check a person must make is written `<ID>: manual: <what to do and what to see>`; "behaviour to observe" without the word is no longer a check. The verify task repeats the phase's manual checks.
+- implement-task: for a `manual:` check it builds the behaviour, adds no test, and never makes or reports the check; the verify task leaves those IDs out of the Verify list it runs. The reply format is unchanged.
+- Files saved earlier: a `tasks.md` without `manual:` behaves as before. To mark a check that needs a person, add `manual:` after the ID in the task's Done when and in the verify task's.
+- build-phase evals: new case `manual-check-done`.
+
 ## 0.11.0
 
 - write-spec: every requirement in a follow-up reply carries `(new)` or `(changed)`. Before, a follow-up to a first reply that held only questions often left the marker out. The lint has a `--follow-up` option that fails an unmarked requirement line.

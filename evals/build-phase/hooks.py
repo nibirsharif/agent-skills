@@ -1,7 +1,7 @@
 """build-phase's own reply checks, run on every case except one with "fires": false.
 
-The reply is the summary and nothing else: the Phase line first, then Branch, Tasks, Verify, and a Stopped
-or Next line as the contract says.
+The reply is the summary and nothing else: the Phase line first, then Branch, Tasks, Verify, any Check by hand
+lines, and a Stopped or Next line as the contract says.
 """
 
 import re
@@ -11,6 +11,7 @@ LINES = [
     r"Branch: \S+",
     r"Tasks: \d+ implemented, \d+ reworked",
     r"Verify: .+",
+    r"Check by hand: (?:FR|NFR)-\d+: .+",
     r"Stopped: .+",
     r"Next: push \S+, open a PR titled \".+\", and run /code-review",
 ]

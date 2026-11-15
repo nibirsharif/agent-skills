@@ -39,7 +39,23 @@ Call the Skill tool with verify-spec. Verify phase <n> of <path to requirements.
 Parse its reply with `parse_reply.py verify`, with the same retry rule once for an unusable reply (a verify run changes nothing, so a retry is always safe).
 
 - **stop**: end the run with the line.
-- **report**: gaps are the rows `unmet`, `partial`, and `untested`. `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.
+- **report**: gaps are the rows `unmet` and `partial`, and each `untested` row that is not a [manual check](#manual-checks). `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.
+
+## Manual checks
+
+A task's Done when holds one check per ID, `<ID>: <check>`. A check that starts with the word `manual:` (`FR-007: manual: ...`) is made by a person: no test can turn its row into `met`, so reworking it cannot succeed.
+
+An `untested` row is a manual check, and not a gap, when at least one build task of the phase covers its ID and every build task that covers it has `manual:` at the start of that ID's check. Then:
+
+- its tasks are not reopened for it, and the phase can end as done;
+- the summary has a `Check by hand:` line for it, as [The summary](#the-summary) says.
+
+Everything else stays a gap:
+
+- An `untested` row where any covering build task has a check for that ID without the word: a test can close it.
+- An `unmet` or `partial` row, whatever its check: the code is wrong or missing.
+
+Decide by the word alone. Never conclude that a check is manual from its wording, the task's Files, or the requirement. In a `tasks.md` that has no `manual:` check, every `untested` row is a gap.
 
 ## Reopening and reworking
 
@@ -65,6 +81,8 @@ Right: the `Phase` line is the first line.
 
 `Tasks: <k> implemented, <r> reworked` counts build tasks only, each reopened task once however many rounds it took; the verify task is in neither number. When the run stops before a phase is picked (no `tasks.md`, no `requirements.md`, no `Todo` task), write the phase as `?`: `Phase ? of <feature>: stopped`, `Branch:` the branch from the start, and `Tasks: 0 implemented, 0 reworked`.
 
+`Check by hand: <ID>: <check>` is written once for each [manual check](#manual-checks) row of the last report, in the report's order, after the `Verify:` line. `<check>` is the text after `manual: ` in that ID's check, copied as written from the first build task that covers it. The lines are there whether the run is done or stopped, so a `Verify:` tally with `untested` in it is explained; with `Verify: not run` there are none. A row that is `met` or a gap gets no line.
+
 The phase title in the `Next:` line is the text after `### Phase <n>: ` in `tasks.md`, copied as written.
 
 ## Never
@@ -82,4 +100,5 @@ The phase title in the `Next:` line is the text after `### Phase <n>: ` in `task
 3. Verify ran only after every task of the phase was `Done`, in a subagent that implemented nothing.
 4. The only commits you made are `Reopen` commits that change only Status lines of `tasks.md`.
 5. Nothing was pushed, and the branch is the one `implement-task` chose.
-6. The summary lines match what happened: counts of implemented and reworked tasks, the last report's tally, and a `Stopped:` line exactly when the run stopped.
+6. The summary lines match what happened: counts of implemented and reworked tasks, the last report's tally, one `Check by hand:` line per manual check row, and a `Stopped:` line exactly when the run stopped.
+7. No task was reopened for a manual check row, and no row was treated as a manual check without the word `manual:` in every covering task.

@@ -102,6 +102,18 @@ None.
 - Out of order: `T-1.2` depends on `T-1.4`. Reorder so the dependency comes first.
 - Layers: `T-1.1 Add database`, `T-1.2 Add API`, `T-1.3 Add UI`. Each task should leave the product working; split by behaviour.
 
+## A manual check
+
+The project has unit tests and no browser test runner. `FR-003` says the reset page shows "This link has expired" for an expired link. The page's handler can be tested; what the browser shows cannot.
+
+```
+**Done when:** FR-003: manual: in a browser, open a reset link older than 15 minutes: the page shows "This link has expired"
+```
+
+- Wrong: `FR-003: the page shows the expired message`. A person must check it, and the word is missing.
+- Wrong: `FR-002: manual: check that an expired token is rejected`. A unit test can do that.
+- Wrong: `FR-003: Playwright test that ...` when neither the plan nor the code has Playwright.
+
 ## A plan that cannot be tasked
 
 The plan lists `FR-003`, and `requirements.md` has `FR-003: Withdrawn.`. Reply with the stop line only:

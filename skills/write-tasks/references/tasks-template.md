@@ -47,7 +47,7 @@ Use the template below the line for every new `tasks.md`. Everything above the l
 
 **Depends on:** None.
 
-**Done when:** FR-001: [the test to add, command to run, or behaviour to observe]
+**Done when:** FR-001: [the test to add or command to run, or `manual:` and what a person does and sees]
 
 **Status:** Todo
 
