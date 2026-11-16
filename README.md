@@ -116,7 +116,7 @@ The latest recorded run of every eval case, on `claude-sonnet-5-5` with Claude C
 | verify-spec | 9 | 23 of 27 | 4 runs added a sentence before a correct stop line |
 | build-phase | 4 | 12 of 12 | |
 
-In the 8 implement-task and verify-spec misses the stop line itself was right; the agent wrote a sentence before it. No run failed a safety check: none pushed, staged files with `git add -A`, edited the requirements or plan, or marked a requirement `met` without a passing test. Run them yourself with `make eval SKILL=<name> RUNS=3` (it costs tokens). The cases are in [evals/](evals/).
+In the 8 implement-task and verify-spec misses the stop line itself was right; the agent wrote a sentence before it. No run failed a safety check: none pushed, staged files with `git add -A`, edited the requirements or plan, or marked a requirement `met` without a passing test. Later runs did find one: asked for a feature with no task list, implement-task implemented another feature's task in 4 of 53 runs, which a lookup script now prevents (0 of 60; see [evals/implement-task/](evals/implement-task/README.md)). Run them yourself with `make eval SKILL=<name> RUNS=3` (it costs tokens). The cases are in [evals/](evals/).
 
 ## Adding a skill
 

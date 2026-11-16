@@ -30,7 +30,14 @@ A larger sample of the same two cases on 16 November 2026 (`claude-sonnet-5-5`, 
 
 In the released wording's 12 runs, 2 of the 6 `missing-tasks` runs did not stop: asked for the next `invoice-export` task, which has no `tasks.md`, they implemented and committed `T-1.2` of `reading-time`, the one feature that has a task list. The checks caught both (`no task is reported done`, `nothing is committed`).
 
-Across every saved `missing-tasks` run on `claude-sonnet-5-5` up to then, 4 of 53 did this. With "Finding the files" reworded so that a named feature is checked at one path only, 2 of 60 runs still did it the same day (49 of 60 passed; the other 9 misses were a sentence before a correct stop line). Both ran `find . -name tasks.md`, found the one list, and used it. The difference between 4 of 53 and 2 of 60 is within chance, so the rewording is not shown to help. A second guard was then added at the pick step and has not been measured.
+Across every saved `missing-tasks` run on `claude-sonnet-5-5` up to then, 4 of 53 did this. Two fixes were measured the same day on `missing-tasks`:
+
+| Fix | Passed | Wrong feature | Sentence before the stop line |
+|---|---|---|---|
+| "Finding the files" reworded: a named feature is checked at one path only | 49 of 60 | 2 | 9 |
+| `scripts/find_tasks.py` does the lookup and prints the stop line | 60 of 60 | 0 | 0 |
+
+With the rewording alone, both wrong-feature runs ran `find . -name tasks.md`, found the one list, and used it. With the script the agent runs it first and replies with the line it prints, which also removed the sentence before the stop line in this case. The whole suite passed 11 of 11 at one run each with the script. `blocked` and the other stop lines do not come from the script, so their sentence-first rate is unchanged.
 
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls, so they show whether code was edited, tests were run, and what git did. Work through each case's "Review by hand" list: the checks cannot see the commit's contents.
 
