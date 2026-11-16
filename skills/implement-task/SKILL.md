@@ -39,7 +39,7 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 
 1. **Find `tasks.md`**, as [Finding the files](#finding-the-files) says. If it is missing, reply with the stop line and stop.
 2. **Check the working tree**: only the feature's own spec files may be uncommitted, as the rules' git section says.
-3. **Pick the task** as the rules say, and check its dependencies are `Done`.
+3. **Pick the task** as the rules say, and check its dependencies are `Done`. When the user named a feature, the folder that holds `tasks.md` has that name; a `tasks.md` in any other folder is the wrong file, and the reply is the no-tasks-file stop line.
 4. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
 5. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby.
 6. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
@@ -51,11 +51,11 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 
 Find `tasks.md`, in this order:
 
-1. A path the user named.
-2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/tasks.md`. If the user names no feature, list the existing `<spec_output_dir>/*/tasks.md` files; if only one exists, use it, otherwise ask which one.
+1. A path the user named. If no file is there, reply with the no-tasks-file stop line for that path.
+2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
+   - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/tasks.md` and no other. Check that one path and do not look for other `tasks.md` files. If it does not exist, reply with the no-tasks-file stop line for that path: another feature's task list is not what the user asked for, even when it is the only one in the project.
+   - **The user names no feature:** list the existing `<spec_output_dir>/*/tasks.md` files; if only one exists, use it, otherwise ask which one.
 3. A task list the user pasted into the conversation: implement from it, but there is no Status to set; the done report's last line still names the commit.
 4. None of these: ask for the path.
-
-When the user names a feature (or a path) whose `tasks.md` does not exist, that is the no-tasks-file stop line for `<spec_output_dir>/<feature>/tasks.md`, even when other features exist. Never suggest or use another feature.
 
 `plan.md` and `requirements.md` are in the same folder as `tasks.md`. When one is missing, work from the task alone.
