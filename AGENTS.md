@@ -53,6 +53,6 @@ Versions are `MAJOR.MINOR.PATCH`. While MAJOR is 0:
 ## Commands
 
 - `make test`: validate every skill and run the unit tests. Free: no agent calls.
-- `make eval SKILL=<name>`: run a skill's eval cases through Claude Code and grade them. Costs tokens. `MODEL=`, `RUNS=`, `JUDGE=1`.
+- `make eval SKILL=<name>`: run a skill's eval cases through Claude Code and grade them. Costs tokens. `MODEL=`, `RUNS=`, `JUDGE=1`. The Summary line names the model ID and Claude Code version the runs used; copy both whenever you record a result, because an alias such as `sonnet` is a different model in different versions.
 - `make install`: symlink skills into `~/.agents/skills` and `~/.claude/skills`. `make install TARGET=<dir>` installs into one directory instead.
 - `make uninstall`: remove the symlinks this repo created.

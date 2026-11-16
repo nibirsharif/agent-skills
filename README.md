@@ -105,7 +105,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 ## Eval results
 
-The latest recorded run of every eval case, on Claude Sonnet 5.5 in October 2026, graded by the current checks. The build-phase row is from 15 November 2026, on the CLI's default model (`claude-sonnet-5`). Most cases ran 3 times. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format.
+The latest recorded run of every eval case, on `claude-sonnet-5-5` with Claude Code 2.1.296 in October 2026, graded by the current checks. The build-phase row is from 15 November 2026, on `claude-sonnet-5` with Claude Code 2.1.267; its misses depend on that model (see [evals/build-phase/](evals/build-phase/README.md)). Most cases ran 3 times. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format.
 
 | Skill | Cases | Runs passed | Misses |
 |-------|-------|-------------|--------|

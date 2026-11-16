@@ -92,18 +92,21 @@ def grade(case_dir, reply, trace=None):
 def summarize(events, watch=()):
     """Summarize a `claude -p --output-format stream-json --verbose` transcript.
 
-    Returns a dict: result (the final result event), plugin_errors (plugins that failed to load), tools (one line per tool call: name and input),
+    Returns a dict: result (the final result event), model and cli_version (what the run used, from the init
+    event, or "" when it has none), plugin_errors (plugins that failed to load), tools (one line per tool call: name and input),
     skills (names passed to the Skill tool), watch_ran and watch_blocked (tool calls whose input
     contains a string in watch, split by whether they returned output or were blocked or failed).
     """
     watched, result, tools, skills, plugin_errors = set(), {}, [], [], []
     ran = blocked = 0
+    model = cli_version = ""
     for event in events:
         # Some events carry a plain string as "message" (for example system/permission_denied).
         message = event.get("message")
         content = message.get("content") if isinstance(message, dict) else None
         content = [b for b in content if isinstance(b, dict)] if isinstance(content, list) else []
         if event.get("type") == "system" and event.get("subtype") == "init":
+            model, cli_version = str(event.get("model", "")), str(event.get("claude_code_version", ""))
             plugin_errors += [str(e.get("message", e)) for e in event.get("plugin_errors", []) if isinstance(e, dict)]
         elif event.get("type") == "assistant":
             for block in content:
@@ -125,7 +128,7 @@ def summarize(events, watch=()):
                         ran += 1
         elif event.get("type") == "result":
             result = event
-    return {"result": result, "plugin_errors": plugin_errors, "tools": tools, "skills": skills, "watch_ran": ran, "watch_blocked": blocked}
+    return {"result": result, "model": model, "cli_version": cli_version, "plugin_errors": plugin_errors, "tools": tools, "skills": skills, "watch_ran": ran, "watch_blocked": blocked}
 
 
 JUDGE_SCHEMA = {

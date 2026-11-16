@@ -128,13 +128,13 @@ def prepare_work(fixture, case_dir, work):
 
 
 def run_case(skill, case_dir, config, out, args):
-    """Run one case once. Returns (passed, report lines)."""
+    """Run one case once. Returns (passed, report lines, what ran it: "<model>, Claude Code <version>" or "")."""
     checks = json.loads((case_dir / "checks.json").read_text())
     limit = checks.get("timeout_seconds", DEFAULT_TIMEOUT)
     text = (case_dir / "input.md").read_text()
     # A routing case, or a case with "raw", is sent as written; the input then names the skill itself.
     prompt = text if "fires" in checks or checks.get("raw") else config["prompt"].replace("{input}", text)
-    report, rel = [], out.relative_to(ROOT)
+    report, rel, ran_on = [], out.relative_to(ROOT), ""
 
     with tempfile.TemporaryDirectory(prefix=f"{skill}-eval-") as tmp:
         tmp = Path(tmp)
@@ -152,7 +152,7 @@ def run_case(skill, case_dir, config, out, args):
         if code != 0:
             out.write_text(stdout)
             why = f"passed the {limit}s limit" if code is None else f"exited with {code}"
-            return False, [f"FAIL agent {why}: {agent_error(stdout, stderr)}", f"   output: {rel}"]
+            return False, [f"FAIL agent {why}: {agent_error(stdout, stderr)}", f"   output: {rel}"], ran_on
 
         trace = None
         if args.agent:
@@ -164,7 +164,8 @@ def run_case(skill, case_dir, config, out, args):
             result = trace["result"]
             reply = result.get("result", "")
             stats = {k: v for k, v in result.items() if k != "result"}
-            stats.update(watch_ran=trace["watch_ran"], watch_blocked=trace["watch_blocked"], skills=trace["skills"])
+            ran_on = ran_on_text(trace["model"], trace["cli_version"])
+            stats.update(model=trace["model"], claude_code_version=trace["cli_version"], watch_ran=trace["watch_ran"], watch_blocked=trace["watch_blocked"], skills=trace["skills"])
             out.with_suffix(".json").write_text(json.dumps(stats, indent=2))
             watched = ", ".join(config.get("watch", [])) or "watched commands"
             report.append(f"   {result.get('num_turns', '?')} turns, {time.time() - started:.0f}s, "
@@ -193,7 +194,12 @@ def run_case(skill, case_dir, config, out, args):
 
     if manual:
         report += ["", "Review by hand:"] + [f"- [ ] {item}" for item in manual]
-    return not failures, report
+    return not failures, report, ran_on
+
+
+def ran_on_text(model, cli_version):
+    """What ran a case, for the report: the model ID and the Claude Code version, whichever are known."""
+    return ", ".join(p for p in (model, f"Claude Code {cli_version}" if cli_version else "") if p)
 
 
 def main(argv):
@@ -229,17 +235,21 @@ def main(argv):
 
     with ThreadPoolExecutor(max_workers=len(jobs)) as pool:
         futures = [pool.submit(run_case, args.skill, here / "cases" / n, config, out, args) for n, _, out in jobs]
-        outcomes = []
+        outcomes, ran_on = [], set()
         for (name, i, _), future in zip(jobs, futures):
             try:
-                passed, report = future.result()
+                passed, report, on = future.result()
             except Exception as e:  # report a broken run and keep the others
-                passed, report = False, [f"FAIL runner error: {e!r}"]
+                passed, report, on = False, [f"FAIL runner error: {e!r}"], ""
+            ran_on.update([on] if on else [])
             outcomes.append((f"{name} run {i}", passed))
             print(f"\n== {name} run {i}")
             print("\n".join(report))
 
-    print(f"\n== Summary{' (' + args.model + ')' if args.model else ''}")
+    # The model the runs really used: an alias such as "sonnet" names different models in different CLI versions.
+    on = "; ".join(sorted(ran_on)) or args.model
+    print(f"\n== Summary{' (' + on + ')' if on else ''}")
+    print(f"{sum(p for _, p in outcomes)} of {len(outcomes)} runs passed")
     for label, passed in outcomes:
         print(f"{'PASS' if passed else 'FAIL'}  {label}")
     return 0 if all(p for _, p in outcomes) else 1

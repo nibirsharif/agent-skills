@@ -90,7 +90,8 @@ def tool_result(i, error):
 class Transcript(unittest.TestCase):
     def test_counts_watched_runs_and_blocks_and_skills(self):
         events = [
-            {"type": "system", "subtype": "init", "plugin_errors": [{"plugin": "p", "message": "Path escapes"}]},
+            {"type": "system", "subtype": "init", "model": "claude-sonnet-5-5", "claude_code_version": "2.1.322",
+             "plugin_errors": [{"plugin": "p", "message": "Path escapes"}]},
             tool_use("s", "Skill", {"skill": "nibirsharif-skills:write-spec"}), tool_result("s", False),
             tool_use("a", "Bash", {"command": "cat <<'EOF' | python3 skills/write-spec/scripts/lint.py -"}),
             tool_result("a", True),
@@ -106,6 +107,10 @@ class Transcript(unittest.TestCase):
         self.assertEqual(trace["skills"], ["nibirsharif-skills:write-spec"])
         self.assertEqual(len(trace["tools"]), 4)
         self.assertEqual(trace["plugin_errors"], ["Path escapes"])
+        self.assertEqual((trace["model"], trace["cli_version"]), ("claude-sonnet-5-5", "2.1.322"))
+        self.assertEqual(run.ran_on_text(trace["model"], trace["cli_version"]), "claude-sonnet-5-5, Claude Code 2.1.322")
+        self.assertEqual(grading.summarize([])["model"], "")
+        self.assertEqual(run.ran_on_text("", ""), "")
 
 
 class Fires(unittest.TestCase):
