@@ -2,6 +2,14 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.14.0
+
+- verify-spec: a new script, `scripts/find_requirements.py`, finds `requirements.md` the way implement-task's script finds `tasks.md`: run first, it prints `found <path>`, `stop <the no-requirements-file stop line>`, or `ask <what>`, and a named feature is looked up at one path only. `missing-requirements` passed 20 of 20 eval runs with it, against about 1 in 3 before, when most runs opened with a sentence.
+- build-phase: a new script, `scripts/find_tasks.py`, finds `tasks.md` and checks that `requirements.md` is beside it. For a stop it prints the whole stopped summary, so the reply is copied rather than composed. `missing-tasks` passed 10 of 10 on `claude-sonnet-5-5`, and 12 of 20 on `claude-sonnet-5`, where it passed 0 of 20 before.
+- build-phase: when git names no current branch (a detached HEAD, or not a repository), the summary's `Branch:` line is `Branch: none`.
+- The three lookup scripts share one core. A skill cannot load code from another skill's folder, so each has its own copy, and a unit test fails when the copies differ.
+- No file format, ID, or reply line changes. Where the agent cannot run commands, each skill's written lookup rules still apply.
+
 ## 0.13.0
 
 - implement-task: a new script, `scripts/find_tasks.py`, finds `tasks.md`. The skill runs it before any other search and does what it prints: `found <path>`, `stop <the no-tasks-file stop line>`, or `ask <what>`. A feature the user names is looked up at `<spec_output_dir>/<feature>/tasks.md` and nowhere else. Before, asked for a feature that has no task list, the skill sometimes searched the project, found another feature's `tasks.md`, and implemented and committed its next task (4 of 53 eval runs). With the script: 0 of 60, and no sentence before the stop line in those runs.
