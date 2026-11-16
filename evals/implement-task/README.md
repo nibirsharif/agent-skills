@@ -20,6 +20,16 @@ Cases that exercise the implement-task skill's rules on a small made-up project,
 
 Known, on 15 November 2026 with Claude Code 2.1.322, `blocked` and `missing-tasks` at 3 runs each: 2 of 6 on `claude-sonnet-5-5` and 5 of 6 on `claude-sonnet-5`. Every miss was a sentence before a correct stop line. This is the opposite of build-phase, whose summary holds on `claude-sonnet-5-5` and not on `claude-sonnet-5`, so the miss is not explained by the model alone. The samples are small.
 
+A larger sample of the same two cases on 16 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.322, 12 runs each) showed no wording that clearly helps, so none was kept:
+
+| Wording | Passed |
+|---|---|
+| 0.12.0 as released | 7 of 12 (9 of 18 with the 6 runs above) |
+| The rule stated once: the repeated "no sentence first" statements and the quoted wrong examples removed from `SKILL.md`, the rules, and the examples | 8 of 12 |
+| Count the reply's lines before sending: 1 for a stop, 5 for a done report, delete the rest | 9 of 12 |
+
+In the released wording's 12 runs, 2 of the 6 `missing-tasks` runs did not stop: asked for the next `invoice-export` task, which has no `tasks.md`, they implemented and committed `T-1.2` of `reading-time`, the one feature that has a task list. The checks caught both (`no task is reported done`, `nothing is committed`).
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls, so they show whether code was edited, tests were run, and what git did. Work through each case's "Review by hand" list: the checks cannot see the commit's contents.
 
 ```bash
