@@ -11,9 +11,9 @@ Cases that run build-phase on the made-up `textstats` project in [fixture/](fixt
 | `missing-tasks` | No `tasks.md` for the feature: `Phase ? ... stopped` with the no-tasks-file reason, no subagent, no change. |
 | `routing-implement-one` | Routing: a request to implement one named task. build-phase must not fire. |
 
-[hooks.py](hooks.py) checks that the reply is only the summary, in the contract's line order. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
+[hooks.py](hooks.py) grades two things apart, so a run shows which one failed: `summary: ...` when the summary lines themselves are wrong, and `outside the summary: ...` when the reply has other text, such as a sentence before a correct summary. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
 
-Known, at 3 runs each (Sonnet): 7 of 12 on 15 November 2026, every miss a sentence before a correct summary (`manual-check-done` 1 of 3, `rework-recovers` 1 of 3, `missing-tasks` 3 of 3). `missing-tasks` does this in most runs, on 0.11.0 as well: 16 of 20 runs that day across both versions. Earlier, one `rework-recovers` run had its implement-task subagent use `git stash`, which implement-task's rules forbid.
+Known, at 3 runs each (Sonnet): 7 of 12 on 15 November 2026, every miss a sentence before a correct summary (`manual-check-done` 1 of 3, `rework-recovers` 1 of 3, `missing-tasks` 3 of 3). `missing-tasks` does this in most runs, on 0.11.0 as well: 16 of 20 runs that day across both versions. The rate depends on the machine: the same day on Linux (Claude Code 2.1.322, Sonnet 5.5, output style `default`, no user `CLAUDE.md`), `missing-tasks` on 0.12.0 passed 14 of 15 runs, the one miss again a sentence before a correct summary. No wording change was tried there, because one could not be measured against that baseline. Earlier, one `rework-recovers` run had its implement-task subagent use `git stash`, which implement-task's rules forbid.
 
 Case folders, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).
 
