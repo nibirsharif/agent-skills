@@ -32,7 +32,7 @@ This skill only schedules work and reopens tasks. It never edits code, tests, or
 
 ## Workflow
 
-1. **Find the files and the phase**, as the rules say. No `tasks.md`: stop.
+1. **Find the files and the phase**, as the rules say: the lookup script first. When it prints `stop`, the lines after it are your whole reply.
 2. **Implement:** for each build task of the phase in order (not the verify task), start a subagent that calls the Skill tool with `implement-task` for that task. Parse its reply with [scripts/parse_reply.py](scripts/parse_reply.py) (or by the same shapes when you cannot run commands). A done report goes on; anything else is handled as the rules say.
 3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report.
 4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to `build_max_rework_rounds` rounds (default 2).

@@ -4,8 +4,11 @@ These rules are authoritative for `build-phase`. A run is checked against the [c
 
 ## Finding the files and the phase
 
-- `tasks.md`: a path the user named, else `<spec_output_dir>/<feature-name>/tasks.md`, with `spec_output_dir` from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`. With no feature named and one `tasks.md` under `spec_output_dir`, use it; with several, ask which. If the file does not exist, the summary is `stopped` with `Stopped: No tasks file found at <path>. Run write-tasks first, then run build-phase again.`
-- `plan.md` and `requirements.md` are beside it. Without `requirements.md`, stop: `Stopped: No requirements file found at <path>. Run write-spec first, then run build-phase again.`
+- Run [find_tasks.py](../scripts/find_tasks.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. Do what it prints:
+  - `found <path>`: that is `tasks.md`, with `plan.md` and `requirements.md` beside it. Use it and no other.
+  - `stop`, then the lines of a stopped summary: those lines are your whole reply. Another feature's task list is not what the user asked for, even when it is the only one in the project.
+  - `ask <what>`: ask the user that.
+- Only when you cannot run commands, find the files yourself by the same rules. `tasks.md`: a path the user named, else `<spec_output_dir>/<feature-name>/tasks.md` and no other, with `spec_output_dir` from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`. With no feature named and one `tasks.md` under `spec_output_dir`, use it; with several, ask which. If the file does not exist, the summary is `stopped` with `Stopped: No tasks file found at <path>. Run write-tasks first, then run build-phase again.` Without `requirements.md` beside it, stop: `Stopped: No requirements file found at <path>. Run write-spec first, then run build-phase again.`
 - **Phase:** the one the user named. Otherwise the first phase of `tasks.md`, in file order, that has a `Todo` task. If none has, stop with `Every task in <path> is Done.`; that is also the stop when a named phase has no `Todo` task and no gap to find.
 - Settings from the same config files: `build_max_rework_rounds` (default 2), and `test_command`, `base_branch`, `branch_prefix`, which the build and verify subagents read themselves.
 - Run `git branch --show-current` once at the start. Do not change branch yourself: `implement-task` does.

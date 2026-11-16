@@ -58,13 +58,20 @@ Work silently: do not narrate what you found or which rule applies.
 
 ## Finding the files
 
-Find the requirements, in this order:
+Requirements the user pasted into the conversation need no file: verify against exactly those, with no plan and so no phase scoping. Add nothing from a file, and do not compare them with one, even when a file has the same IDs.
 
-1. Requirements the user pasted into the conversation: verify against exactly those, with no plan and so no phase scoping. Add nothing from a file, and do not compare them with one, even when a file has the same IDs.
-2. A path the user named.
-3. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`. If the user names no feature, list the existing `<spec_output_dir>/*/requirements.md` files; if only one exists, use it, otherwise ask which one.
-4. None of these: ask for the path.
+Otherwise run [scripts/find_requirements.py](scripts/find_requirements.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. It prints one line, and you do what it says:
 
-When the user names a feature (or a path) whose `requirements.md` does not exist, that is the no-requirements-file stop line for `<spec_output_dir>/<feature>/requirements.md`, even when other features exist. Never suggest or use another feature.
+- `found <path>`: that is `requirements.md`. Use it and no other.
+- `stop <line>`: `<line>` is your whole reply. Another feature's requirements are not what the user asked for, even when they are the only ones in the project.
+- `ask <what>`: ask the user that.
+
+Only when you cannot run commands, find it yourself by the same rules:
+
+1. A path the user named. If no file is there, reply with the no-requirements-file stop line for that path.
+2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
+   - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/requirements.md` and no other. Check that one path and do not look for other `requirements.md` files. If it does not exist, reply with the no-requirements-file stop line for that path.
+   - **The user names no feature:** list the existing `<spec_output_dir>/*/requirements.md` files; if only one exists, use it, otherwise ask which one.
+3. None of these: ask for the path.
 
 `plan.md` is in the same folder as `requirements.md`. It is optional: it supplies phase scoping and the list of blocked requirements. `tasks.md` is never read.
