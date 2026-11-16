@@ -24,6 +24,8 @@ Known, at 3 runs each on 15 November 2026: 12 of 12 on `claude-sonnet-5-5` (Clau
 
 To reproduce the miss on a newer Claude Code, pass `--model claude-sonnet-5`. Earlier, one `rework-recovers` run had its implement-task subagent use `git stash`, which implement-task's rules forbid.
 
+With `scripts/find_tasks.py` doing the lookup and printing the whole stopped summary (16 November 2026, Claude Code 2.1.322), `missing-tasks` passed 12 of 20 on `claude-sonnet-5`, against 0 of 20 before and at most 4 of 15 with any wording; the 8 misses were still a sentence before a correct summary. On `claude-sonnet-5-5` it passed 10 of 10, and the whole suite 4 of 4 at one run each.
+
 Case folders, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).
 
 ```bash
