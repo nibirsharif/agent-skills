@@ -44,6 +44,8 @@ The full list is in [the rules](../skills/implement-task/references/implement-ru
 
 **Which branch does it commit to?** One branch per phase, named `<feature>/phase-<n>`, for example `password-reset/phase-1` (set `branch_prefix` in `.agent-skills-config.yaml` to put a prefix such as `team/` in front). From `main` (or your default branch; set `base_branch` if it is something else), or from another phase branch of the feature, it switches to the task's phase branch, creating it when needed: phase 1 from the default branch, later phases from the previous phase's branch while that is unmerged (so they stack), else from the default branch. Each phase branch is one reviewable PR. On any other branch it stays where it is.
 
+**What if the feature I name has no task list?** It replies with one line, `No tasks file found at <path>. Run write-tasks first, then run implement-task again.`, and changes nothing. It never falls back to another feature's `tasks.md`, even when that is the only one in the project: a script does the lookup at the one path your feature name gives.
+
 **Why does it refuse a dirty working tree?** So each commit holds only its own task. Commit or stash your changes first.
 
 **What about the spec files that write-spec, write-plan, and write-tasks just saved?** They are the one exception. On its first run the skill commits the feature's folder as `Add <feature-name> spec` on the first phase's branch, then commits the task. It does this without asking, so review those files first if you want to change them; the commit is local and you can amend or drop it before merging.

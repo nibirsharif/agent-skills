@@ -41,7 +41,7 @@ Requirements are written in [EARS](https://alistairmavin.com/ears/) (Easy Approa
 
 - **Claude Code.** The skills are built and tested on it. `build-phase` runs other skills in subagents through Claude Code's Agent and Skill tools, so it needs Claude Code.
 - **git**, for `implement-task`, `verify-spec`, and `build-phase`: they work on branches and commits.
-- **Python 3** (standard library only), for the scripts that lint requirements and read replies. A skill still works when the agent cannot run commands.
+- **Python 3** (standard library only), for the scripts that lint requirements, find the task list, and read replies. A skill still works when the agent cannot run commands.
 
 The other five skills are plain `SKILL.md` folders and load in any agent that reads the Agent Skills format, but they are only tested on Claude Code. Agents that ignore `disable-model-invocation` may start the user-only skills on their own.
 

@@ -2,6 +2,15 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.13.0
+
+- implement-task: a new script, `scripts/find_tasks.py`, finds `tasks.md`. The skill runs it before any other search and does what it prints: `found <path>`, `stop <the no-tasks-file stop line>`, or `ask <what>`. A feature the user names is looked up at `<spec_output_dir>/<feature>/tasks.md` and nowhere else. Before, asked for a feature that has no task list, the skill sometimes searched the project, found another feature's `tasks.md`, and implemented and committed its next task (4 of 53 eval runs). With the script: 0 of 60, and no sentence before the stop line in those runs.
+- implement-task: where the agent cannot run commands, the written lookup rules still apply. They now state the named-feature case first and say not to look for other `tasks.md` files.
+- No file format, ID, or reply line changes. The skill needs Python 3 for the lookup, as the other scripts do.
+- Evals: `evals/run.py` prints the model ID and the Claude Code version in its Summary line, with a pass count, and saves both in each run's stats. The alias `sonnet` is a different model in different Claude Code versions, and results recorded without the model ID could not be compared.
+- build-phase evals: the hook reports a wrong summary (`summary: ...`) and text around a correct one (`outside the summary: ...`) separately. Both still fail a run.
+- Eval results: build-phase passes 12 of 12 on `claude-sonnet-5-5`. Its sentence before the summary is specific to `claude-sonnet-5` (0 of 20 on `missing-tasks`), and three wordings did not change that. For the implement-task and verify-spec stop lines the sentence is as frequent on `claude-sonnet-5-5`, and two wordings did not change it. The numbers are in each skill's eval README.
+
 ## 0.12.0
 
 - build-phase: a phase with a requirement only a person can check can now finish. An `untested` row is a gap only when a test can close it. When every build task that covers the ID marks its check `manual:`, the tasks are not reopened and the phase can end as done. Before, every `untested` row was reworked, the rework could not succeed, and the run ended in `Stopped`. `unmet` and `partial` rows are reworked as before, and verify-spec's verdicts are unchanged.
