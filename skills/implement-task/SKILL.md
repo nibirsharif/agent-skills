@@ -39,7 +39,7 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 
 1. **Find `tasks.md`**, as [Finding the files](#finding-the-files) says. If it is missing, reply with the stop line and stop.
 2. **Check the working tree**: only the feature's own spec files may be uncommitted, as the rules' git section says.
-3. **Pick the task** as the rules say, and check its dependencies are `Done`. When the user named a feature, the folder that holds `tasks.md` has that name; a `tasks.md` in any other folder is the wrong file, and the reply is the no-tasks-file stop line.
+3. **Pick the task** as the rules say, and check its dependencies are `Done`.
 4. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
 5. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby.
 6. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
@@ -49,13 +49,20 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 
 ## Finding the files
 
-Find `tasks.md`, in this order:
+A task list the user pasted into the conversation needs no file: implement from it, but there is no Status to set; the done report's last line still names the commit.
+
+Otherwise run [scripts/find_tasks.py](scripts/find_tasks.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. It prints one line, and you do what it says:
+
+- `found <path>`: that is `tasks.md`. Use it and no other.
+- `stop <line>`: `<line>` is your whole reply. Another feature's task list is not what the user asked for, even when it is the only one in the project.
+- `ask <what>`: ask the user that.
+
+Only when you cannot run commands, find it yourself by the same rules:
 
 1. A path the user named. If no file is there, reply with the no-tasks-file stop line for that path.
 2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
-   - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/tasks.md` and no other. Check that one path and do not look for other `tasks.md` files. If it does not exist, reply with the no-tasks-file stop line for that path: another feature's task list is not what the user asked for, even when it is the only one in the project.
+   - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/tasks.md` and no other. Check that one path and do not look for other `tasks.md` files. If it does not exist, reply with the no-tasks-file stop line for that path.
    - **The user names no feature:** list the existing `<spec_output_dir>/*/tasks.md` files; if only one exists, use it, otherwise ask which one.
-3. A task list the user pasted into the conversation: implement from it, but there is no Status to set; the done report's last line still names the commit.
-4. None of these: ask for the path.
+3. None of these: ask for the path.
 
 `plan.md` and `requirements.md` are in the same folder as `tasks.md`. When one is missing, work from the task alone.
