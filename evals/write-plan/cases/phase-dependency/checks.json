@@ -1,0 +1,120 @@
+{
+  "description": "Eleven requirements, written in the file with the monthly report first and expense submission in the middle. Each step needs the one before it: approval needs submitted expenses, payment needs approved ones, and the report reads approved ones. The plan orders its phases by that dependency, not by the order of the IDs, and every ID lands in exactly one phase.",
+  "counts": {
+    "FR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-002 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-002\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-003 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-003\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-004 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-004\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-005 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-005\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-006 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-006\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-007 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-007\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-008 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-008\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-009 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-009\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-010 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-010\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "phases": {
+      "pattern": "^### Phase \\d+",
+      "min": 2
+    },
+    "phase over 8 requirements": {
+      "pattern": "^\\*\\*Requirements:\\*\\*(?:[^\\n]*?(?:FR|NFR)-\\d+){9}",
+      "max": 0
+    },
+    "phase over 10 files": {
+      "pattern": "^\\*\\*Size:\\*\\* about (1[1-9]|[2-9]\\d|\\d{3,}) files",
+      "max": 0
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A## 1\\. Approach",
+      "why": "the reply is the plan alone: it starts at the Approach heading, with no preamble"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*(?=.*\\bFR-008\\b)(?=.*\\bNFR-001\\b)",
+      "why": "NFR-001 is a deadline on FR-008's response: same phase"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-003\\b[^\\n]*\\n[\\s\\S]*^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-006\\b",
+      "why": "approval (FR-003) is planned before the submission it approves (FR-006)"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-009\\b[^\\n]*\\n[\\s\\S]*^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-003\\b",
+      "why": "payment (FR-009) is planned before the approval that triggers it (FR-003)"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-001\\b[^\\n]*\\n[\\s\\S]*^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-003\\b",
+      "why": "the report of approved expenses (FR-001) is planned before approval (FR-003)"
+    },
+    {
+      "pattern": "^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-010\\b[^\\n]*\\n[\\s\\S]*^\\*\\*Requirements:\\*\\*[^\\n]*\\bFR-009\\b",
+      "why": "the payment confirmation (FR-010) is planned before the payment run (FR-009)"
+    },
+    {
+      "pattern": "^Blocked by",
+      "why": "nothing is blocked"
+    },
+    {
+      "pattern": "^```",
+      "why": "a plan holds no code"
+    },
+    {
+      "pattern": "^## 5\\. Revision History|^---$|^Note:",
+      "why": "no Revision History, closing note, or rule in a chat reply"
+    }
+  ],
+  "expectations": [
+    "Each phase can merge on its own: no phase needs something that only a later phase builds.",
+    "No phase lists as Reuse something an earlier phase of this plan builds.",
+    "No requirement is added, reworded, or split."
+  ],
+  "manual": [
+    "The Approach says the phases follow the flow, not the order of the IDs in the file."
+  ]
+}

@@ -15,7 +15,8 @@ The default agent is `claude -p` with this repo's released skills plus the skill
 as a plugin, and the tools from evals/<skill>/config.json allowed without prompting. Each run starts
 in an empty folder, so no project config or files affect it, unless config.json names a "fixture"
 folder: it is copied in (with the case's committed/ folder over it) and committed as a git repository on
-main, and a case's dirty/ folder is then copied over it uncommitted. All runs start at once, so a full run
+main, a case's branch/ folder is committed over that on the branch feature-work, and a case's dirty/ folder
+is then copied over it uncommitted. All runs start at once, so a full run
 takes about as long as the slowest case.
 
 Replies, transcripts (.jsonl), stats (.json), judge results (.judge.json) and error output (.err)
@@ -39,6 +40,7 @@ import grading
 
 ROOT = grading.EVALS.parent
 DEFAULT_TIMEOUT = 600
+BRANCH = "feature-work"  # the branch a case's or benchmark input's branch/ folder is committed on
 
 
 def build_plugin(skill, into):
@@ -113,8 +115,9 @@ def agent_error(stdout, stderr):
 def prepare_work(fixture, case_dir, work):
     """Fill the agent's folder: the skill's fixture (config.json "fixture") becomes a git repository with
     one commit on main, then the case's dirty/ is copied over it uncommitted. A case's committed/ folder is
-    copied over the fixture before that commit, for a case that needs its own committed config. Without a
-    fixture, the folder starts empty."""
+    copied over the fixture before that commit, for a case that needs its own committed config. A case's
+    branch/ folder is copied over that and committed on a new branch, BRANCH, which stays checked out. Without
+    a fixture, the folder starts empty."""
     if fixture:
         shutil.copytree(fixture, work, dirs_exist_ok=True)
         if (case_dir / "committed").is_dir():
@@ -122,6 +125,10 @@ def prepare_work(fixture, case_dir, work):
         git = ["git", "-c", "user.name=Eval", "-c", "user.email=eval@example.com", "-c", "commit.gpgsign=false"]
         for cmd in (["git", "init", "-q", "-b", "main"], ["git", "add", "-A"], git + ["commit", "-q", "-m", "Initial commit"]):
             subprocess.run(cmd, cwd=work, check=True, capture_output=True)
+        if (case_dir / "branch").is_dir():
+            shutil.copytree(case_dir / "branch", work, dirs_exist_ok=True)
+            for cmd in (["git", "checkout", "-q", "-b", BRANCH], ["git", "add", "-A"], git + ["commit", "-q", "-m", "Feature work"]):
+                subprocess.run(cmd, cwd=work, check=True, capture_output=True)
     dirty = case_dir / "dirty"
     if dirty.is_dir():
         shutil.copytree(dirty, work, dirs_exist_ok=True)

@@ -110,7 +110,7 @@ The latest recorded run of every eval case, on `claude-sonnet-5-5` with Claude C
 | Skill | Cases | Runs passed | Misses |
 |-------|-------|-------------|--------|
 | write-spec | 7 | 19 of 21 | 1 run changed the input's terms; 1 run picked the wrong EARS keyword (`Where` for a state that changes at runtime) |
-| write-plan | 6 | 18 of 18 | |
+| write-plan | 8 | 24 of 24 | The two newest cases ran on 16 November 2026 with Claude Code 2.1.322; one of them, a requirement too large for one phase, passed 0 of 3 before a rule was added for it (see [evals/write-plan/](evals/write-plan/README.md)) |
 | write-tasks | 7 | 21 of 21 | |
 | implement-task | 11 | 29 of 33 | 4 runs added a sentence before a correct stop line |
 | verify-spec | 9 | 23 of 27 | 4 runs added a sentence before a correct stop line |

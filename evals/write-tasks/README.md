@@ -17,3 +17,5 @@ Case folders, the golden and bad replies, running, and adding a case work as des
 ```bash
 make eval SKILL=write-tasks
 ```
+
+[benchmark/](benchmark/README.md) measures task size, order, and whether the checks can be run, which these cases do not.

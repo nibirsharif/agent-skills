@@ -5,8 +5,11 @@ Usage: python3 evals/bench.py <skill> [input ...] [--model M] [--label NAME] [--
 
 Inputs are evals/<skill>/benchmark/<name>/input.md, or the file --file names in the same folder (turn2.md is
 the input, a fixed first reply, and scripted answers). Each has a reference.md beside it, which the agent never
-sees: the decisions the input leaves open. Replies go to evals/<skill>/runs/bench-<label>/<name>.md, with the
-run's cost in <name>.json. See evals/<skill>/benchmark/README.md for how the replies are scored.
+sees: the decisions the input leaves open, or the faults planted in its project. An input with a project/
+folder beside it runs in a copy of that folder, set up as run.py sets up a fixture: committed on main, then
+the input's branch/ folder committed on the branch feature-work, then its dirty/ folder left uncommitted.
+Replies go to evals/<skill>/runs/bench-<label>/<name>.md, with the run's cost, model ID, and Claude Code
+version in <name>.json. See evals/<skill>/benchmark/README.md for how the replies are scored.
 """
 
 import argparse
@@ -26,16 +29,22 @@ def one(skill, config, name, source, out, model):
     with tempfile.TemporaryDirectory(prefix=f"{skill}-bench-") as tmp:
         tmp = Path(tmp)
         (tmp / "work").mkdir()
+        project = source.parent / "project"
+        run.prepare_work(project if project.is_dir() else None, source.parent, tmp / "work")
         cmd = run.default_agent(config, run.build_plugin(skill, tmp / "plugin"), model) + [prompt]
         code, stdout, stderr = run.run_command(cmd, tmp / "work", run.DEFAULT_TIMEOUT)
     if code != 0:
         out.with_suffix(".err").write_text(stderr or stdout)
         return f"FAIL  {name}: {run.agent_error(stdout, stderr)}"
     events = [json.loads(line) for line in stdout.splitlines() if line.strip().startswith("{")]
-    result = grading.summarize(events, config.get("watch", []))["result"]
+    trace = grading.summarize(events, config.get("watch", []))
+    result = trace["result"]
     out.write_text(result.get("result", ""))
-    out.with_suffix(".json").write_text(json.dumps({k: v for k, v in result.items() if k != "result"}, indent=2))
-    return f"ok    {name}: ${result.get('total_cost_usd', 0):.2f}"
+    stats = {k: v for k, v in result.items() if k != "result"}
+    stats.update(model=trace["model"], claude_code_version=trace["cli_version"])
+    out.with_suffix(".json").write_text(json.dumps(stats, indent=2))
+    on = run.ran_on_text(trace["model"], trace["cli_version"])
+    return f"ok    {name}: ${result.get('total_cost_usd', 0):.2f}{' (' + on + ')' if on else ''}"
 
 
 def main(argv):

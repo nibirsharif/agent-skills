@@ -39,3 +39,5 @@ Case folders, the golden and bad replies, running, and adding a case work as des
 ```bash
 make eval SKILL=verify-spec
 ```
+
+[benchmark/](benchmark/README.md) measures whether the verdicts are right on six other projects with planted faults, which these cases do not.

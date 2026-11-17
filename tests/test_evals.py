@@ -191,6 +191,21 @@ class Work(unittest.TestCase):
             self.assertEqual(self.git(work, "status", "--porcelain").strip(), "")
             self.assertEqual(self.git(work, "show", "HEAD:config.yaml"), "a: 2\n")
 
+    def test_branch_is_committed_on_its_own_branch_before_dirty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture, case, work = Path(tmp) / "fixture", Path(tmp) / "case", Path(tmp) / "work"
+            fixture.mkdir()
+            (fixture / "a.txt").write_text("a\n")
+            (case / "branch").mkdir(parents=True)
+            (case / "branch" / "b.txt").write_text("b\n")
+            (case / "dirty").mkdir()
+            (case / "dirty" / "c.txt").write_text("c\n")
+            work.mkdir()
+            run.prepare_work(fixture, case, work)
+            self.assertEqual(self.git(work, "branch", "--show-current").strip(), run.BRANCH)
+            self.assertEqual(self.git(work, "diff", "--name-only", "main...HEAD").split(), ["b.txt"])
+            self.assertEqual(self.git(work, "status", "--porcelain").strip(), "?? c.txt")
+
     def test_without_a_fixture_the_folder_stays_empty(self):
         with tempfile.TemporaryDirectory() as tmp:
             case, work = Path(tmp) / "case", Path(tmp) / "work"

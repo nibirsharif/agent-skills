@@ -23,3 +23,6 @@ scratch-*
 
 # Local backlog
 TODO.md
+
+# The benchmark projects need theirs too
+!evals/*/benchmark/*/project/.agent-skills-config.yaml
