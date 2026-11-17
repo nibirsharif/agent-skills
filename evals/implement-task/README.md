@@ -39,6 +39,8 @@ Across every saved `missing-tasks` run on `claude-sonnet-5-5` up to then, 4 of 5
 
 With the rewording alone, both wrong-feature runs ran `find . -name tasks.md`, found the one list, and used it. With the script the agent runs it first and replies with the line it prints, which also removed the sentence before the stop line in this case. The whole suite passed 11 of 11 at one run each with the script. `blocked` and the other stop lines do not come from the script, so their sentence-first rate is unchanged.
 
+With `scripts/pick_task.py` finding the file, checking the working tree, picking the task, and printing the stop line (16 November 2026, `claude-sonnet-5-5`, Claude Code 2.1.322): the five stop-line cases (`blocked`, `dependency-not-done`, `dirty-tree`, `spec-and-code-dirty`, `missing-tasks`) passed 30 of 30 at 6 runs each, against about half before, and the whole suite 11 of 11 at one run each. The stop lines the script cannot decide (task mismatch, failed check, rework with nothing to fix) have no case and are unmeasured.
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls, so they show whether code was edited, tests were run, and what git did. Work through each case's "Review by hand" list: the checks cannot see the commit's contents.
 
 ```bash

@@ -32,6 +32,8 @@ Known, on 15 November 2026 with Claude Code 2.1.322, `missing-requirements` and 
 
 With `scripts/find_requirements.py` doing the lookup and printing the stop line, `missing-requirements` passed 20 of 20 on `claude-sonnet-5-5` (Claude Code 2.1.322) on 16 November 2026, and the whole suite 9 of 9 at one run each. `unknown-id` and the other stop lines do not come from the script, so their sentence-first rate is unchanged.
 
+With `scripts/check_scope.py` finding the file, checking the named ID or phase, and printing the stop line (16 November 2026, `claude-sonnet-5-5`, Claude Code 2.1.322): `unknown-id` and `missing-requirements` passed 12 of 12 at 6 runs each, and the whole suite 9 of 9 at one run each. Every stop line of the skill now comes from the script.
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls. Work through each case's "Review by hand" list: the checks cannot tell whether a cited line is the right one.
 
 ```bash
