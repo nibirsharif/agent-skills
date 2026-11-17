@@ -37,7 +37,7 @@ This skill implements the task it picked and nothing else. It does not write or 
 
 Work silently: do not say what you found, which rule applies, or why you stop. A stop line is the whole reply, even when the reason is obvious from the file.
 
-1. **Find `tasks.md`**, as [Finding the files](#finding-the-files) says. If it is missing, reply with the stop line and stop.
+1. **Find `tasks.md`**, as [Finding the files](#finding-the-files) says: one script does this step and the next two, and prints the stop line when there is one.
 2. **Check the working tree**: only the feature's own spec files may be uncommitted, as the rules' git section says.
 3. **Pick the task** as the rules say, and check its dependencies are `Done`.
 4. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
@@ -51,13 +51,18 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 
 A task list the user pasted into the conversation needs no file: implement from it, but there is no Status to set; the done report's last line still names the commit.
 
-Otherwise run [scripts/find_tasks.py](scripts/find_tasks.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. It prints one line, and you do what it says:
+Otherwise run [scripts/pick_task.py](scripts/pick_task.py) by its full path, with the project as the current directory, before any other command. It finds `tasks.md`, checks the working tree, and picks the task, which are steps 1 to 3 of the workflow. Give it:
 
-- `found <path>`: that is `tasks.md`. Use it and no other.
-- `stop <line>`: `<line>` is your whole reply. Another feature's task list is not what the user asked for, even when it is the only one in the project.
+- `--feature <name>` when the user names a feature, or `--path <path>` when they name a path to `tasks.md`; neither when they name neither.
+- `--task <T-id>` when the user names a task, or `--requirement <ID>` when they ask for an FR or NFR in place of a task; neither for the next task.
+
+Do what it prints:
+
+- `found <path>` and, on the next line, `task <T-id>`: that is `tasks.md` and the task to implement. Use them and no other. `task <T-id> rework` means the task is a rework, as the rules say.
+- `stop <line>`: `<line>` is your whole reply. Run nothing more and change nothing.
 - `ask <what>`: ask the user that.
 
-Only when you cannot run commands, find it yourself by the same rules:
+Only when you cannot run commands, do steps 1 to 3 yourself: check the working tree and pick the task as the rules say, and find `tasks.md` like this:
 
 1. A path the user named. If no file is there, reply with the no-tasks-file stop line for that path.
 2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.

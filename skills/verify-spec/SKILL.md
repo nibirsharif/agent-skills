@@ -48,7 +48,7 @@ This skill reports and nothing else. It does not edit code, tests, or any spec f
 
 Work silently: do not narrate what you found or which rule applies.
 
-1. **Find `requirements.md`**, as [Finding the files](#finding-the-files) says. If it is missing, reply with the stop line and stop.
+1. **Find `requirements.md`**, as [Finding the files](#finding-the-files) says: one script does this step and the next, and prints the stop line when there is one.
 2. **Pick the scope:** the whole file, one phase from `plan.md`, or one ID, as the rules say. Mark blocked requirements `skipped`.
 3. **Explore the code:** for each requirement in scope, find where its behaviour lives and the tests that drive it. Read the test bodies.
 4. **Run the project's test command** once, as the rules say, and read the result per test.
@@ -60,13 +60,18 @@ Work silently: do not narrate what you found or which rule applies.
 
 Requirements the user pasted into the conversation need no file: verify against exactly those, with no plan and so no phase scoping. Add nothing from a file, and do not compare them with one, even when a file has the same IDs.
 
-Otherwise run [scripts/find_requirements.py](scripts/find_requirements.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. It prints one line, and you do what it says:
+Otherwise run [scripts/check_scope.py](scripts/check_scope.py) by its full path, with the project as the current directory, before any other command. It finds `requirements.md` and checks the scope, which are steps 1 and 2 of the workflow. Give it:
 
-- `found <path>`: that is `requirements.md`. Use it and no other.
-- `stop <line>`: `<line>` is your whole reply. Another feature's requirements are not what the user asked for, even when they are the only ones in the project.
+- `--feature <name>` when the user names a feature, or `--path <path>` when they name a path to `requirements.md`; neither when they name neither.
+- `--id <ID>` when the user names one requirement, or `--phase <n>` when they name a phase; neither for the whole file.
+
+Do what it prints:
+
+- `found <path>` and, on the next line, `scope <what>`: that is `requirements.md` and the scope, `all`, one ID, or `phase <n>:` with the IDs of that phase. Use them and no other.
+- `stop <line>`: `<line>` is your whole reply. Run nothing more.
 - `ask <what>`: ask the user that.
 
-Only when you cannot run commands, find it yourself by the same rules:
+Only when you cannot run commands, pick the scope as the rules say and find `requirements.md` like this:
 
 1. A path the user named. If no file is there, reply with the no-requirements-file stop line for that path.
 2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
