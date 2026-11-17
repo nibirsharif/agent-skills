@@ -2,6 +2,15 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## Unreleased
+
+On `master`, not yet in a release: installed plugins get these with the next version bump.
+
+- implement-task: a new script, `scripts/pick_task.py`, does the first three workflow steps: it finds `tasks.md`, checks the working tree, and picks the task. It prints `found <path>` and `task <T-id>` (with ` rework` for a task that already has a commit), or `stop <the stop line>`, or `ask <what>`. It decides these stop lines: no tasks file, uncommitted changes, no Status lines, no such task, already Done, a dependency not Done, a requirement no task covers, and every task Done. Task mismatch, a failed check, and a rework with nothing to fix are still the agent's. The five stop-line eval cases passed 30 of 30 with it, against about half before, when most misses were a sentence before a correct stop line.
+- implement-task: asked for a requirement in place of a task (`--requirement FR-003`), the script takes the first task not yet `Done` that builds it, never the phase's verify task. Before, the rules did not say which task that was.
+- verify-spec: a new script, `scripts/check_scope.py`, does the first two workflow steps: it finds `requirements.md` and checks the named ID or phase. It prints `found <path>` and `scope <all, an ID, or a phase with its IDs>`, or `stop <the stop line>`, or `ask <what>`. Every stop line of the skill now comes from it. `unknown-id` and `missing-requirements` passed 12 of 12.
+- No file format, ID, or reply line changes. Where the agent cannot run commands, each skill's written rules still apply.
+
 ## 0.14.0
 
 - verify-spec: a new script, `scripts/find_requirements.py`, finds `requirements.md` the way implement-task's script finds `tasks.md`: run first, it prints `found <path>`, `stop <the no-requirements-file stop line>`, or `ask <what>`, and a named feature is looked up at one path only. `missing-requirements` passed 20 of 20 eval runs with it, against about 1 in 3 before, when most runs opened with a sentence.
