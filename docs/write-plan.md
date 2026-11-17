@@ -23,6 +23,8 @@ When saved, a short reply: the path, one line per phase (`Phase 2: title (FR-003
 
 If an open question would change the core approach (an architecture, a data model, a system boundary), it asks that question instead of planning around a guess. The answer belongs in the requirements, through write-spec.
 
+If one requirement alone needs more files than a phase may have, it writes no plan and replies with one line that names the requirement and sends you to write-spec to split it. It never spreads a requirement over several phases.
+
 Phase size is limited by `plan_max_requirements_per_phase` (default 8) and `plan_max_files_per_phase` (default 10); see [the config](../README.md#configuration).
 
 ## FAQ

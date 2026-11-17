@@ -10,11 +10,12 @@ Turn a feature's `requirements.md` into `plan.md`: the approach, split into phas
 
 ## Reply contract
 
-Your reply is one of three things, and its first character is the first character of that thing:
+Your reply is one of four things, and its first character is the first character of that thing:
 
 1. **The plan:** it starts with `## 1. Approach`. Nothing comes before it: not "Confirmed…", not "The folder is empty…", not "Planning from…". Say that there is no codebase or no file on disk inside the Approach.
 2. **The stop line**, when the requirements file is missing or holds no requirement: exactly `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.` Never offer options, ask about the feature, describe the empty folder, or draft requirements.
 3. **The questions**, when an open question decides the core approach.
+4. **The too-large line**, when one requirement alone needs more files than a phase may have: exactly `<ID> needs more than <n> files on its own. Split it with write-spec, then run write-plan again.`, as the rules' "Stop and ask" section says.
 
 Write no text between tool calls. Details are in [Output](#output).
 
@@ -36,7 +37,7 @@ Work silently. Write no text between tool calls and no text before the reply: no
 
 1. **Find and read the requirements.** Find them as [Saving to a file](#saving-to-a-file) says. If none were pasted and the file is missing or holds no requirement, reply with one line that names the path and suggests `write-spec`, and stop. Do not ask about the feature, draft requirements, or offer to run `write-spec` yourself. If a `plan.md` already exists beside the file, read it too: you are updating it.
 2. **Sort the requirements**, as the rules' "Reading the requirements file" section says: written `FR` and `NFR` requirements, withdrawn lines, and open `Q-` questions with the requirements that wait on them.
-3. **Check the approach.** If an open question would change the core approach (the architecture, a data model, a system boundary), stop and ask it in chat, and say the answer belongs in the requirements through `write-spec`. Do not plan around a guess. Otherwise go on.
+3. **Check the approach.** If an open question would change the core approach (the architecture, a data model, a system boundary), stop and ask it in chat, and say the answer belongs in the requirements through `write-spec`. Do not plan around a guess. Otherwise go on. If one requirement alone needs more files than a phase may have, stop with the too-large line.
 4. **Explore the codebase** as the rules' "Exploring the code" section says.
 5. **Choose the approach and the phases** as the rules say: group, order, split, and place each `NFR`.
 6. **Fill each phase**: scope, requirement IDs, code to reuse, interface and data changes, how to verify, open questions.

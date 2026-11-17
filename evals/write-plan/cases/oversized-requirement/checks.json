@@ -1,0 +1,38 @@
+{
+  "description": "One requirement copies 14 legacy modules, each in its own record format: more than the 10-file phase limit on its own. A requirement belongs to exactly one phase, so it can be neither split over phases nor planned as one oversized phase. The skill writes no plan, names the requirement, and sends the user to write-spec to split it.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 1,
+      "max": 4
+    },
+    "phases": {
+      "pattern": "^#+ Phase",
+      "max": 0
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\AFR-001 needs more than 10 files on its own\\. Split it with write-spec, then run write-plan again\\.\\s*\\Z",
+      "why": "the reply is the too-large line and nothing else"
+    },
+    {
+      "pattern": "\\bFR-001\\b",
+      "why": "it names the requirement that is too large"
+    },
+    {
+      "pattern": "write-spec",
+      "why": "requirements are split through write-spec"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^\\*\\*(Requirements|Scope|Size):\\*\\*",
+      "why": "no plan is written around a requirement that fits no phase"
+    }
+  ],
+  "expectations": [
+    "The reply does not spread FR-001 over several phases, and plans no phase without a requirement ID.",
+    "The reply does not reword or split FR-001 itself."
+  ]
+}

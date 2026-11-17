@@ -74,6 +74,16 @@ A requirements file for an audit log ends its functional section with `Pending: 
 Q-001 decides the data model, so no plan can be written yet: Is each tenant's audit log stored in a separate database or in one shared database? Record the answer with write-spec, then run write-plan again.
 ```
 
+## A requirement too large for one phase
+
+`FR-001` copies the records of 14 legacy modules, each in its own record format. That is at least 14 files, over the limit of 10, and a requirement cannot be spread over phases:
+
+```
+FR-001 needs more than 10 files on its own. Split it with write-spec, then run write-plan again.
+```
+
+Wrong: phases that list `**Requirements:** None (part of FR-001)`, or one phase of `about 28 files`.
+
 ## Splitting into phases
 
 Nineteen requirements, limit 8 per phase: group by flow, not by layer.
