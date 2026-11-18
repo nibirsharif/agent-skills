@@ -150,10 +150,21 @@ class BuildPhase(Project):
 
     def test_found_needs_requirements_beside_it(self):
         self.project("reading-time")
-        self.assertEqual(self.find(feature="reading-time"), "found docs/specs/reading-time/tasks.md")
+        self.assertEqual(self.find(feature="reading-time"), "found docs/specs/reading-time/tasks.md\nrounds 2")
         self.project("no-reqs", files=("tasks.md",))
         self.assertEqual(self.find(feature="no-reqs"), self.summary(
             "no-reqs", "No requirements file found at docs/specs/no-reqs/requirements.md. Run write-spec first, then run build-phase again."))
+
+    def test_rounds_is_the_configured_limit_or_the_default(self):
+        config = "spec_output_dir: docs/specs\nbuild_max_rework_rounds:{}\n"
+        for written, line in (("", "rounds 2"), (" 0", "rounds 0"), (" 3  # more", "rounds 3")):
+            self.project("reading-time", config=config.format(written))
+            self.assertEqual(self.find(feature="reading-time").split("\n")[1], line)
+        (self.root / ".agent-skills-config.yaml").write_text("spec_output_dir: docs/specs\n")
+        (self.home / ".agent-skills-config.yaml").write_text("build_max_rework_rounds: 1\n")
+        self.assertEqual(self.find(feature="reading-time").split("\n")[1], "rounds 1")
+        self.project("reading-time", config=config.format(" two"))
+        self.assertTrue(self.find(feature="reading-time").startswith("ask build_max_rework_rounds"))
 
     def test_missing_tasks_is_the_whole_stopped_summary(self):
         self.project("reading-time")

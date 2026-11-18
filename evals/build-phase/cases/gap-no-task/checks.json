@@ -1,0 +1,62 @@
+{
+  "description": "The case's committed/ folder adds a sentence-count feature whose plan puts FR-001 and FR-002 in phase 1, while tasks.md has a build task for FR-001 only. build-phase implements T-1.1, verify-spec finds FR-002 unmet, and no build task of the phase covers it: the run stops with the no-task reason, reopens nothing, and does not run the verify task.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of sentence-count: stopped$",
+      "why": "a gap no task covers ends the run"
+    },
+    {
+      "pattern": "^Branch: sentence-count/phase-1$",
+      "why": "implement-task's phase branch"
+    },
+    {
+      "pattern": "^Tasks: 1 implemented, 0 reworked$",
+      "why": "T-1.1 was implemented and nothing was reworked"
+    },
+    {
+      "pattern": "^Verify: (Tally: )?1 (met|partial), 1 unmet$",
+      "why": "FR-002 unmet; FR-001 is met, or partial when the implementer counted punctuation marks and verify-spec objected, which does not change the stop"
+    },
+    {
+      "pattern": "^Stopped: FR-002 is unmet but no task of phase 1 covers it\\. Add one with write-tasks, then run build-phase again\\.$",
+      "why": "the reason from build-rules.md"
+    },
+    {
+      "pattern": "^Skill .*verify-spec",
+      "why": "verify-spec ran",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Next:",
+      "why": "a stopped run has no hand-off line"
+    },
+    {
+      "pattern": "^Bash .*git commit.*Reopen",
+      "why": "no task is reopened",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent .*T-1\\.2",
+      "why": "the verify task does not run while a gap is open",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent .*(?:\\n.*)*?\\nAgent .*(?:\\n.*)*?\\nAgent ",
+      "why": "one implementer and one verifier, and no rework",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "git log on sentence-count/phase-1: the spec is unchanged, a T-1.1 commit, and nothing after it.",
+    "sentence_count takes no abbreviations argument: T-1.1's implementer did not build FR-002 on the way. If it did, the run proves nothing.",
+    "tasks.md differs from the committed one only in T-1.1's Status."
+  ],
+  "timeout_seconds": 1800
+}

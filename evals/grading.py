@@ -10,6 +10,7 @@ Each case folder (evals/<skill>/cases/<case>/) holds a checks.json with any of t
 - expectations: ["..."], claims an LLM judge checks against the reply (evals/run.py --judge).
 - manual: ["..."], a checklist for a person.
 - timeout_seconds: the time limit for one run.
+- disallowed_tools: ["Agent"], tools the agent is denied in this case, whatever config.json allows.
 
 A case can also hold branch/, files committed over the skill's fixture (config.json "fixture") on the branch
 feature-work, and dirty/, files copied over it after that and left uncommitted. See evals/run.py.

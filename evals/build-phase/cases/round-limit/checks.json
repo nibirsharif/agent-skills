@@ -1,0 +1,57 @@
+{
+  "description": "The case's committed/ config sets build_max_rework_rounds to 0. build-phase implements T-1.2 and T-1.3, verify-spec finds the fixture's planted FR-001 gap, and with no rework round allowed the run stops with the round-limit reason: no task is reopened and T-1.1 is not reworked.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: stopped$",
+      "why": "gaps are left at the round limit"
+    },
+    {
+      "pattern": "^Branch: reading-time/phase-1$",
+      "why": "implement-task's phase branch"
+    },
+    {
+      "pattern": "^Tasks: 2 implemented, 0 reworked$",
+      "why": "T-1.2 and T-1.3 were implemented and nothing was reworked"
+    },
+    {
+      "pattern": "^Verify: (Tally: )?2 met, 1 (partial|unmet), 1 skipped$",
+      "why": "the one report's tally: FR-001 is the gap, FR-004 is blocked"
+    },
+    {
+      "pattern": "^Stopped: FR-001 still not met after 0 rework rounds$",
+      "why": "the round-limit reason from build-rules.md, with the limit from the config"
+    },
+    {
+      "pattern": "^Skill .*verify-spec",
+      "why": "verify-spec ran",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Next:",
+      "why": "a stopped run has no hand-off line"
+    },
+    {
+      "pattern": "^Bash .*git commit.*Reopen",
+      "why": "no task is reopened",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent .*T-1\\.1",
+      "why": "T-1.1 is not reworked past the limit",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "git log on reading-time/phase-1: the T-1.2 and T-1.3 commits and nothing after them.",
+    "tasks.md: T-1.1 is still Done and T-1.4 still Todo.",
+    "The limit is 0, so this proves the stop and that nothing is reopened past the limit. It does not prove a run that used its rounds and still had gaps."
+  ],
+  "timeout_seconds": 1800
+}

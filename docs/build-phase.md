@@ -41,9 +41,21 @@ Check by hand: FR-008: in the browser, open a revoked link: the page shows "Revo
 
 The phase is done for the agent, not for you, until you have made those checks.
 
-`Tasks:` counts build tasks only. When the run stops, the first line says `stopped`, a `Stopped:` line gives the reason, and there is no `Next:` line. The phase is `?` when the run stopped before one was picked. Reasons include any stop line from implement-task or verify-spec (never retried), an unusable reply twice, a gap that no task of the phase covers, and gaps left after the round limit.
+`Tasks:` counts build tasks only. When the run stops, the first line says `stopped`, a `Stopped:` line gives the reason, and there is no `Next:` line. The phase is `?` when the run stopped before one was picked. Reasons include any stop line from implement-task or verify-spec (never retried), an unusable reply twice, a gap that no task of the phase covers, gaps left after the round limit, and an agent that cannot start subagents (see the FAQ).
 
 ## FAQ
+
+**Does it work in an agent without subagents?** No, and it says so. build-phase needs an agent that can start subagents: each task and each verify runs in a context of its own, and the check is only worth something when the verifier did not write the code. Claude Code has them (the Agent tool, called Task in older versions). In an agent that has none, or where the tool is switched off, the run stops after it has found the files and picked the phase, and changes nothing:
+
+```
+Phase 1 of reading-time: stopped
+Branch: main
+Tasks: 0 implemented, 0 reworked
+Verify: not run
+Stopped: This agent cannot start subagents, which build-phase needs. Run implement-task for each task of phase 1, then verify-spec, yourself.
+```
+
+It does not fall back to doing the work in one context. Do what the line says: run [implement-task](implement-task.md) once per task, then [verify-spec](verify-spec.md) for the phase, in a new session if you can, and set a task back to `Todo` yourself when a requirement is not met. This is tested only in Claude Code with the Agent tool denied (the `no-subagents` case in [the evals](../evals/build-phase/README.md)), not in another agent.
 
 **Why a separate subagent for verify-spec?** So the check is not made by the context that wrote the code.
 

@@ -1,0 +1,68 @@
+{
+  "description": "The case's committed/ folder holds a project skill named implement-task, a test double that changes nothing and replies with one sentence that is neither a done report nor a stop line. build-phase finds T-1.2 still Todo with no commit, starts one new subagent with the same prompt, gets the same reply, and stops with the no-usable-reply reason.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: stopped$",
+      "why": "a second unusable reply ends the run"
+    },
+    {
+      "pattern": "^Branch: (main|reading-time/phase-1)$",
+      "why": "the test double never switches branch, so the run is still on main; the phase branch name is also accepted"
+    },
+    {
+      "pattern": "^Tasks: 0 implemented, 0 reworked$",
+      "why": "no task finished"
+    },
+    {
+      "pattern": "^Verify: not run$",
+      "why": "verify-spec never ran"
+    },
+    {
+      "pattern": "^Stopped: T-1\\.2 gave no usable reply twice$",
+      "why": "the reason from build-rules.md"
+    },
+    {
+      "pattern": "^Agent .*(?:\\n.*)*?\\nAgent ",
+      "why": "the task was retried once",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*\"skill\": \"implement-task\"",
+      "why": "the subagents loaded the test double; without this the run proves nothing",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Agent .*(?:\\n.*)*?\\nAgent .*(?:\\n.*)*?\\nAgent ",
+      "why": "never more than one retry, and no later task runs",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*nibirsharif-skills:implement-task",
+      "why": "the real implement-task ran instead of the test double, so the run proves nothing",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*verify-spec",
+      "why": "verify-spec does not run after a stop",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit",
+      "why": "nothing is committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "Both Agent calls have the same prompt, naming T-1.2.",
+    "Between them, build-phase re-read tasks.md and ran git log -1 --format=%s.",
+    "tasks.md and the code are unchanged; git log has only the initial commit."
+  ],
+  "timeout_seconds": 900
+}

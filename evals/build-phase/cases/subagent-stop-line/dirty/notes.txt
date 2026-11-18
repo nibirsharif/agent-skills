@@ -1,0 +1,1 @@
+Ideas for later: a per-language speed table.

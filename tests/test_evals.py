@@ -16,7 +16,7 @@ import run  # noqa: E402
 
 SKILLS = sorted(p for p in EVALS.iterdir() if (p / "cases").is_dir())
 CASES = [c for s in SKILLS for c in sorted(p for p in (s / "cases").iterdir() if p.is_dir())]
-KEYS = {"description", "raw", "counts", "must_match", "must_not_match", "fires", "expectations", "manual", "timeout_seconds"}
+KEYS = {"description", "raw", "counts", "must_match", "must_not_match", "fires", "expectations", "manual", "timeout_seconds", "disallowed_tools"}
 
 
 def checks_of(case):
@@ -224,6 +224,12 @@ class Plugin(unittest.TestCase):
             copy = plugin / "skills" / "write-spec"
             self.assertTrue((copy / "SKILL.md").is_file())
             self.assertFalse(copy.is_symlink())
+
+    def test_disallowed_tools_are_passed_before_a_single_value_flag(self):
+        cmd = run.default_agent({"allowed_tools": ["Agent", "Read"]}, Path("plugin"), None, ["Agent"])
+        at = cmd.index("--disallowedTools")
+        self.assertEqual(cmd[at + 1:at + 3], ["Agent", "--no-session-persistence"])
+        self.assertNotIn("--disallowedTools", run.default_agent({}, Path("plugin"), None))
 
 
 if __name__ == "__main__":

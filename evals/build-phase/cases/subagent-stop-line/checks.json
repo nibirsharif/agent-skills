@@ -1,0 +1,57 @@
+{
+  "description": "The case's dirty/ folder leaves notes.txt uncommitted, outside the feature's folder. The first implement-task subagent (T-1.2) replies with its uncommitted-changes stop line. build-phase ends the run with that line, word for word, and does not retry it, run T-1.3, or verify.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: stopped$",
+      "why": "a stop line from a subagent ends the run"
+    },
+    {
+      "pattern": "^Branch: main$",
+      "why": "implement-task stops before it switches branch"
+    },
+    {
+      "pattern": "^Tasks: 0 implemented, 0 reworked$",
+      "why": "no task finished"
+    },
+    {
+      "pattern": "^Verify: not run$",
+      "why": "verify-spec never ran"
+    },
+    {
+      "pattern": "^Stopped: Uncommitted changes in notes\\.txt\\. Commit or stash them, then run implement-task again\\.$",
+      "why": "implement-task's stop line, copied word for word"
+    },
+    {
+      "pattern": "^Agent .*T-1\\.2",
+      "why": "the first build task ran in a subagent",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Agent .*(?:\\n.*)*?\\nAgent ",
+      "why": "a stop line is never retried, and no later task runs",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*verify-spec",
+      "why": "verify-spec does not run after a stop",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (commit|add|checkout|switch|restore|clean)",
+      "why": "nothing is committed and the uncommitted file is left alone",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "notes.txt is still there and uncommitted; git log has only the initial commit.",
+    "tasks.md is unchanged."
+  ],
+  "timeout_seconds": 900
+}

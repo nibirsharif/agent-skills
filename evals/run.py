@@ -59,12 +59,14 @@ def build_plugin(skill, into):
     return into
 
 
-def default_agent(config, plugin, model):
+def default_agent(config, plugin, model, disallowed=()):
     # --allowedTools and --add-dir take lists, so a flag with a single value must follow them;
     # otherwise the prompt (the last argument) would be read as one more list item.
     cmd = ["claude", "-p", "--plugin-dir", str(plugin),
            "--add-dir", str(plugin),
            "--allowedTools", "Skill", *config.get("allowed_tools", []),
+           # A case's "disallowed_tools" takes tools away, for a run in an agent that lacks them.
+           *(["--disallowedTools", *disallowed] if disallowed else []),
            "--no-session-persistence", "--output-format", "stream-json", "--verbose"]
     return cmd + (["--model", model] if model else [])
 
@@ -151,7 +153,7 @@ def run_case(skill, case_dir, config, out, args):
         if args.agent:
             cmd = shlex.split(args.agent) + [prompt]
         else:
-            cmd = default_agent(config, build_plugin(skill, tmp / "plugin"), args.model) + [prompt]
+            cmd = default_agent(config, build_plugin(skill, tmp / "plugin"), args.model, checks.get("disallowed_tools", [])) + [prompt]
         started = time.time()
         code, stdout, stderr = run_command(cmd, tmp / "work", limit)
         if stderr.strip():

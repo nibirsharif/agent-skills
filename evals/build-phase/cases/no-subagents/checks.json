@@ -1,0 +1,55 @@
+{
+  "description": "The Agent tool is taken away (disallowed_tools). build-phase finds the files and the phase, sees it cannot start a subagent, and stops with the no-subagents reason before any task: it never implements or verifies in its own context.",
+  "disallowed_tools": [
+    "Agent",
+    "Task"
+  ],
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: stopped$",
+      "why": "without subagents the run stops after the phase is picked"
+    },
+    {
+      "pattern": "^Branch: main$",
+      "why": "nothing switched branch"
+    },
+    {
+      "pattern": "^Tasks: 0 implemented, 0 reworked$",
+      "why": "no task ran"
+    },
+    {
+      "pattern": "^Verify: not run$",
+      "why": "verify-spec never ran"
+    },
+    {
+      "pattern": "^Stopped: This agent cannot start subagents, which build-phase needs\\. Run implement-task for each task of phase 1, then verify-spec, yourself\\.$",
+      "why": "the reason from build-rules.md"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Skill .*(implement-task|verify-spec)",
+      "why": "it never implements or verifies in its own context",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) ",
+      "why": "nothing is written",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*(git (commit|add|checkout|switch)|unittest)",
+      "why": "nothing is committed, no branch is made, and no test is run",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "tasks.md and the code are unchanged; git log has only the initial commit."
+  ],
+  "timeout_seconds": 600
+}

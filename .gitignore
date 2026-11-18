@@ -26,3 +26,7 @@ TODO.md
 
 # The benchmark projects need theirs too
 !evals/*/benchmark/*/project/.agent-skills-config.yaml
+
+# Eval cases that commit their own config or a test-double skill
+!evals/*/cases/*/committed/.agent-skills-config.yaml
+!evals/*/cases/*/committed/.claude/

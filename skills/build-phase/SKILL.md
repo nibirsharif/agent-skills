@@ -28,13 +28,13 @@ Write no text between tool calls. The last message you write is the summary: it 
 
 ## Scope
 
-This skill only schedules work and reopens tasks. It never edits code, tests, or spec files, except the `Status` lines of the tasks it reopens. It never pushes, merges, or opens a PR, and never answers an open question. A step that needs a decision (a stop line, a malformed reply twice, a gap no task covers, the round limit) ends the run with the reason.
+This skill only schedules work and reopens tasks. It never edits code, tests, or spec files, except the `Status` lines of the tasks it reopens. It never pushes, merges, or opens a PR, and never answers an open question. A step that needs a decision (a stop line, a malformed reply twice, a gap no task covers, the round limit) ends the run with the reason, and so does an agent that cannot start subagents.
 
 ## Workflow
 
 1. **Find the files and the phase**, as the rules say: the lookup script first. When it prints `stop`, the lines after it are your whole reply.
 2. **Implement:** for each build task of the phase in order (not the verify task), start a subagent that calls the Skill tool with `implement-task` for that task. Parse its reply with [scripts/parse_reply.py](scripts/parse_reply.py) (or by the same shapes when you cannot run commands). A done report goes on; anything else is handled as the rules say.
 3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report.
-4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to `build_max_rework_rounds` rounds (default 2).
+4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to the round limit the lookup script printed (`rounds <n>`, from `build_max_rework_rounds`, default 2). At the limit the run stops.
 5. **Close:** with no gaps, run the phase's verify task through `implement-task`.
 6. **Finish** with the summary.

@@ -6,14 +6,17 @@ These rules are authoritative for `build-phase`. A run is checked against the [c
 
 - Run [find_tasks.py](../scripts/find_tasks.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. Do what it prints:
   - `found <path>`: that is `tasks.md`, with `plan.md` and `requirements.md` beside it. Use it and no other.
+  - `rounds <n>`, the line after `found`: the round limit, the most rework rounds this run may make. It is `build_max_rework_rounds` from the config, and `rounds 0` means no task is ever reopened.
   - `stop`, then the lines of a stopped summary: those lines are your whole reply. Another feature's task list is not what the user asked for, even when it is the only one in the project.
   - `ask <what>`: ask the user that.
 - Only when you cannot run commands, find the files yourself by the same rules. `tasks.md`: a path the user named, else `<spec_output_dir>/<feature-name>/tasks.md` and no other, with `spec_output_dir` from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`. With no feature named and one `tasks.md` under `spec_output_dir`, use it; with several, ask which. If the file does not exist, the summary is `stopped` with `Stopped: No tasks file found at <path>. Run write-tasks first, then run build-phase again.` Without `requirements.md` beside it, stop: `Stopped: No requirements file found at <path>. Run write-spec first, then run build-phase again.`
 - **Phase:** the one the user named. Otherwise the first phase of `tasks.md`, in file order, that has a `Todo` task. If none has, stop with `Every task in <path> is Done.`; that is also the stop when a named phase has no `Todo` task and no gap to find.
-- Settings from the same config files: `build_max_rework_rounds` (default 2), and `test_command`, `base_branch`, `branch_prefix`, which the build and verify subagents read themselves.
+- Settings from the same config files: `build_max_rework_rounds` (default 2), which the script prints as `rounds <n>` and which you read from the files yourself only when you cannot run commands; and `test_command`, `base_branch`, `branch_prefix`, which the build and verify subagents read themselves.
 - Run `git branch --show-current` once at the start. Do not change branch yourself: `implement-task` does.
 
 ## Running a task
+
+**No subagents.** Before the first task, check that you have a tool that starts a subagent (the Agent tool, or Task under its older name). When you have none, or the first call is refused because the tool is not available, end the run: `Stopped: This agent cannot start subagents, which build-phase needs. Run implement-task for each task of phase <n>, then verify-spec, yourself.` Change nothing, and never do a task's work or the verify in your own context in its place.
 
 Start one subagent per task, with the Agent tool and the general-purpose type, never in the background, and never two at once. Its prompt is exactly:
 
@@ -64,7 +67,7 @@ Decide by the word alone. Never conclude that a check is manual from its wording
 
 For each gap row, the tasks to reopen are the build tasks of this phase whose Covers include the row's ID. The verify task is never reopened: it has not run yet. A gap whose ID no build task of the phase covers ends the run: `Stopped: <ID> is <verdict> but no task of phase <n> covers it. Add one with write-tasks, then run build-phase again.`
 
-1. Past the round limit with gaps left: end the run, `Stopped: <IDs> still not met after <limit> rework rounds`.
+1. When the rounds already made equal the round limit and gaps are left (at once, with a limit of 0): end the run, `Stopped: <IDs> still not met after <limit> rework rounds`. Reopen nothing.
 2. Check that the current branch is `<branch_prefix><feature>/phase-<n>`; otherwise stop with `Stopped: not on the phase branch`.
 3. Set `**Status:** Todo` on each task to reopen, and nothing else in the file. Stage `tasks.md` by path and commit it with the subject `Reopen <T-ids>: <gap IDs> <verdicts>`. Nothing else is staged. Never amend, never push.
 4. Run each reopened build task in file order as in [Running a task](#running-a-task), with the gap rows for its Covers in the prompt, then [Verifying the phase](#verifying-the-phase) again. That is one round.
@@ -92,7 +95,7 @@ The phase title in the `Next:` line is the text after `### Phase <n>: ` in `task
 
 - Edit code, tests, requirements, the plan, or any task text; only the `Status` line of a task you reopen.
 - Push, pull, merge, rebase, reset, stash, amend, or switch branches.
-- Implement or verify in your own context: always a subagent, and always a different one for verify.
+- Implement or verify in your own context: always a subagent, and always a different one for verify. An agent with no subagents [stops](#running-a-task).
 - Retry a stop line, or retry more than once.
 - Answer an open question or mark a blocked requirement as a gap.
 
