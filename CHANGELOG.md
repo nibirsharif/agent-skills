@@ -2,9 +2,7 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
-## Unreleased
-
-On `master`, not yet in a release: installed plugins get these with the next version bump.
+## 0.15.0
 
 - implement-task: a new script, `scripts/pick_task.py`, does the first three workflow steps: it finds `tasks.md`, checks the working tree, and picks the task. It prints `found <path>` and `task <T-id>` (with ` rework` for a task that already has a commit), or `stop <the stop line>`, or `ask <what>`. It decides these stop lines: no tasks file, uncommitted changes, no Status lines, no such task, already Done, a dependency not Done, a requirement no task covers, and every task Done. Task mismatch, a failed check, and a rework with nothing to fix are still the agent's. The five stop-line eval cases passed 30 of 30 with it, against about half before, when most misses were a sentence before a correct stop line.
 - implement-task: asked for a requirement in place of a task (`--requirement FR-003`), the script takes the first task not yet `Done` that builds it, never the phase's verify task. Before, the rules did not say which task that was.
@@ -25,6 +23,18 @@ On `master`, not yet in a release: installed plugins get these with the next ver
 - implement-task: an uncommitted `.agent-skills-config.yaml` in the project root no longer stops a task as an uncommitted change, and is never staged. Users keep their settings for these skills out of the repository; before, such a file stopped build-phase before its first task. New case `config-uncommitted`.
 - build-phase: `Tasks:` counts only this run's tasks, never those of an earlier run in the same conversation. In the real run a rerun reported `Tasks: 1 implemented` after implementing none.
 - No file format or ID changes. New reply lines: write-plan's stop, build-phase's no-subagents and verify-twice stops, `Verify: no usable report`, and build-phase's relayed stop lines. Where the agent cannot run commands, each skill's written rules still apply.
+
+Known issues, found in the real run and tracked on GitHub. All of them were in 0.14.0 as well:
+
+- [#2](https://github.com/nibirsharif/agent-skills/issues/2) build-phase: a `partial` verdict can be lost when its verify report is rejected for a miscounted Tally and the retry says `met`. In 0.14.0 the same report was copied unchecked, wrong Tally included.
+- [#3](https://github.com/nibirsharif/agent-skills/issues/3) verify-spec: a phase report can leave out the skipped rows, and `parse_reply.py` accepts it.
+- [#4](https://github.com/nibirsharif/agent-skills/issues/4) implement-task: a file its test command creates is left behind and stops the next task.
+- [#5](https://github.com/nibirsharif/agent-skills/issues/5) implement-task: no rule for a service the tests need that is not running.
+- [#6](https://github.com/nibirsharif/agent-skills/issues/6) Without `spec_output_dir`, write-spec, write-plan, write-tasks, and build-phase disagree on finding and saving files.
+- [#7](https://github.com/nibirsharif/agent-skills/issues/7) implement-task: a stale local `main` is taken as the default branch over `origin/HEAD`.
+- [#8](https://github.com/nibirsharif/agent-skills/issues/8) write-tasks: a plan item that no Verify line names gets no task.
+- [#9](https://github.com/nibirsharif/agent-skills/issues/9) implement-task: the project's lint and format checks are never run, so a phase branch can fail CI.
+- [#10](https://github.com/nibirsharif/agent-skills/issues/10) write-plan, write-tasks: too many small phases and tasks for a small feature.
 
 ## 0.14.0
 
