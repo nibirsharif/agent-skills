@@ -15,11 +15,12 @@ Cases that run build-phase on the made-up `textstats` project in [fixture/](fixt
 | `no-subagents` | `"disallowed_tools"` in its `checks.json` takes the Agent tool away. The run stops after picking the phase with the no-subagents reason, and never loads implement-task or verify-spec itself. |
 | `all-done` | Its `committed/` `tasks.md` has every task `Done`, and no phase is named: `find_tasks.py` prints the stopped summary with `Every task in ... is Done.`; no subagent, no change. |
 | `off-phase-branch` | Its `branch/` folder leaves the run on `feature-work`, which implement-task stays on. When verify-spec finds the FR-001 gap, the run stops with `not on the phase branch`: no Reopen commit, no branch switch. |
-| `bad-verify-report` | Its `committed/` folder holds a project skill named `verify-spec`, a test double whose report has a Tally (2 met) that does not match its rows (3 met). `parse_reply.py` rejects it; the verify is retried once, then `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Without the parse step the run would see no gap and end `done`. |
+| `bad-verify-report` | Its `committed/` folder holds a project skill named `verify-spec`, a test double whose report has FR-002 `met` with no path:line and no passed test. `parse_reply.py` rejects it; the verify is retried once, then `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Without the parse step the run would see no gap and end `done`. |
+| `miscounted-tally` | The same kind of test double, whose report has every row right but a Tally (2 met) that miscounts its rows (3 met); its `committed/` folder also has FR-001 already fixed, so the verify task's check passes. The report is not rejected: no retry, T-1.4 runs, and the reply is `done` with `Verify: 3 met, 1 skipped`, counted from the rows. |
 | `missing-tasks` | No `tasks.md` for the feature: `Phase ? ... stopped` with the no-tasks-file reason, no subagent, no change. |
 | `routing-implement-one` | Routing: a request to implement one named task. build-phase must not fire. |
 
-Every stop reason the rules name has a case. No `requirements.md` is printed by `find_tasks.py` the same way the no-tasks-file stop is, and is unit-tested there rather than run.
+Every stop reason the rules name has a case but one. No `requirements.md` is printed by `find_tasks.py` the same way the no-tasks-file stop is, and is unit-tested there rather than run. A verify-spec retry that calls a gap of its rejected first report `met` has no case: it needs a test double that answers differently the second time. The rows a rejected report keeps are unit-tested in `tests/test_parse_reply.py`.
 
 What the four stop cases added on 16 November 2026 do not prove:
 

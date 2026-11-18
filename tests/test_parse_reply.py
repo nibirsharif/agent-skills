@@ -50,10 +50,21 @@ class Verify(unittest.TestCase):
         self.assertEqual(pr.parse_verify("I looked.\n" + STOP)["kind"], "stop")
         self.assertEqual(pr.parse_verify("I looked.\n" + STOP, strict=True)["kind"], "invalid")
 
-    def test_wrong_tally_and_unproven_met(self):
-        self.assertEqual(pr.parse_verify(REPORT.replace("1 met, 1 untested", "2 met"))["kind"], "invalid")
+    def test_wrong_tally_is_recounted_but_not_strict(self):
+        text = REPORT.replace("1 met, 1 untested", "2 met")
+        r = pr.parse_verify(text)
+        self.assertEqual((r["kind"], r["tally"]), ("report", "1 met, 1 untested"))
+        self.assertEqual(r["warnings"], ["the tally is '2 met', the rows give '1 met, 1 untested'"])
+        self.assertNotIn("warnings", pr.parse_verify(REPORT))
+        self.assertEqual(pr.parse_verify(text, strict=True)["kind"], "invalid")
+
+    def test_unproven_met_is_invalid_and_keeps_its_rows(self):
         bad = REPORT.replace("textstats/counts.py:17; tests/test_counts.py::test_x passed", "looks fine")
-        self.assertEqual(pr.parse_verify(bad)["kind"], "invalid")
+        bad = bad.replace("| FR-002 | untested |", "| FR-002 | partial |").replace("1 untested", "1 partial")
+        r = pr.parse_verify(bad)
+        self.assertEqual(r["kind"], "invalid")
+        self.assertEqual([(x["id"], x["verdict"]) for x in r["rows"]], [("FR-001", "met"), ("FR-002", "partial")])
+        self.assertNotIn("rows", pr.parse_verify("All requirements look met."))
 
     def test_missing_line_or_garbage(self):
         self.assertEqual(pr.parse_verify(REPORT.rsplit("\n", 1)[0])["kind"], "invalid")

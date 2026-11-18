@@ -41,7 +41,7 @@ Check by hand: FR-008: in the browser, open a revoked link: the page shows "Revo
 
 The phase is done for the agent, not for you, until you have made those checks.
 
-`Tasks:` counts build tasks only. When the run stops, the first line says `stopped`, a `Stopped:` line gives the reason, and there is no `Next:` line. The phase is `?` when the run stopped before one was picked. Reasons include any stop line from implement-task or verify-spec (never retried), an unusable reply twice, a gap that no task of the phase covers, gaps left after the round limit, and an agent that cannot start subagents (see the FAQ).
+`Tasks:` counts build tasks only. When the run stops, the first line says `stopped`, a `Stopped:` line gives the reason, and there is no `Next:` line. The phase is `?` when the run stopped before one was picked. Reasons include any stop line from implement-task or verify-spec (never retried), an unusable reply twice, a verify-spec retry that calls met (or any other non-gap verdict) a requirement its rejected first report called a gap, a gap that no task of the phase covers, gaps left after the round limit, and an agent that cannot start subagents (see the FAQ). A verify report whose `Tally:` line miscounts its rows is not rejected: the rows decide, and the `Verify:` line has the tally counted from them.
 
 ## FAQ
 

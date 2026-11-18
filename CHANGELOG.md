@@ -2,6 +2,13 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## Unreleased
+
+- build-phase: a gap verify-spec found is no longer lost when its report is rejected and the retry says `met` ([#2](https://github.com/nibirsharif/agent-skills/issues/2)). A `Tally:` line that miscounts the rows no longer rejects a report: the rows decide, and `parse_reply.py` returns the tally counted from them (still a failure with `--strict`, which the evals use). A report rejected for another reason keeps its rows in the script's output, and when the retry gives one of its gap rows a verdict that is not a gap, the run stops with `Stopped: verify-spec gave <ID> <first verdict> in a rejected report and <second verdict> on the retry. ...` instead of trusting either report.
+- build-phase: subagent replies reach `parse_reply.py` through a file in the system temp directory, written whole, never retyped into a heredoc. In a real run the retyped report had lost 24 rows.
+- `Verify:` in the summary is the tally counted from the last report's rows.
+- Evals: `bad-verify-report`'s test double is now invalid for a `met` row with no evidence, since a miscounted Tally no longer is. New case `miscounted-tally`: a report whose Tally miscounts its rows is used, not retried, and the summary has the tally counted from the rows.
+
 ## 0.15.0
 
 - implement-task: a new script, `scripts/pick_task.py`, does the first three workflow steps: it finds `tasks.md`, checks the working tree, and picks the task. It prints `found <path>` and `task <T-id>` (with ` rework` for a task that already has a commit), or `stop <the stop line>`, or `ask <what>`. It decides these stop lines: no tasks file, uncommitted changes, no Status lines, no such task, already Done, a dependency not Done, a requirement no task covers, and every task Done. Task mismatch, a failed check, and a rework with nothing to fix are still the agent's. The five stop-line eval cases passed 30 of 30 with it, against about half before, when most misses were a sentence before a correct stop line.
