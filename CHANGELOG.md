@@ -20,7 +20,11 @@ On `master`, not yet in a release: installed plugins get these with the next ver
 - build-phase: every subagent reply goes through `parse_reply.py`, done ones too, and the run acts on its verdict. Before, the step was skipped in every run checked, and a verify-spec report whose Tally did not match its rows was copied into the summary. An invalid verify report twice now ends the run with `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`, a new reply value and stop. New case `bad-verify-report` (a test-double verify-spec): 3 of 3.
 - Evals: a case can name `"disallowed_tools"` in its `checks.json`, tools the agent is denied in that case.
 - Evals: `.gitignore` hid the `.agent-skills-config.yaml` in a case's `committed/` folder, so the implement-task `test-command` case's config was never in the repository and the case ran without it on a fresh clone. It is tracked now.
-- No file format or ID changes. New reply lines: write-plan's stop, build-phase's no-subagents and verify-twice stops, and `Verify: no usable report`. Where the agent cannot run commands, each skill's written rules still apply.
+- Evals: [evals/real-runs/2026-11-17.md](evals/real-runs/2026-11-17.md) records the whole chain run once on a real, private project (`claude-sonnet-5-5`, Claude Code 2.1.327): where it stopped or needed a person, and twelve findings. Three are fixed below; the rest are listed there as open.
+- build-phase: an implement-task stop line is passed on with build-phase as the command to rerun. Before, a build-phase summary could end `..., then run implement-task again.`, which sends the user to the wrong skill. `parse_reply.py` gives the line to copy as `relay`. `subagent-stop-line` now expects `... then run build-phase again.` A changed reply line.
+- implement-task: an uncommitted `.agent-skills-config.yaml` in the project root no longer stops a task as an uncommitted change, and is never staged. Users keep their settings for these skills out of the repository; before, such a file stopped build-phase before its first task. New case `config-uncommitted`.
+- build-phase: `Tasks:` counts only this run's tasks, never those of an earlier run in the same conversation. In the real run a rerun reported `Tasks: 1 implemented` after implementing none.
+- No file format or ID changes. New reply lines: write-plan's stop, build-phase's no-subagents and verify-twice stops, `Verify: no usable report`, and build-phase's relayed stop lines. Where the agent cannot run commands, each skill's written rules still apply.
 
 ## 0.14.0
 
