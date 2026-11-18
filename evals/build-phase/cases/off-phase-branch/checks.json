@@ -1,0 +1,67 @@
+{
+  "description": "The case's branch/ folder leaves the run on the branch feature-work, which is neither the default branch nor a phase branch, so implement-task stays on it. T-1.2 and T-1.3 are implemented there, verify-spec finds the fixture's FR-001 gap, and before reopening T-1.1 build-phase checks the branch: it is not reading-time/phase-1, so the run stops without a Reopen commit and without switching branch.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: stopped$",
+      "why": "a reopen off the phase branch ends the run"
+    },
+    {
+      "pattern": "^Branch: feature-work$",
+      "why": "the branch the run was on; build-phase never switches"
+    },
+    {
+      "pattern": "^Tasks: 2 implemented, 0 reworked$",
+      "why": "T-1.2 and T-1.3 were implemented and nothing was reworked"
+    },
+    {
+      "pattern": "^Verify: (Tally: )?2 met, 1 (partial|unmet), 1 skipped$",
+      "why": "FR-001 is the gap, FR-004 is blocked"
+    },
+    {
+      "pattern": "^Stopped: not on the phase branch$",
+      "why": "the reason from build-rules.md"
+    },
+    {
+      "pattern": "^Skill .*verify-spec",
+      "why": "verify-spec ran",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*parse_reply\\.py verify",
+      "why": "the verify report went through parse_reply.py",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Next:",
+      "why": "a stopped run has no hand-off line"
+    },
+    {
+      "pattern": "^Bash .*git commit.*Reopen",
+      "why": "nothing is reopened off the phase branch",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (checkout|switch)",
+      "why": "build-phase never switches branch",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent .*T-1\\.[14]",
+      "why": "T-1.1 is not reworked and the verify task does not run",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "git log on feature-work: Initial commit, Feature work, then the T-1.2 and T-1.3 commits; no reading-time/phase-1 branch exists.",
+    "tasks.md: T-1.1 is still Done and T-1.4 still Todo.",
+    "If the implement-task subagents created or switched to reading-time/phase-1 themselves, the run proves nothing: implement-task stays on a branch that is not the default or a phase branch."
+  ],
+  "timeout_seconds": 1800
+}

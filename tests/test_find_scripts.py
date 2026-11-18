@@ -166,6 +166,16 @@ class BuildPhase(Project):
         self.project("reading-time", config=config.format(" two"))
         self.assertTrue(self.find(feature="reading-time").startswith("ask build_max_rework_rounds"))
 
+    def test_every_task_done_is_a_stop_unless_a_phase_is_named(self):
+        self.project("reading-time")
+        tasks = self.root / "docs" / "specs" / "reading-time" / "tasks.md"
+        tasks.write_text("#### T-1.1: A\n\n**Status:** Done\n\n#### T-1.2: B\n\n**Status:** Done\n")
+        self.assertEqual(self.find(feature="reading-time"), self.summary(
+            "reading-time", "Every task in docs/specs/reading-time/tasks.md is Done."))
+        self.assertTrue(self.find(feature="reading-time", phase="1").startswith("found "))
+        tasks.write_text("#### T-1.1: A\n\n**Status:** Done\n\n#### T-1.2: B\n\n**Status:** Todo\n")
+        self.assertTrue(self.find(feature="reading-time").startswith("found "))
+
     def test_missing_tasks_is_the_whole_stopped_summary(self):
         self.project("reading-time")
         stopped = "No tasks file found at docs/specs/invoice-export/tasks.md. Run write-tasks first, then run build-phase again."

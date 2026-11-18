@@ -10,8 +10,8 @@
       "why": "implement-task's phase branch"
     },
     {
-      "pattern": "^Tasks: [2-9] implemented, [1-9]\\d* reworked$",
-      "why": "T-1.2 and T-1.3 were implemented and at least T-1.1 was reworked"
+      "pattern": "^Tasks: 2 implemented, 1 reworked$",
+      "why": "T-1.2 and T-1.3 were implemented and T-1.1 was reworked; the verify task T-1.4 is in neither number"
     },
     {
       "pattern": "^Verify: (Tally: )?3 met, 1 skipped$",
@@ -34,6 +34,11 @@
     {
       "pattern": "^Skill .*verify-spec",
       "why": "verify-spec ran",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*parse_reply\\.py verify",
+      "why": "the verify report went through parse_reply.py",
       "target": "trace"
     }
   ],

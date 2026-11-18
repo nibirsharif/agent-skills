@@ -13,10 +13,13 @@ Cases that run build-phase on the made-up `textstats` project in [fixture/](fixt
 | `malformed-reply-twice` | Its `committed/` folder holds a project skill named `implement-task`, a test double that changes nothing and replies with one sentence. T-1.2 is tried twice, then `Stopped: T-1.2 gave no usable reply twice`. |
 | `gap-no-task` | Its `committed/` folder adds a `sentence-count` feature whose plan puts FR-001 and FR-002 in phase 1, with a build task for FR-001 only. verify-spec finds FR-002 unmet and the run stops with the no-task reason, before the verify task. |
 | `no-subagents` | `"disallowed_tools"` in its `checks.json` takes the Agent tool away. The run stops after picking the phase with the no-subagents reason, and never loads implement-task or verify-spec itself. |
+| `all-done` | Its `committed/` `tasks.md` has every task `Done`, and no phase is named: `find_tasks.py` prints the stopped summary with `Every task in ... is Done.`; no subagent, no change. |
+| `off-phase-branch` | Its `branch/` folder leaves the run on `feature-work`, which implement-task stays on. When verify-spec finds the FR-001 gap, the run stops with `not on the phase branch`: no Reopen commit, no branch switch. |
+| `bad-verify-report` | Its `committed/` folder holds a project skill named `verify-spec`, a test double whose report has a Tally (2 met) that does not match its rows (3 met). `parse_reply.py` rejects it; the verify is retried once, then `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Without the parse step the run would see no gap and end `done`. |
 | `missing-tasks` | No `tasks.md` for the feature: `Phase ? ... stopped` with the no-tasks-file reason, no subagent, no change. |
 | `routing-implement-one` | Routing: a request to implement one named task. build-phase must not fire. |
 
-The stop reasons the rules name each have a case, except three: no `requirements.md` (printed by `find_tasks.py` as the no-tasks-file stop is, and unit-tested there), `Every task in <path> is Done.`, and `not on the phase branch`. Those two have no case and are unmeasured.
+Every stop reason the rules name has a case. No `requirements.md` is printed by `find_tasks.py` the same way the no-tasks-file stop is, and is unit-tested there rather than run.
 
 What the four stop cases added on 16 November 2026 do not prove:
 
@@ -35,7 +38,40 @@ First runs of the five, 16 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.3
 | `gap-no-task` | 3 of 4 | The miss was a sentence before a correct summary. One pass is by the widened tally check (FR-001 `partial`). |
 | `no-subagents` | 1 of 1 | |
 
-`rework-recovers` passed 1 of 1 with the script's new `rounds` line. The other three older cases were not run again after that change, and none of the five has had 3 runs. In the failed `round-limit` run the summary also said `Tasks: 3 implemented, 1 reworked` where the rules give 2 and 1; `rework-recovers` accepts 2 to 9, so that miscount is not caught.
+The whole suite at 3 runs, 16 and 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.322): 26 of 27. The first attempt hit the account's usage limit, and 12 runs ended early or wrote about the limit in the summary; those four cases were run again and only the complete runs are counted.
+
+| Case | Passed |
+|---|---|
+| `rework-recovers` | 3 of 3 under the old `Tasks:` check, 1 of 3 under the tighter one below, 3 of 3 after the fix below |
+| `manual-check-done` | 3 of 3 |
+| `missing-tasks` | 3 of 3 |
+| `routing-implement-one` | 3 of 3 |
+| `round-limit` | 3 of 3 |
+| `subagent-stop-line` | 3 of 3 |
+| `malformed-reply-twice` | 3 of 3 |
+| `gap-no-task` | 2 of 3, the miss a sentence before a correct summary |
+| `no-subagents` | 3 of 3 |
+
+`rework-recovers` reported `Tasks: 3 implemented, 1 reworked` in 2 of 3 runs, counting the verify task T-1.4, which the rules leave out of both numbers. Its check accepted 2 to 9 implemented; it now requires exactly `2 implemented, 1 reworked`, and the reply contract and build-rules.md now say what each number counts, with this case as the wrong-and-right example. After that, 3 of 3 runs reported `Tasks: 2 implemented, 1 reworked` (17 November 2026, `claude-sonnet-5-5`, Claude Code 2.1.322). The other eight cases were not run again after the wording change.
+
+`all-done` and `off-phase-branch`, 3 runs each on 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.322): 2 of 3 each.
+
+- `all-done`: the miss was a sentence before a correct summary. `find_tasks.py` prints the no-tasks-file stop as a whole summary, which ended that miss for `missing-tasks`; the every-task-Done stop is still composed by the agent.
+- `off-phase-branch`: every run stopped correctly. The miss was the `Verify:` line, `1 met, 1 partial, 1 skipped`: verify-spec's own Tally line was wrong (its rows give 2 met), and build-phase copied it. `parse_reply.py verify` rejects that report as invalid, which would have sent it to the retry rule, but in none of the 3 runs, nor in the `rework-recovers` run checked, did build-phase run `parse_reply.py`: the step is skipped in practice.
+
+Two fixes followed. `find_tasks.py` prints the every-task-Done stop as a whole summary when no phase is named (`--phase` leaves it to the rules). The rules and SKILL.md say to run `parse_reply.py` on every reply, with the command written out, and to act on its `kind`; an invalid verify report twice is `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. `rework-recovers`, `manual-check-done`, `round-limit`, `gap-no-task`, and `off-phase-branch` now fail a run in which no `parse_reply.py verify` call appears.
+
+After them, 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.322): the whole suite once, then `all-done`, `bad-verify-report`, and `off-phase-branch` twice more: 14 of 18.
+
+| Case | Passed |
+|---|---|
+| `all-done` | 3 of 3 |
+| `bad-verify-report` | 3 of 3 |
+| `off-phase-branch` | 1 of 3 |
+| `no-subagents`, `round-limit` | 0 of 1 each |
+| the other seven | 1 of 1 each |
+
+Every run that reached verify-spec ran `parse_reply.py verify`. All four misses were text around a correct summary (a sentence before it, or the gap explained after it), on stops the agent composes. `no-subagents` and `round-limit` had passed 3 of 3 before the rule change, so the longer rules may have made this more frequent; it is not yet measured at 3 runs.
 
 [hooks.py](hooks.py) grades two things apart, so a run shows which one failed: `summary: ...` when the summary lines themselves are wrong, and `outside the summary: ...` when the reply has other text, such as a sentence before a correct summary. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
 

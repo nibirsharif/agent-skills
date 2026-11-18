@@ -1,0 +1,70 @@
+{
+  "description": "The case's committed/ folder holds a project skill named verify-spec, a test double that changes nothing and replies with a report whose Tally (2 met) does not match its rows (3 met). parse_reply.py calls it invalid. build-phase implements T-1.2 and T-1.3 with the real implement-task, retries the verify once, gets the same report, and stops: it never copies the bad Tally and never runs the verify task. Without the parse step it would see no gap and finish done.",
+  "must_match": [
+    {
+      "pattern": "\\APhase 1 of reading-time: stopped$",
+      "why": "an invalid verify report twice ends the run"
+    },
+    {
+      "pattern": "^Branch: reading-time/phase-1$",
+      "why": "implement-task's phase branch"
+    },
+    {
+      "pattern": "^Tasks: 2 implemented, 0 reworked$",
+      "why": "T-1.2 and T-1.3 were implemented"
+    },
+    {
+      "pattern": "^Verify: no usable report$",
+      "why": "the rejected Tally is never copied"
+    },
+    {
+      "pattern": "^Stopped: verify-spec gave no usable reply twice$",
+      "why": "the reason from build-rules.md"
+    },
+    {
+      "pattern": "^Bash .*parse_reply\\.py verify",
+      "why": "the verify report went through the script",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent .*verify-spec.*(?:\\n.*)*?\\nAgent .*verify-spec",
+      "why": "the verify was retried once",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*\"skill\": \"verify-spec\"",
+      "why": "the subagents loaded the test double; without this the run proves nothing",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Verify: (Tally: )?2 met, 1 skipped$",
+      "why": "the Tally the script rejected"
+    },
+    {
+      "pattern": "^Agent .*verify-spec.*(?:\\n.*)*?\\nAgent .*verify-spec.*(?:\\n.*)*?\\nAgent .*verify-spec",
+      "why": "never more than one retry",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent .*T-1\\.4",
+      "why": "the verify task does not run without a usable report",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Skill .*nibirsharif-skills:verify-spec",
+      "why": "the real verify-spec ran instead of the test double, so the run proves nothing",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "git log on reading-time/phase-1: the T-1.2 and T-1.3 commits and nothing after them; T-1.4 is still Todo."
+  ],
+  "timeout_seconds": 1800
+}

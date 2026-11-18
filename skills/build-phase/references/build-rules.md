@@ -4,10 +4,10 @@ These rules are authoritative for `build-phase`. A run is checked against the [c
 
 ## Finding the files and the phase
 
-- Run [find_tasks.py](../scripts/find_tasks.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither. Do what it prints:
+- Run [find_tasks.py](../scripts/find_tasks.py) by its full path, with the project as the current directory, before any other search. Give it `--feature <name>` when the user names a feature, `--path <path>` when they name a path, and no argument when they name neither; add `--phase <n>` when they name a phase. Do what it prints:
   - `found <path>`: that is `tasks.md`, with `plan.md` and `requirements.md` beside it. Use it and no other.
   - `rounds <n>`, the line after `found`: the round limit, the most rework rounds this run may make. It is `build_max_rework_rounds` from the config, and `rounds 0` means no task is ever reopened.
-  - `stop`, then the lines of a stopped summary: those lines are your whole reply. Another feature's task list is not what the user asked for, even when it is the only one in the project.
+  - `stop`, then the lines of a stopped summary: those lines are your whole reply. That includes `Every task in <path> is Done.` when no phase was named. Another feature's task list is not what the user asked for, even when it is the only one in the project.
   - `ask <what>`: ask the user that.
 - Only when you cannot run commands, find the files yourself by the same rules. `tasks.md`: a path the user named, else `<spec_output_dir>/<feature-name>/tasks.md` and no other, with `spec_output_dir` from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`. With no feature named and one `tasks.md` under `spec_output_dir`, use it; with several, ask which. If the file does not exist, the summary is `stopped` with `Stopped: No tasks file found at <path>. Run write-tasks first, then run build-phase again.` Without `requirements.md` beside it, stop: `Stopped: No requirements file found at <path>. Run write-spec first, then run build-phase again.`
 - **Phase:** the one the user named. Otherwise the first phase of `tasks.md`, in file order, that has a `Todo` task. If none has, stop with `Every task in <path> is Done.`; that is also the stop when a named phase has no `Todo` task and no gap to find.
@@ -28,7 +28,15 @@ Name the task, so the subagent never picks one. Tasks run in file order within t
 
 **The verify task** is the phase's task with `**Files:** None.` (it runs the plan's Verify list and changes no code). It is not a build task: skip it here, and run it only after [Verifying the phase](#verifying-the-phase) reports no gaps, as the last step before the summary. Run before the gaps are fixed, its check fails by design.
 
-Parse the reply with `python3 <this skill folder>/scripts/parse_reply.py implement`, or by the same shapes when you cannot run commands:
+**Parse every reply with the script**, the done ones too: it checks what reading cannot, such as a done report missing a line or a tally that does not match its rows. Pass the subagent's reply as it came back, without editing it, and do what the JSON's `kind` says, not what the reply looks like:
+
+```
+python3 <this skill folder>/scripts/parse_reply.py implement <<'REPLY'
+<the subagent's reply>
+REPLY
+```
+
+Only when you cannot run commands, parse by the same shapes yourself. The kinds:
 
 - **done** (five lines, the first `T-<p>.<n> done: <title>`): the task is finished. Keep its commit.
 - **stop**: one of `implement-task`'s stop lines. End the run: `Stopped: <the line>`. Never work around a stop line.
@@ -42,10 +50,10 @@ When every task of the phase is `Done`, start a separate subagent (a fresh one, 
 Call the Skill tool with verify-spec. Verify phase <n> of <path to requirements.md>. Reply as the skill says.
 ```
 
-Parse its reply with `parse_reply.py verify`, with the same retry rule once for an unusable reply (a verify run changes nothing, so a retry is always safe).
+Parse its reply with `parse_reply.py verify` in the same way. When the script says `invalid` (no report, or a report whose own lines disagree, such as a Tally that does not match its rows), start one new verify subagent with the same prompt; a verify run changes nothing, so a retry is always safe. A second `invalid` ends the run: `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Never fix a report yourself, and never copy a Tally the script rejected.
 
 - **stop**: end the run with the line.
-- **report**: gaps are the rows `unmet` and `partial`, and each `untested` row that is not a [manual check](#manual-checks). `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.
+- **report**: the `Verify:` line is the script's `tally`. Gaps are the rows `unmet` and `partial`, and each `untested` row that is not a [manual check](#manual-checks). `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.
 
 ## Manual checks
 
@@ -85,7 +93,9 @@ Phase ? of invoice-export: stopped
 
 Right: the `Phase` line is the first line.
 
-`Tasks: <k> implemented, <r> reworked` counts build tasks only, each reopened task once however many rounds it took; the verify task is in neither number. When the run stops before a phase is picked (no `tasks.md`, no `requirements.md`, no `Todo` task), write the phase as `?`: `Phase ? of <feature>: stopped`, `Branch:` the branch from the start, and `Tasks: 0 implemented, 0 reworked`.
+`Tasks: <k> implemented, <r> reworked` counts build tasks only. `<k>` is the build tasks this run implemented for the first time; `<r>` is the build tasks it reopened, each once however many rounds it took. A task in `<r>` is not also in `<k>`. The verify task (`**Files:** None.`) is in neither number, even though it ran through `implement-task` and replied done. Count from the task IDs, not from the number of subagents you started.
+
+Wrong, for a phase whose build tasks T-1.2 and T-1.3 were implemented, T-1.1 reopened once, and verify task T-1.4 run last: `Tasks: 3 implemented, 1 reworked` (T-1.4 counted). Right: `Tasks: 2 implemented, 1 reworked`. When the run stops before a phase is picked (no `tasks.md`, no `requirements.md`, no `Todo` task), write the phase as `?`: `Phase ? of <feature>: stopped`, `Branch:` the branch from the start, and `Tasks: 0 implemented, 0 reworked`.
 
 `Check by hand: <ID>: <check>` is written once for each [manual check](#manual-checks) row of the last report, in the report's order, after the `Verify:` line. `<check>` is the text after `manual: ` in that ID's check, copied as written from the first build task that covers it. The lines are there whether the run is done or stopped, so a `Verify:` tally with `untested` in it is explained; with `Verify: not run` there are none. A row that is `met` or a gap gets no line.
 
@@ -102,7 +112,7 @@ The phase title in the `Next:` line is the text after `### Phase <n>: ` in `task
 ## Validation checklist
 
 1. Every task you ran was named, and ran only with its dependencies `Done`.
-2. Every subagent reply was parsed; no stop line was retried; no task had more than two attempts.
+2. Every subagent reply went through `parse_reply.py` (unless you cannot run commands); no stop line was retried; no task or verify had more than two attempts.
 3. Verify ran only after every task of the phase was `Done`, in a subagent that implemented nothing.
 4. The only commits you made are `Reopen` commits that change only Status lines of `tasks.md`.
 5. Nothing was pushed, and the branch is the one `implement-task` chose.

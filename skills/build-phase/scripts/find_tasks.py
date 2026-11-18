@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Find the tasks.md that build-phase works from, or say what to reply when there is none.
 
-Usage: python3 find_tasks.py [--feature NAME | --path PATH] [--root DIR]
+Usage: python3 find_tasks.py [--feature NAME | --path PATH] [--phase N] [--root DIR]
 
 Run it with the project as the current directory. --root is the project root; without it, the git
 repository's root, or the current directory outside a repository. Prints one of these and exits 0:
@@ -13,7 +13,7 @@ repository's root, or the current directory outside a repository. Prints one of 
 
 --feature NAME looks at <spec_output_dir>/NAME/tasks.md and nowhere else: another feature's task list is
 never the answer. --path PATH looks at PATH. With neither, the one <spec_output_dir>/*/tasks.md is used;
-several, or none, is a question. requirements.md must be beside the tasks.md that is found, or that
+several, or none, is a question. With no --phase, a tasks.md whose every task is Done is a stop. requirements.md must be beside the tasks.md that is found, or that
 is a stop too. The summary's Branch line is the current branch, or `none` when git names none. spec_output_dir comes from .agent-skills-config.yaml in the project
 root, else from ~/.agent-skills-config.yaml.
 
@@ -29,6 +29,16 @@ SUMMARY = "Phase ? of {feature}: stopped\nBranch: {branch}\nTasks: 0 implemented
 # (config key, the word it is printed under after `found`, default): whole numbers the skill needs from the config.
 SETTINGS = [("build_max_rework_rounds", "rounds", 2)]
 
+
+def check_found(root, shown, phase):
+    """With no phase named, a tasks.md whose every task is Done is a stop: there is no phase to pick.
+    A named phase is left to the skill, which may still find a gap in it. Returns the stop, or None."""
+    if phase:
+        return None
+    statuses = re.findall(r"^\*\*Status:\*\*\s*(\S+)", (root / Path(shown).expanduser()).read_text(), re.M)
+    if statuses and all(s == "Done" for s in statuses):
+        return stop(root, Path(shown).parent.name, f"Every task in {shown} is Done.")
+    return None
 
 # Everything below this line is the same in every skill's copy of this script (tests/test_find_scripts.py checks it):
 # a skill cannot load code from another skill's folder.
@@ -86,13 +96,16 @@ def stop(root, feature, line):
     return "\n".join(["stop", SUMMARY.format(feature=feature, branch=branch), "Stopped: " + line])
 
 
-def found(root, home, shown):
+def found(root, home, shown, phase=None):
     """A file was found at the shown path: check the files that must be beside it, then read the settings."""
     folder = str(Path(shown).parent)
     for name, line in BESIDE:
         beside = f"{folder}/{name}"
         if not (root / Path(beside).expanduser()).is_file():
             return stop(root, Path(folder).name, line.format(path=beside))
+    own = check_found(root, shown, phase) if check_found else None
+    if own:
+        return own
     lines = [f"found {shown}"]
     for key, word, default in SETTINGS:
         value = config_value(root / CONFIG, key) or config_value(home / CONFIG, key)
@@ -102,11 +115,11 @@ def found(root, home, shown):
     return "\n".join(lines)
 
 
-def find(root, home, feature=None, path=None):
+def find(root, home, feature=None, path=None, phase=None):
     """The text to print."""
     if path:
         if (root / Path(path).expanduser()).is_file():
-            return found(root, home, path)
+            return found(root, home, path, phase)
         return stop(root, Path(path).parent.name or "?", STOP.format(path=path))
     spec = spec_output_dir(root, home)
     if not spec:
@@ -116,11 +129,11 @@ def find(root, home, feature=None, path=None):
     if feature:
         wanted = f"{shown}/{feature}/{FILE}"
         if (base / feature / FILE).is_file():
-            return found(root, home, wanted)
+            return found(root, home, wanted, phase)
         return stop(root, feature, STOP.format(path=wanted))
     names = sorted(p.parent.name for p in base.glob(f"*/{FILE}") if p.is_file())
     if len(names) == 1:
-        return found(root, home, f"{shown}/{names[0]}/{FILE}")
+        return found(root, home, f"{shown}/{names[0]}/{FILE}", phase)
     if names:
         return "ask Which feature: " + ", ".join(names)
     return f"ask No {FILE} under {shown} and no feature was named: which feature, or the path of {FILE}"
@@ -132,11 +145,13 @@ def main(argv):
     group.add_argument("--feature")
     group.add_argument("--path")
     parser.add_argument("--root")
+    if check_found:
+        parser.add_argument("--phase", help="the phase the user named")
     args = parser.parse_args(argv)
     if args.feature is not None and (not args.feature.strip() or "/" in args.feature or args.feature in (".", "..")):
         parser.error("--feature is a folder name, without a slash")
     root = Path(args.root).resolve() if args.root else project_root(Path.cwd())
-    print(find(root, Path.home(), args.feature, args.path))
+    print(find(root, Path.home(), args.feature, args.path, getattr(args, "phase", None)))
     return 0
 
 

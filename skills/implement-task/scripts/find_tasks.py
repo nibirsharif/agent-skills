@@ -24,6 +24,8 @@ BESIDE = []  # (file that must be beside it, stop line when it is not)
 SUMMARY = ""  # the lines before `Stopped:` when the reply is a summary
 SETTINGS = []  # (config key, the word it is printed under after `found`, default)
 
+check_found = None  # a skill's own check of the file that was found: function(root, shown, phase)
+
 # Everything below this line is the same in every skill's copy of this script (tests/test_find_scripts.py checks it):
 # a skill cannot load code from another skill's folder.
 
@@ -80,13 +82,16 @@ def stop(root, feature, line):
     return "\n".join(["stop", SUMMARY.format(feature=feature, branch=branch), "Stopped: " + line])
 
 
-def found(root, home, shown):
+def found(root, home, shown, phase=None):
     """A file was found at the shown path: check the files that must be beside it, then read the settings."""
     folder = str(Path(shown).parent)
     for name, line in BESIDE:
         beside = f"{folder}/{name}"
         if not (root / Path(beside).expanduser()).is_file():
             return stop(root, Path(folder).name, line.format(path=beside))
+    own = check_found(root, shown, phase) if check_found else None
+    if own:
+        return own
     lines = [f"found {shown}"]
     for key, word, default in SETTINGS:
         value = config_value(root / CONFIG, key) or config_value(home / CONFIG, key)
@@ -96,11 +101,11 @@ def found(root, home, shown):
     return "\n".join(lines)
 
 
-def find(root, home, feature=None, path=None):
+def find(root, home, feature=None, path=None, phase=None):
     """The text to print."""
     if path:
         if (root / Path(path).expanduser()).is_file():
-            return found(root, home, path)
+            return found(root, home, path, phase)
         return stop(root, Path(path).parent.name or "?", STOP.format(path=path))
     spec = spec_output_dir(root, home)
     if not spec:
@@ -110,11 +115,11 @@ def find(root, home, feature=None, path=None):
     if feature:
         wanted = f"{shown}/{feature}/{FILE}"
         if (base / feature / FILE).is_file():
-            return found(root, home, wanted)
+            return found(root, home, wanted, phase)
         return stop(root, feature, STOP.format(path=wanted))
     names = sorted(p.parent.name for p in base.glob(f"*/{FILE}") if p.is_file())
     if len(names) == 1:
-        return found(root, home, f"{shown}/{names[0]}/{FILE}")
+        return found(root, home, f"{shown}/{names[0]}/{FILE}", phase)
     if names:
         return "ask Which feature: " + ", ".join(names)
     return f"ask No {FILE} under {shown} and no feature was named: which feature, or the path of {FILE}"
@@ -126,11 +131,13 @@ def main(argv):
     group.add_argument("--feature")
     group.add_argument("--path")
     parser.add_argument("--root")
+    if check_found:
+        parser.add_argument("--phase", help="the phase the user named")
     args = parser.parse_args(argv)
     if args.feature is not None and (not args.feature.strip() or "/" in args.feature or args.feature in (".", "..")):
         parser.error("--feature is a folder name, without a slash")
     root = Path(args.root).resolve() if args.root else project_root(Path.cwd())
-    print(find(root, Path.home(), args.feature, args.path))
+    print(find(root, Path.home(), args.feature, args.path, getattr(args, "phase", None)))
     return 0
 
 

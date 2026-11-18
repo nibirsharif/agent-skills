@@ -25,6 +25,11 @@
       "pattern": "^Skill .*verify-spec",
       "why": "verify-spec ran",
       "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*parse_reply\\.py verify",
+      "why": "the verify report went through parse_reply.py",
+      "target": "trace"
     }
   ],
   "must_not_match": [

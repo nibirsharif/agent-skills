@@ -1,0 +1,51 @@
+{
+  "description": "The case's committed/ tasks.md has every task Done, and no phase is named. build-phase finds no phase with a Todo task and stops before picking one: no subagent, no verify, no change. The fixture's FR-001 gap is still in the code, and finding it is not this skill's job when nothing is Todo.",
+  "must_match": [
+    {
+      "pattern": "\\APhase \\? of reading-time: stopped$",
+      "why": "the run stops before a phase is picked, so the phase is ?"
+    },
+    {
+      "pattern": "^Branch: main$",
+      "why": "the branch from the start"
+    },
+    {
+      "pattern": "^Tasks: 0 implemented, 0 reworked$",
+      "why": "no task ran"
+    },
+    {
+      "pattern": "^Verify: not run$",
+      "why": "verify-spec never ran"
+    },
+    {
+      "pattern": "^Stopped: Every task in docs/specs/reading-time/tasks\\.md is Done\\.$",
+      "why": "the every-task-Done reason from build-rules.md"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Agent ",
+      "why": "no subagent is started",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) ",
+      "why": "nothing is written",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (commit|checkout|switch)",
+      "why": "nothing is committed and no branch is made",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|pull|merge|rebase|reset|stash|commit .*--amend)",
+      "why": "it never pushes, merges, or rewrites history",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "git log has only the initial commit, and the working tree is clean."
+  ],
+  "timeout_seconds": 600
+}
