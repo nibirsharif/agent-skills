@@ -39,7 +39,7 @@ REPLY
 Only when you cannot run commands, parse by the same shapes yourself. The kinds:
 
 - **done** (five lines, the first `T-<p>.<n> done: <title>`): the task is finished. Keep its commit.
-- **stop**: one of `implement-task`'s stop lines. End the run: `Stopped: <the line>`. Never work around a stop line.
+- **stop**: one of `implement-task`'s stop lines. End the run: `Stopped: <the script's relay>`, which is the line with `then run implement-task again.` made `then run build-phase again.`, since the user reruns build-phase. Without the script, make that one change yourself. Never work around a stop line.
 - **anything else** (invalid, or questions): the reply is not usable. First re-read `tasks.md` and `git log -1 --format=%s`: when the task is `Done` and the last commit subject starts with `<T-id>:`, the work happened and only the reply was wrong, so count it as done. Otherwise start one new subagent with the same prompt. A second unusable reply ends the run: `Stopped: <T-id> gave no usable reply twice`.
 
 ## Verifying the phase
@@ -93,7 +93,7 @@ Phase ? of invoice-export: stopped
 
 Right: the `Phase` line is the first line.
 
-`Tasks: <k> implemented, <r> reworked` counts build tasks only. `<k>` is the build tasks this run implemented for the first time; `<r>` is the build tasks it reopened, each once however many rounds it took. A task in `<r>` is not also in `<k>`. The verify task (`**Files:** None.`) is in neither number, even though it ran through `implement-task` and replied done. Count from the task IDs, not from the number of subagents you started.
+`Tasks: <k> implemented, <r> reworked` counts build tasks only. `<k>` is the build tasks this run implemented for the first time; `<r>` is the build tasks it reopened, each once however many rounds it took. A task in `<r>` is not also in `<k>`. The verify task (`**Files:** None.`) is in neither number, even though it ran through `implement-task` and replied done. Count from the task IDs, not from the number of subagents you started. This run starts at the build-phase command that started it: a task an earlier run in the same conversation implemented is not counted, even when that run stopped and this one picked up after it.
 
 Wrong, for a phase whose build tasks T-1.2 and T-1.3 were implemented, T-1.1 reopened once, and verify task T-1.4 run last: `Tasks: 3 implemented, 1 reworked` (T-1.4 counted). Right: `Tasks: 2 implemented, 1 reworked`. When the run stops before a phase is picked (no `tasks.md`, no `requirements.md`, no `Todo` task), write the phase as `?`: `Phase ? of <feature>: stopped`, `Branch:` the branch from the start, and `Tasks: 0 implemented, 0 reworked`.
 

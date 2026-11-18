@@ -11,7 +11,8 @@ or the stop line is found anywhere in the reply, so a sentence before it does no
 kind is one of:
   report  (verify)     rows [{id, verdict, evidence}], tests, tally, drift
   done    (implement)  task, title, covers, changed, check, commit
-  stop                 line: the one enumerated stop line, word for word
+  stop                 line: the one enumerated stop line, word for word; for implement also relay: the
+                       line as build-phase passes it on, with "run implement-task again" made "run build-phase again"
   invalid              problems
 
 Python 3 standard library only.
@@ -111,6 +112,11 @@ DONE = re.compile(r"^(T-\d+\.\d+) done: (.+)$")
 DONE_FIELDS = ["Covers", "Changed", "Check", "Commit"]
 
 
+def relay(stop):
+    """The stop line as build-phase passes it on: the user reruns build-phase, not implement-task."""
+    return stop.replace("then run implement-task again.", "then run build-phase again.")
+
+
 def parse_implement(text, strict=False):
     lines = lines_of(text)
     starts = [i for i, l in enumerate(lines) if DONE.match(l)]
@@ -118,7 +124,9 @@ def parse_implement(text, strict=False):
         stop = find_stop(lines, IMPLEMENT_STOPS)
         if stop:
             extra = [l for l in lines if l != stop]
-            return invalid("text outside the stop line") if strict and extra else {"kind": "stop", "line": stop}
+            if strict and extra:
+                return invalid("text outside the stop line")
+            return {"kind": "stop", "line": stop, "relay": relay(stop)}
         return invalid("neither a stop line nor a done report")
     start = starts[0]
     block = lines[start + 1:start + 5]

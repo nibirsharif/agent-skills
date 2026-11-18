@@ -1,5 +1,5 @@
 {
-  "description": "The case's dirty/ folder leaves notes.txt uncommitted, outside the feature's folder. The first implement-task subagent (T-1.2) replies with its uncommitted-changes stop line. build-phase ends the run with that line, word for word, and does not retry it, run T-1.3, or verify.",
+  "description": "The case's dirty/ folder leaves notes.txt uncommitted, outside the feature's folder. The first implement-task subagent (T-1.2) replies with its uncommitted-changes stop line. build-phase ends the run with that line, its rerun command changed to build-phase, and does not retry it, run T-1.3, or verify.",
   "must_match": [
     {
       "pattern": "\\APhase 1 of reading-time: stopped$",
@@ -18,8 +18,8 @@
       "why": "verify-spec never ran"
     },
     {
-      "pattern": "^Stopped: Uncommitted changes in notes\\.txt\\. Commit or stash them, then run implement-task again\\.$",
-      "why": "implement-task's stop line, copied word for word"
+      "pattern": "^Stopped: Uncommitted changes in notes\\.txt\\. Commit or stash them, then run build-phase again\\.$",
+      "why": "implement-task's stop line, with build-phase as the command to rerun"
     },
     {
       "pattern": "^Agent .*T-1\\.2",

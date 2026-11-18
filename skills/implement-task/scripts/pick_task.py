@@ -65,13 +65,19 @@ def read_tasks(text):
 
 
 def dirty_outside(root, folder):
-    """Paths with uncommitted changes that are not inside the feature's folder, as git status names them."""
+    """Paths with uncommitted changes that are not inside the feature's folder, as git status names them.
+
+    The project's .agent-skills-config.yaml is never one: it holds the user's settings for these skills, which
+    they may keep out of the repository, and it is never committed with a task.
+    """
     # Not find_tasks.git: it trims the output, and the first line's status columns can start with a space.
     out = subprocess.run(["git", "status", "--porcelain"], cwd=root, capture_output=True, text=True).stdout
     inside = folder.rstrip("/") + "/"
     paths = []
     for line in out.splitlines():
         path = line[3:].split(" -> ")[-1].strip().strip('"')
+        if path == ".agent-skills-config.yaml":
+            continue
         if path and not path.startswith(inside) and not inside.startswith(path):
             paths.append(path)
     return paths

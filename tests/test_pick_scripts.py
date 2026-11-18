@@ -122,6 +122,18 @@ class PickTask(Project):
         (self.root / "new.py").write_text("y = 1\n")
         self.assert_stop(self.run_pick(task="T-9.9"), "Uncommitted changes in a.py, new.py. Commit or stash them, then run implement-task again.")
 
+    def test_an_uncommitted_config_file_is_not_a_change(self):
+        self.fixture()
+        (self.root / "a.py").write_text("x = 1\n")
+        self.commit_all()
+        self.git("rm", "-q", "--cached", ".agent-skills-config.yaml")
+        self.commit_all("Stop tracking the config")
+        (self.root / ".agent-skills-config.yaml").write_text("spec_output_dir: docs/specs\nbase_branch: main\n")
+        self.assertEqual(self.run_pick(), f"found {TASKS}\ntask T-1.2", "the skills' own settings file may stay untracked")
+        (self.root / "sub").mkdir()
+        (self.root / "sub" / ".agent-skills-config.yaml").write_text("x: 1\n")
+        self.assert_stop(self.run_pick(), "Uncommitted changes in sub/. Commit or stash them, then run implement-task again.")
+
     def test_a_spec_folder_that_is_wholly_untracked_is_allowed(self):
         (self.root / "a.py").write_text("x = 1\n")
         (self.root / ".gitignore").write_text(".agent-skills-config.yaml\n")

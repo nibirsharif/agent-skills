@@ -14,7 +14,7 @@ Your last message is the summary, exactly these lines as plain text, and nothing
 
 - `Phase <n> of <feature>: done` or `Phase <n> of <feature>: stopped`
 - `Branch: <branch>`
-- `Tasks: <k> implemented, <r> reworked`: `<k>` is the build tasks this run implemented from `Todo` for the first time, `<r>` the build tasks it reopened. The verify task is in neither number, however it ran.
+- `Tasks: <k> implemented, <r> reworked`: `<k>` is the build tasks this run implemented from `Todo` for the first time, `<r>` the build tasks it reopened. The verify task is in neither number, however it ran. Tasks from an earlier run in the same conversation are not counted.
 - `Verify: <the Tally line of the last report>`, `Verify: not run`, or `Verify: no usable report` when verify-spec's reply was invalid twice
 - `Check by hand: <ID>: <check>`, one line for each requirement a person must check, only when there are any
 - `Stopped: <the stop line or reason>`, only when stopped

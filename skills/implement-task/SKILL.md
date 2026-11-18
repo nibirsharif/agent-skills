@@ -38,7 +38,7 @@ This skill implements the task it picked and nothing else. It does not write or 
 Work silently: do not say what you found, which rule applies, or why you stop. A stop line is the whole reply, even when the reason is obvious from the file.
 
 1. **Find `tasks.md`**, as [Finding the files](#finding-the-files) says: one script does this step and the next two, and prints the stop line when there is one.
-2. **Check the working tree**: only the feature's own spec files may be uncommitted, as the rules' git section says.
+2. **Check the working tree**: only the feature's own spec files and `.agent-skills-config.yaml` may be uncommitted, as the rules' git section says.
 3. **Pick the task** as the rules say, and check its dependencies are `Done`.
 4. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
 5. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby.

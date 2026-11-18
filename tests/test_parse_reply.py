@@ -77,7 +77,10 @@ class Implement(unittest.TestCase):
                      "Uncommitted changes in textstats/counts.py. Commit or stash them, then run implement-task again.",
                      "T-1.2 check failed: python3 -m unittest: 1 failure. Status stays Todo; the changes are left uncommitted."]:
             with self.subTest(line=line):
-                self.assertEqual(pr.parse_implement(line, strict=True), {"kind": "stop", "line": line})
+                result = pr.parse_implement(line, strict=True)
+                self.assertEqual((result["kind"], result["line"]), ("stop", line))
+                self.assertEqual(result["relay"], line.replace("run implement-task again", "run build-phase again"))
+                self.assertNotIn("implement-task", result["relay"])
 
     def test_incomplete_report_and_questions(self):
         self.assertEqual(pr.parse_implement(DONE.rsplit("\n", 1)[0])["kind"], "invalid")
