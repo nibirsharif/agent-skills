@@ -20,7 +20,7 @@ Your last message is the summary, exactly these lines as plain text, and nothing
 - `Stopped: <the stop line or reason>`, only when stopped
 - `Next: push <branch>, open a PR titled "<feature> phase <n>: <phase title>", and run /code-review`, only when done
 
-Write no text between tool calls. The last message you write is the summary: it starts with `Phase`, never with a sentence about what you found or which rule applies.
+Write no text between tool calls. [scripts/summary.py](scripts/summary.py) prints the summary from the run's values, and the last message you write is what it printed, copied whole: it starts with `Phase`, never with a sentence about what you found or which rule applies, and nothing follows its last line. The `Stopped:` line is the only explanation a stop gets.
 
 ## Before starting
 
@@ -37,4 +37,4 @@ This skill only schedules work and reopens tasks. It never edits code, tests, or
 3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report with the script: an `invalid` report, such as one whose Tally does not match its rows, is retried once and never copied.
 4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to the round limit the lookup script printed (`rounds <n>`, from `build_max_rework_rounds`, default 2). At the limit the run stops.
 5. **Close:** with no gaps, run the phase's verify task through `implement-task`.
-6. **Finish** with the summary.
+6. **Finish:** as soon as the phase is done or a rule ends the run, run `summary.py` as the rules say, and reply with what it printed.

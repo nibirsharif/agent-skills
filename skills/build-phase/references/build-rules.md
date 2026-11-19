@@ -82,16 +82,27 @@ For each gap row, the tasks to reopen are the build tasks of this phase whose Co
 
 ## The summary
 
-A stop is still the whole summary. Wrong, because a sentence comes first:
+When `find_tasks.py` prints `stop`, its lines are the summary. Every other run ends by printing the summary with [summary.py](../scripts/summary.py), once you know how it ends, and the reply is what it printed, copied whole:
 
 ```
-There is no tasks file for invoice-export.
+python3 <this skill folder>/scripts/summary.py --feature <feature> --phase <n> --branch <branch> \
+  --implemented <k> --reworked <r> --verify '<tally, not run, or no usable report>' \
+  [--check-by-hand '<ID>: <check>' ...] (--stopped '<the stop line or reason>' | --title '<phase title>')
+```
 
-Phase ? of invoice-export: stopped
+Give each value as this section says, without its label (`Stopped:`, `Verify:`). Only when you cannot run commands, write the same lines yourself.
+
+A stop is still the whole summary. Most stops are yours to decide, after reading `parse_reply.py`'s JSON or the branch name: decide it, run `summary.py` with `--stopped`, and copy its output. The `Stopped:` line is the reason, given once. Wrong, because the decision is written out before the printed lines:
+
+```
+FR-003 is still unmet and both rework rounds are used, so nothing more is reopened.
+
+Phase 2 of invoice-export: stopped
 ...
+Stopped: FR-003 still not met after 2 rework rounds
 ```
 
-Right: the `Phase` line is the first line.
+Right: the printed lines alone, so the `Phase` line is the first line. Nothing follows the last line either, such as the gap explained again.
 
 `Tasks: <k> implemented, <r> reworked` counts build tasks only. `<k>` is the build tasks this run implemented for the first time; `<r>` is the build tasks it reopened, each once however many rounds it took. A task in `<r>` is not also in `<k>`. The verify task (`**Files:** None.`) is in neither number, even though it ran through `implement-task` and replied done. Count from the task IDs, not from the number of subagents you started. This run starts at the build-phase command that started it: a task an earlier run in the same conversation implemented is not counted, even when that run stopped and this one picked up after it.
 

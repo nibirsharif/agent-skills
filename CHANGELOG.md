@@ -2,6 +2,10 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## Unreleased
+
+- build-phase: a new script, `scripts/summary.py`, prints the summary from the run's values (feature, phase, branch, counts, the `Verify:` value, any `Check by hand:` checks, and the stop reason or phase title). Every run that `find_tasks.py` does not stop ends with it, and the reply is its output copied whole. Since 0.15.0 made `parse_reply.py` mandatory, a stop the agent decided from the script's JSON was written out as a sentence before the summary: `round-limit` passed 0 of 3, against 3 of 3 before. Wording alone brought it to 2 of 3; with the script, the whole suite passed 36 of 36 at 3 runs on `claude-sonnet-5-5` (Claude Code 2.1.327). The reply lines are unchanged, and where the agent cannot run commands it writes the same lines itself.
+
 ## 0.15.0
 
 - implement-task: a new script, `scripts/pick_task.py`, does the first three workflow steps: it finds `tasks.md`, checks the working tree, and picks the task. It prints `found <path>` and `task <T-id>` (with ` rework` for a task that already has a commit), or `stop <the stop line>`, or `ask <what>`. It decides these stop lines: no tasks file, uncommitted changes, no Status lines, no such task, already Done, a dependency not Done, a requirement no task covers, and every task Done. Task mismatch, a failed check, and a rework with nothing to fix are still the agent's. The five stop-line eval cases passed 30 of 30 with it, against about half before, when most misses were a sentence before a correct stop line.
