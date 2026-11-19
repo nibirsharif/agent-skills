@@ -27,10 +27,12 @@ def errors(text):
 
 class SkillExamplesPass(unittest.TestCase):
     def test_examples_have_no_findings(self):
-        self.assertEqual(run((SKILL / "references" / "examples.md").read_text()), [])
+        for name in ("examples.md", "follow-ups.md"):
+            with self.subTest(name=name):
+                self.assertEqual(run((SKILL / "references" / name).read_text()), [])
 
     def test_saved_file_example_passes_file_checks(self):
-        text = (SKILL / "references" / "examples.md").read_text()
+        text = (SKILL / "references" / "saving.md").read_text()
         saved = re.search(r"```markdown\n(.*?)```", text, re.S).group(1)
         self.assertEqual(run(saved), [])
 
@@ -44,9 +46,13 @@ class SkillExamplesPass(unittest.TestCase):
                     text = sentence if re.match(r"(FR|NFR|Q)-\d", sentence) else f"FR-001: {sentence}"
                     self.assertEqual(errors(text), [], sentence)
 
-    def test_banned_words_are_read_from_rules(self):
-        words = {w for w, _ in PATTERNS}
+    def test_banned_words_are_read_from_their_list(self):
+        words = {p[0] for p in PATTERNS}
         self.assertTrue({"gracefully", "handle", "etc.", "and/or", "TBD"} <= words)
+
+    def test_banned_word_finding_names_its_group(self):
+        found = [f[3] for f in run("FR-001: The billing service shall manage invoices.")]
+        self.assertIn("banned word `manage`, listed under vague verbs (allowed only in another sense)", found)
 
 
 class LintCatches(unittest.TestCase):

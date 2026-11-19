@@ -26,8 +26,8 @@
       "why": "FR-2.3: daylight is a state (While) and the missing reading is an unwanted event (if ... then)"
     },
     {
-      "pattern": "^(FR|NFR)-\\d+: While [^\\n]*quiet hours",
-      "why": "FR-3.5: quiet hours can change at runtime, so While, not Where"
+      "pattern": "^(FR|NFR)-\\d+: While [^\\n]*quiet hours|^Q-\\d+: [^\\n]*[Tt]ime[ -]?zone[^\\n]*quiet[ -]hours|^Q-\\d+: [^\\n]*quiet[ -]hours[^\\n]*time[ -]?zone",
+      "why": "FR-3.5: quiet hours can change at runtime, so While, not Where; or, since the PRD gives their times no time zone, a question asks it"
     },
     {
       "pattern": "^(FR|NFR)-\\d+: Where the battery add-on is installed[^,]*, the mobile app shall",
@@ -50,6 +50,10 @@
     {
       "pattern": "^(FR|NFR)-\\d+: Where [^\\n]*quiet hours",
       "why": "FR-3.5 written with Where"
+    },
+    {
+      "pattern": "^(FR|NFR)-\\d+: (?!While )[^\\n]*quiet hours[^\\n]*\\balert service shall",
+      "why": "FR-3.5 written with quiet hours as a condition under another keyword: a time-zone question does not excuse it"
     },
     {
       "pattern": "^(FR|NFR)-\\d+: When [^\\n]*rated capacity",

@@ -6,100 +6,52 @@ disable-model-invocation: true
 
 # Write Spec (EARS)
 
-Turn a feature description, user story, or draft requirements into EARS requirements, and keep them in a requirements specification file when a path is set. Write every requirement the input fully supports; turn every gap into a question.
+Turn a feature description, user story, or draft requirements into EARS requirements, and keep them in a requirements file when a path is set. Write every requirement the input fully supports; turn every gap into a question.
 
 ## Before writing
 
-- Always read [references/ears-rules.md](references/ears-rules.md) in full before producing anything: sentence structure, the five patterns, choosing a keyword, system and response rules, testability, banned words, functional versus non-functional, what to rewrite versus ask, coverage gaps, and the validation checklist. This file is authoritative.
-- Before writing or updating a file, read [references/ears-template.md](references/ears-template.md): the specification file template and how to fill it.
-- Read [references/examples.md](references/examples.md) before your first reply in a conversation, and again whenever you are unsure of a keyword, a question, a follow-up reply, or a saved file.
+- Read [references/ears-rules.md](references/ears-rules.md) in full before producing anything. It is authoritative.
+- Read [references/examples.md](references/examples.md) before your first reply in a conversation, and again when unsure of a keyword or a question.
+- When the user answers your questions or adds input after an earlier reply, or the input changes, withdraws, or answers what the target file already holds, read [references/follow-ups.md](references/follow-ups.md) before replying.
+- Before looking for `spec_output_dir`, or reading, writing, or updating a requirements file, read [references/saving.md](references/saving.md).
 
 ## Scope
 
-This skill writes EARS requirements only. It does not write Given/When/Then (Gherkin) scenarios, test cases, PRDs, design or architecture documents, or code. When asked for one of these, say that this skill does not produce it and offer EARS requirements for the same input. Never convert the input silently into another format.
+This skill writes EARS requirements only. Asked for Given/When/Then (Gherkin) scenarios, test cases, a PRD, a design or architecture document, or code, say that it does not produce them and offer EARS requirements for the same input; never convert the input silently.
 
 Stop and ask instead of writing when:
 
-- No target is known: the user named no path, no `spec_output_dir` is set (see [Saving to a file](#saving-to-a-file)), and the user has not said chat only. Write nothing yet. The whole reply is the one line `Where should I save the requirements? Give a path, set `spec_output_dir` in `.agent-skills-config.yaml`, or say "chat only".` It is not linted. After the user answers, go on with that answer for the rest of the conversation.
+- No target is known: the user named no path and did not say chat only, and no `spec_output_dir` is set, as [The path](references/saving.md#the-path) says. Write nothing yet. The whole reply is the one line `Where should I save the requirements? Give a path, set `spec_output_dir` in `.agent-skills-config.yaml`, or say "chat only".` After the user answers, go on with that answer for the rest of the conversation.
 - The input states no behaviour or property of any system. Write nothing, and ask what the system must do.
-- The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap as a question, with a proposed value where [Output](#output) allows one, and write the requirement after the user confirms.
+- The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap, with a proposal where [Output](#output) allows one.
 - The user insists on a banned word or an untestable requirement. Do not write it. Keep its question open and say once which rule blocks it.
 
 ## Workflow
 
-1. **Read the target file.** Find it as [Saving to a file](#saving-to-a-file) says, and read it if it exists: its highest `FR`, `NFR`, and `Q` IDs, its systems and terms, and its requirements.
+1. **Read the target file**, if it exists: its highest `FR`, `NFR`, and `Q` IDs, its systems and terms, and its requirements.
 2. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
-3. **Fill the slots** for each requirement from the input, the user's answers, and the target file only: system, response, and any feature, precondition, and trigger.
-4. **Choose the keywords** as the rules' "Choosing the keyword" section says.
-5. **Write the sentence** in the fixed clause order.
-6. **Classify** each requirement as functional or non-functional, as the rules' "Functional or non-functional" section says. The class sets the ID: `FR` for functional, `NFR` for non-functional (see [IDs](#ids)). A statement that gives a behaviour and a threshold on how fast or how well it happens becomes two requirements: an `FR` for the behaviour and an `NFR` for the threshold.
-7. **Validate.** Run every item of the rules' validation checklist on each requirement and on the set. Fix what the rules say to rewrite. A requirement that still fails an item is not output: ask about the gap instead. Then run the [lint](#lint) on the draft. This step is required.
-8. **Look for coverage gaps** in the whole set, as the rules' [Coverage gaps](references/ears-rules.md#coverage-gaps) section says, and ask about each one.
-9. **Ask.** Give every open question an ID, and put the most important ones in this reply, as [Output](#output) says. Hold back a question whose wording depends on another's answer until that answer arrives.
-10. **Return** the requirements that passed step 7, then the open questions, then **save** if a target path is set. Chat only, when the user chose it.
+3. **Write each requirement** from the input, the user's answers, and the target file only, as the rules say.
+4. **Check** each requirement and the set against the rules' [checklist](references/ears-rules.md#checklist), including coverage gaps. A requirement that still fails is not output: ask about its gap instead.
+5. **Lint** the draft reply, as [Lint](#lint) says, which is required. Then return it, and save if a target path is set.
 
 ## Output
 
-Return the requirements that pass the checklist, `FR` lines first and then `NFR` lines, then the open questions. If no requirement can be written, return only the questions. Nothing else: no preamble, no summary, no closing note, and no title, priority, or rationale on a requirement. Never mention the lint, the checklist, the rules, or how you worked; act on their findings without reporting them. The reply's first line is its first `FR-`, `NFR-`, or `Q-` line, and the only other line it may hold is the `<N> more open questions after these.` line.
+The reply holds `FR` lines, then `NFR` lines, then `Q` lines, with a blank line between lines, and nothing else: no preamble, summary, or closing note, no title, priority, or rationale, and no word about the lint, the rules, or how you worked. Its first line is an `FR-`, `NFR-`, or `Q-` line.
 
 ```
 FR-001: <EARS sentence>
 
-FR-002: <EARS sentence>
-
-NFR-001: <EARS sentence>
-
 Q-001: <one direct question>? Proposed: <value>.
 ```
 
-Put a blank line between lines so each renders on its own.
-
-Ask one gap per question, on one line, for exactly what is missing: a system, value, unit, limit, threshold, name, or the response to a [coverage gap](references/ears-rules.md#coverage-gaps). One gap is one decision the user makes. A value with its parts is one gap: a number with its unit, a time with the percentage of cases it holds for. Two things the user could decide separately are two questions: what a limit counts per, and how high it is. No padding, hedging, or apologies.
-
-Add `Proposed:` only when the input suggests the value, a named standard or common practice sets it (for example SPF, DKIM, and DMARC for email sender authentication, or WCAG 2.2 level AA), or the project names the one system a statement lacks, as the rules' [The system](references/ears-rules.md#the-system) section says. Never propose a business decision: a target, limit, retry count, retention period, price, or schedule that the business must choose. When there is nothing to propose, leave `Proposed:` out; never write `Proposed: none`. Never write the requirement until the user confirms the value.
-
-Ask at most 10 questions in one reply. Put first the questions that unblock the most requirements, then the rest in input order, then the coverage-gap questions. When more are open, end with one line: `<N> more open questions after these.` The user can answer by ID, or accept proposals with `accept Q-001, Q-004` or `accept all proposed`. Treat an accepted proposal as the user's answer.
-
-When the user answers questions or adds input, return the requirements the answers change marked `(changed)` after the ID, the requirements they unblock marked `(new)`, and the next open questions, at most 10. In every reply after the first, each requirement line carries one of the two markers: a requirement written for the first time is `(new)`, also when the earlier replies held only questions. A requirement that did not change is not returned.
-
-## IDs
-
-- Functional requirements are `FR-001`, `FR-002`, and so on; non-functional requirements are `NFR-001`, `NFR-002`, and so on; questions are `Q-001`, `Q-002`, and so on. These are three separate sequences.
-- Continue each sequence from its own highest ID in this conversation or the target file, whichever is higher. An answered question never becomes a requirement ID: it closes, and the requirement it unblocks takes the next free `FR` or `NFR` ID.
-- A requirement's prefix is fixed when it is first written. When an answer or new input changes a requirement but not its class, rewrite it under its existing ID.
-- When an answer shows that a requirement belongs to the other class, replace its text with `Withdrawn. Moved to <new ID>.` and write it under the next free ID of the other sequence.
-- When the user withdraws or deletes a requirement, replace its text with `Withdrawn.` and keep the line, so its ID is never reused.
-- An answered question is closed and drops out of the open questions in chat. In the file it becomes `Q-NNN: Closed. <the question as asked, without its Proposed: part> Answer: <the user's answer>`, so its ID is never reused and a reader sees what was asked and what was decided. Never drop the question: `Closed. Answer: Yes.` means nothing on its own.
-- Never renumber.
-
-## Saving to a file
-
-Pick the path, in this order:
-
-1. A path the user named.
-2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the input's feature in kebab-case (for example `password-reset`). First look at the existing `<spec_output_dir>/*/requirements.md` files: if one already covers this feature, use it. Ask when the input names no feature, or when more than one existing file could match.
-3. Neither is set: ask where to save, as the "Stop and ask" list says, before writing any requirement. Write no file only when the user answers "chat only" or asked for chat only at the start.
-
-Write a file only when at least one requirement was written. A new file uses the [specification file template](references/ears-template.md).
-
-If the file already exists and follows the template, update it:
-
-- Add new `FR` lines at the end of the Functional section and new `NFR` lines at the end of the Non-Functional section, each with its source comment.
-- Rewrite changed and withdrawn requirements in place under their existing IDs.
-- Close answered questions in place and add new questions at the end of the section. The file holds every open question, including those not yet asked in chat.
-- Add to Summary, Scope (including its Systems line), and References only what the new input states.
-- Raise the version, update the date, and add one Revision History row, as the template says.
-
-If the file exists but does not follow the template, change nothing yet. Say so and ask before rewriting it:
-
-- If it holds `FR-NNN` lines and the user agrees, move it into the template. Keep every `FR` ID and every requirement's text. Turn each open question it lists into a `Q-NNN` line, in its order, continuing from the highest `Q` ID in the file.
-- If it holds no `FR-NNN` lines, ask whether to use another path instead.
-
-After writing, state the path in one line.
+- **IDs:** `FR` (functional), `NFR` (non-functional), and `Q` are three separate sequences. Each continues from its own highest ID in this conversation or the target file. Never renumber or reuse an ID.
+- **One gap per question,** on one line, asking exactly what is missing. One gap is one decision the user makes: a number with its unit, or a time with the percentage of cases it holds for, is one gap; what a limit counts per and how high it is are two. No padding, hedging, or apologies.
+- **`Proposed:`** only when the input suggests the value, a named standard or common practice sets it (SPF, DKIM, and DMARC for email sender authentication; WCAG 2.2 level AA), or the project names the one system a statement lacks, as [The system](references/ears-rules.md#the-system) says. Never propose a business decision: a target, limit, retry count, retention period, price, or schedule. With nothing to propose, leave `Proposed:` out. Write the requirement only after the user confirms.
+- **At most 10 questions:** first those that unblock the most requirements, then the rest in input order, then coverage gaps. Hold back a question whose wording depends on another's answer. When more are open, end with the one line `<N> more open questions after these.`
 
 ## Lint
 
-Run [scripts/lint.py](scripts/lint.py) on every draft reply before you return it, and on every file you save. Do not skip it. Pass the draft on standard input, in one command and with no temporary file:
+Run [scripts/lint.py](scripts/lint.py) on every draft reply, in one command with no temporary file, adding `--follow-up` before the `-` for any reply after the first in a conversation:
 
 ```bash
 python3 <this skill folder>/scripts/lint.py - <<'EOF'
@@ -107,11 +59,4 @@ python3 <this skill folder>/scripts/lint.py - <<'EOF'
 EOF
 ```
 
-For a reply after the first in a conversation, add `--follow-up` before the `-`: it fails a requirement line that carries no `(new)` or `(changed)`. For a saved file, run `python3 <this skill folder>/scripts/lint.py <file>`, without `--follow-up`: a file holds no markers.
-
-- Fix every `ERROR`, then run it again until none remain.
-- For each `CHECK`, reread the rule it names and fix the line unless the words are used in an allowed sense.
-- Never report lint results in the reply.
-- The lint checks only the mechanical rules. A clean result does not replace the validation checklist.
-
-Skip the lint only when you cannot run commands at all; the checklist still applies.
+Fix every `ERROR` and rerun until none remain. For each `CHECK`, reread the rule it names and fix the line unless the words are used in an allowed sense. A clean lint does not replace the checklist. Skip it only when you cannot run commands.

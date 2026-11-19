@@ -13,14 +13,14 @@ ERROR  breaks a rule. Fix it.
 CHECK  may break a rule, depending on the sense of the words. Confirm it against the rule.
 
 Exits 1 when there is at least one ERROR. The rules stay in ears-rules.md; this script only
-catches what a reread can miss. The banned words are read from that file.
+catches what a reread can miss. The banned words are read from banned-words.md.
 """
 
 import re
 import sys
 from pathlib import Path
 
-RULES = Path(__file__).resolve().parent.parent / "references" / "ears-rules.md"
+BANNED = Path(__file__).resolve().parent.parent / "references" / "banned-words.md"
 
 LINE_RE = re.compile(r"^(- )?((FR|NFR|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
 MARKED_RE = re.compile(r"^(- )?(FR|NFR)-\d{3,} \((new|changed)\): ")
@@ -53,18 +53,20 @@ FILE_HEADINGS = [
 
 
 def banned_patterns():
-    """Return (word, compiled regex) for each banned word listed in ears-rules.md."""
-    text = RULES.read_text()
-    section = text.split("## Banned words", 1)[1].split("\n## ", 1)[0]
-    words = []
-    for line in section.splitlines():
-        label, sep, rest = line.partition(":")
-        if line.startswith("- ") and sep and "**" not in label:
-            words += re.findall(r"`([^`]+)`", rest)
+    """Return (word, compiled regex, group) for each banned word listed in banned-words.md.
+
+    Every `- <group>: ...` bullet in that file is a group, and every backticked text in it a banned word.
+    """
     patterns = []
-    for word in words:
-        suffix = r"(?:s|es|d|ed|ing|ly)?" if re.fullmatch(r"[A-Za-z]+", word) else ""
-        patterns.append((word, re.compile(r"(?<![\w/])" + re.escape(word) + suffix + r"(?![\w/])", re.I)))
+    for line in BANNED.read_text().splitlines():
+        label, sep, rest = line.partition(":")
+        if not (line.startswith("- ") and sep):
+            continue
+        group = label[2:].strip().lower()
+        for word in re.findall(r"`([^`]+)`", rest):
+            suffix = r"(?:s|es|d|ed|ing|ly)?" if re.fullmatch(r"[A-Za-z]+", word) else ""
+            regex = re.compile(r"(?<![\w/])" + re.escape(word) + suffix + r"(?![\w/])", re.I)
+            patterns.append((word, regex, group))
     return patterns
 
 
@@ -140,13 +142,14 @@ class Linter:
         if " or " in response:
             self.add(where, "CHECK", ident, "`or` in the response: alternatives hide the condition that picks one")
 
-        for word, pattern in self.patterns:
+        for word, pattern, group in self.patterns:
             for m in pattern.finditer(bare):
                 found = m.group(0)
                 if found.isupper() and len(found) > 1 and found not in UPPERCASE_WORDS:
                     continue
                 level = "CHECK" if word.lower() in TWO_SENSES else "ERROR"
-                self.add(where, level, ident, f"banned word `{found}`" + (" (allowed only in another sense)" if level == "CHECK" else ""))
+                self.add(where, level, ident, f"banned word `{found}`, listed under {group}"
+                         + (" (allowed only in another sense)" if level == "CHECK" else ""))
 
     def question(self, where, ident, text):
         if text.startswith("Closed."):
