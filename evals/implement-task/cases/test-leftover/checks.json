@@ -1,0 +1,85 @@
+{
+  "description": "Running the tests writes .last-test-run in the project root, a file the project neither commits nor ignores, as uv run wrote uv.lock in the Stage 5 real run. The skill implements T-1.2 as usual, never commits .last-test-run, and after its commit removes it by path, so the next task's clean start does not stop on it. The reply is the plain done report.",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 5,
+      "max": 5
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\AT-1\\.2 done: ",
+      "why": "the reply is the done report for T-1.2, starting on its first line"
+    },
+    {
+      "pattern": "^Covers: FR-002$",
+      "why": "it covers only T-1.2's requirement"
+    },
+    {
+      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time/phase-1$",
+      "why": "one commit on the reading-time/phase-1 branch"
+    },
+    {
+      "pattern": "^Bash .*git commit.*T-1\\.2: ",
+      "why": "the commit subject names the task",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git clean -[a-z]*f[a-z]* (-[a-z]+ )*-- [^\"]*\\.last-test-run",
+      "why": "the file the tests created is removed by path",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^```",
+      "why": "the done report holds no code"
+    },
+    {
+      "pattern": "(?i)^(next|note|summary|i |the )",
+      "why": "nothing but the done report's lines"
+    },
+    {
+      "pattern": "\\.last-test-run",
+      "why": "the reply does not mention the removed file"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add (-A|--all|\\.(\\s|\"|$))|commit [^\"]*-a)",
+      "why": "files are staged by path",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (add|commit)[^\"]*\\.last-test-run",
+      "why": "the file the tests created is never committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git clean(?![^\"]* -- \\S)",
+      "why": "git clean always names its paths",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git clean[^\"]*agent-skills-config",
+      "why": "the user's config file is never removed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) .*(requirements|plan)\\.md",
+      "why": "requirements and plan are never changed",
+      "target": "trace"
+    }
+  ],
+  "expectations": [
+    "The reply reports only T-1.2: it does not implement or mention T-1.3 or T-1.4."
+  ],
+  "manual": [
+    "After the run, git status --porcelain on reading-time/phase-1 shows nothing, and .last-test-run is gone.",
+    "The T-1.2 commit holds counts.py, test_counts.py, and tasks.md, and not .last-test-run."
+  ]
+}

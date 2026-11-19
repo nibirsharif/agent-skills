@@ -41,6 +41,7 @@ These rules are authoritative for `implement-task`. A change is checked against 
 - **Spec commit.** If the feature's folder had uncommitted changes, stage that folder by path and commit it before implementing, once, with the subject `Add <feature-name> spec` and no body, on the branch the previous rule chose (the first phase's). Later runs find a clean tree and make no spec commit.
 - **Stage by path.** Stage only the files you changed and `tasks.md`. Never `git add -A`, `git add .`, or `git commit -a`.
 - **One commit per task**, after any spec commit, made only after every check passes and Status is `Done`. Subject `T-<p>.<n>: <task title>` (` (rework)` appended for a rework); body `Covers: <IDs>` and `Tasks: <path to tasks.md>`. Keep any commit trailer the environment requires.
+- **Leave no new files behind.** After the task's commit, run `git status --porcelain` again. The clean start allowed no untracked file but the spec files, which are now committed, so each untracked path (`??`) is one this run's commands created, such as a lock file or cache the test command wrote. Remove each of them by path with `git clean -fd -- <path>`, except `.agent-skills-config.yaml` and the task's own Files. Never run `git clean` without a path, and never remove a tracked file. Otherwise the next task's clean start stops on them. A stop line removes nothing.
 - **Never** push, pull, merge, amend, rebase, reset, stash, or change another branch.
 - **Not a git repository:** implement, set Status, and end the done report with `Commit: none (not a git repository)`.
 

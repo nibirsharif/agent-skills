@@ -48,6 +48,8 @@ The full list is in [the rules](../skills/implement-task/references/implement-ru
 
 **Why does it refuse a dirty working tree?** So each commit holds only its own task. Commit or stash your changes first.
 
+**My test command creates a file, such as `uv.lock`. Will it stop the next task?** No. The skill starts from a clean tree, so after its commit any new untracked file came from its own commands, and it removes each one by path. It leaves your `.agent-skills-config.yaml` and anything `.gitignore` covers alone. To keep such a file, commit it or add it to `.gitignore`.
+
 **What about the spec files that write-spec, write-plan, and write-tasks just saved?** They are the one exception. On its first run the skill commits the feature's folder as `Add <feature-name> spec` on the first phase's branch, then commits the task. It does this without asking, so review those files first if you want to change them; the commit is local and you can amend or drop it before merging.
 
 **What if [verify-spec](verify-spec.md) finds a gap in a `Done` task?** Set that task's Status back to `Todo`, commit it, and run implement-task on it with the verify rows in your message. It treats a `Todo` task that already has a commit as a rework: it fixes only what the rows show, inside the task's Files, and commits `T-1.2: <title> (rework)`. [build-phase](build-phase.md) does this loop for you.
