@@ -53,6 +53,7 @@ IMPLEMENT_STOPS = [
     r"T-\d+\.\d+ .+\. Fix the task with write-tasks, then run implement-task again\.",
     r"T-\d+\.\d+ is a rework but its check passes and no gap was given\. Pass the failing verify rows, then run implement-task again\.",
     r"T-\d+\.\d+ check failed: .+\. Status stays Todo; the changes are left uncommitted\.",
+    r"T-\d+\.\d+ cannot run its tests: .+ is not available \(.+\)\. Make it available, then run implement-task again\.",
 ]
 
 

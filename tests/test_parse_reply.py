@@ -140,7 +140,9 @@ class Implement(unittest.TestCase):
         for line in ["T-1.2 is already Done.", "Every task in a/tasks.md is Done.",
                      "T-1.4 depends on T-1.2, T-1.3, not yet Done. Implement those first.",
                      "Uncommitted changes in textstats/counts.py. Commit or stash them, then run implement-task again.",
-                     "T-1.2 check failed: python3 -m unittest: 1 failure. Status stays Todo; the changes are left uncommitted."]:
+                     "T-1.2 check failed: python3 -m unittest: 1 failure. Status stays Todo; the changes are left uncommitted.",
+                     "T-1.2 cannot run its tests: PostgreSQL on localhost:5432 is not available "
+                     "(uv run pytest: 11 errors at setup, connection refused). Make it available, then run implement-task again."]:
             with self.subTest(line=line):
                 result = pr.parse_implement(line, strict=True)
                 self.assertEqual((result["kind"], result["line"]), ("stop", line))

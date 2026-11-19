@@ -58,6 +58,14 @@ T-1.2 check failed: python3 -m unittest: test_expired_token_rejected expected Fa
 
 The next run stops with the uncommitted-changes line until the user commits or discards those changes.
 
+The tests need PostgreSQL, and none is running. The first test run, before any file was edited, errors at setup:
+
+```
+T-1.2 cannot run its tests: PostgreSQL on localhost:5432 is not available (uv run pytest: 11 errors at setup, connection refused). Make it available, then run implement-task again.
+```
+
+Nothing was edited, so once the user starts the database, the next run starts from this tree. Starting a container to run the tests, or reporting this as `check failed`, is wrong.
+
 The user asks to implement `FR-004`, which `tasks.md` lists as `Blocked by Q-001`:
 
 ```

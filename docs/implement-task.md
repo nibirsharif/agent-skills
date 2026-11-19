@@ -37,6 +37,7 @@ It stops with a single line instead when:
 | The task's files do not fit the code | fix the task with write-tasks |
 | Files outside the feature's folder have uncommitted changes | commit or stash them |
 | The check fails | the change is left uncommitted for you to see; Status stays `Todo`. Commit or discard it before the next run |
+| A service the tests need, such as a database, is not running | start it; nothing was changed, so rerun as is |
 
 The full list is in [the rules](../skills/implement-task/references/implement-rules.md#stop-lines).
 
@@ -49,6 +50,8 @@ The full list is in [the rules](../skills/implement-task/references/implement-ru
 **Why does it refuse a dirty working tree?** So each commit holds only its own task. Commit or stash your changes first.
 
 **My test command creates a file, such as `uv.lock`. Will it stop the next task?** No. The skill starts from a clean tree, so after its commit any new untracked file came from its own commands, and it removes each one by path. It leaves your `.agent-skills-config.yaml` and anything `.gitignore` covers alone. To keep such a file, commit it or add it to `.gitignore`.
+
+**My tests need a database (or another service). Will the skill start one?** No. It never starts, stops, or installs a service, container, or tool. Before it edits anything it runs the tests once; when they cannot reach something they need, it stops with `T-1.2 cannot run its tests: <what> is not available (...). Make it available, then run implement-task again.` That is not a failed check, since the code was never tested, and nothing was edited, so after you start the service the next run picks up from the same tree.
 
 **What about the spec files that write-spec, write-plan, and write-tasks just saved?** They are the one exception. On its first run the skill commits the feature's folder as `Add <feature-name> spec` on the first phase's branch, then commits the task. It does this without asking, so review those files first if you want to change them; the commit is local and you can amend or drop it before merging.
 
