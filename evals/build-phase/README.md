@@ -15,11 +15,12 @@ Cases that run build-phase on the made-up `textstats` project in [fixture/](fixt
 | `no-subagents` | `"disallowed_tools"` in its `checks.json` takes the Agent tool away. The run stops after picking the phase with the no-subagents reason, and never loads implement-task or verify-spec itself. |
 | `all-done` | Its `committed/` `tasks.md` has every task `Done`, and no phase is named: `find_tasks.py` prints the stopped summary with `Every task in ... is Done.`; no subagent, no change. |
 | `off-phase-branch` | Its `branch/` folder leaves the run on `feature-work`, which implement-task stays on. When verify-spec finds the FR-001 gap, the run stops with `not on the phase branch`: no Reopen commit, no branch switch. |
-| `bad-verify-report` | Its `committed/` folder holds a project skill named `verify-spec`, a test double whose report has a Tally (2 met) that does not match its rows (3 met). `parse_reply.py` rejects it; the verify is retried once, then `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Without the parse step the run would see no gap and end `done`. |
+| `bad-verify-report` | Its `committed/` folder holds a project skill named `verify-spec`, a test double whose report has FR-002 `met` with no path:line and no passed test. `parse_reply.py` rejects it; the verify is retried once, then `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Without the parse step the run would see no gap and end `done`. |
+| `miscounted-tally` | The same kind of test double, whose report has every row right but a Tally (2 met) that miscounts its rows (3 met); its `committed/` folder also has FR-001 already fixed, so the verify task's check passes. The report is not rejected: no retry, T-1.4 runs, and the reply is `done` with `Verify: 3 met, 1 skipped`, counted from the rows. |
 | `missing-tasks` | No `tasks.md` for the feature: `Phase ? ... stopped` with the no-tasks-file reason, no subagent, no change. |
 | `routing-implement-one` | Routing: a request to implement one named task. build-phase must not fire. |
 
-Every stop reason the rules name has a case. No `requirements.md` is printed by `find_tasks.py` the same way the no-tasks-file stop is, and is unit-tested there rather than run.
+Every stop reason the rules name has a case but one. No `requirements.md` is printed by `find_tasks.py` the same way the no-tasks-file stop is, and is unit-tested there rather than run. A verify-spec retry that calls a gap of its rejected first report `met` has no case: it needs a test double that answers differently the second time. The rows a rejected report keeps are unit-tested in `tests/test_parse_reply.py`.
 
 What the four stop cases added on 16 November 2026 do not prove:
 
@@ -74,6 +75,18 @@ After them, 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.322): the who
 Every run that reached verify-spec ran `parse_reply.py verify`. All four misses were text around a correct summary (a sentence before it, or the gap explained after it), on stops the agent composes. `no-subagents` and `round-limit` had passed 3 of 3 before the rule change, so the longer rules may have made this more frequent; it is not yet measured at 3 runs.
 
 From the real run in [../real-runs/2026-11-17.md](../real-runs/2026-11-17.md), implement-task's stop lines are passed on with build-phase as the command to rerun, and `subagent-stop-line` expects `... then run build-phase again.`: 3 of 3 on 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327).
+
+After the fix for [#2](https://github.com/nibirsharif/agent-skills/issues/2) (a miscounted Tally is recounted, not rejected; replies reach `parse_reply.py` through a file; `bad-verify-report`'s double changed and `miscounted-tally` added), the whole suite at 3 runs on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327): 33 of 39. A single pass the day before had 12 of 13, the miss `round-limit`.
+
+| Case | Passed |
+|---|---|
+| `miscounted-tally` | 3 of 3 |
+| `bad-verify-report` | 2 of 3, the miss a sentence before a correct summary |
+| `off-phase-branch` | 1 of 3: once the gap explained after a correct summary, once verify-spec also gave FR-003 `partial` (rounding down at a custom speed), so the tally, counted right, was `1 met, 2 partial, 1 skipped` |
+| `round-limit` | 0 of 3, each a sentence before a correct summary |
+| the other nine | 3 of 3 each |
+
+In every run that reached verify-spec, build-phase wrote each subagent reply to a file in its temp directory and passed that file to `parse_reply.py`. `round-limit` is the measurement the paragraph above asked for: at 3 runs, the longer rules from 0.15.0 do make a composed stop open with a sentence.
 
 [hooks.py](hooks.py) grades two things apart, so a run shows which one failed: `summary: ...` when the summary lines themselves are wrong, and `outside the summary: ...` when the reply has other text, such as a sentence before a correct summary. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
 

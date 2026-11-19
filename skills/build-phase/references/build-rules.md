@@ -28,15 +28,13 @@ Name the task, so the subagent never picks one. Tasks run in file order within t
 
 **The verify task** is the phase's task with `**Files:** None.` (it runs the plan's Verify list and changes no code). It is not a build task: skip it here, and run it only after [Verifying the phase](#verifying-the-phase) reports no gaps, as the last step before the summary. Run before the gaps are fixed, its check fails by design.
 
-**Parse every reply with the script**, the done ones too: it checks what reading cannot, such as a done report missing a line or a tally that does not match its rows. Pass the subagent's reply as it came back, without editing it, and do what the JSON's `kind` says, not what the reply looks like:
+**Parse every reply with the script**, the done ones too: it checks what reading cannot, such as a done report missing a line or a `met` row without evidence. **The script reads the reply whole and unchanged:** write the subagent's reply exactly as it came back, every line, to a new file in the system temp directory (outside the project, so `implement-task` never sees an uncommitted file) with your file-writing tool, and pass that file:
 
 ```
-python3 <this skill folder>/scripts/parse_reply.py implement <<'REPLY'
-<the subagent's reply>
-REPLY
+python3 <this skill folder>/scripts/parse_reply.py implement <file>
 ```
 
-Only when you cannot run commands, parse by the same shapes yourself. The kinds:
+Never retype it into a heredoc, `echo`, or the command line, and never shorten, summarize, or rebuild it; a reply that does not reach the script whole can be rejected for something the subagent did not do. Do what the JSON's `kind` says, not what the reply looks like. Only when you cannot run commands, parse by the same shapes yourself. The kinds:
 
 - **done** (five lines, the first `T-<p>.<n> done: <title>`): the task is finished. Keep its commit.
 - **stop**: one of `implement-task`'s stop lines. End the run: `Stopped: <the script's relay>`, which is the line with `then run implement-task again.` made `then run build-phase again.`, since the user reruns build-phase. Without the script, make that one change yourself. Never work around a stop line.
@@ -50,10 +48,12 @@ When every task of the phase is `Done`, start a separate subagent (a fresh one, 
 Call the Skill tool with verify-spec. Verify phase <n> of <path to requirements.md>. Reply as the skill says.
 ```
 
-Parse its reply with `parse_reply.py verify` in the same way. When the script says `invalid` (no report, or a report whose own lines disagree, such as a Tally that does not match its rows), start one new verify subagent with the same prompt; a verify run changes nothing, so a retry is always safe. A second `invalid` ends the run: `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Never fix a report yourself, and never copy a Tally the script rejected.
+Parse its reply with `parse_reply.py verify <file>`, passed through a file in the same way. A `Tally:` line that miscounts the rows does not make a report invalid: the rows decide, and the script returns the tally counted from them (count them yourself when you cannot run commands). When the script says `invalid` (no report, or one it rejects for another reason, such as a `met` row without a path:line and a passed test), start one new verify subagent with the same prompt; a verify run changes nothing, so a retry is always safe. A second `invalid` ends the run: `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Never fix a report yourself, and never copy its Tally line: the summary's tally is the script's.
 
 - **stop**: end the run with the line.
 - **report**: the `Verify:` line is the script's `tally`. Gaps are the rows `unmet` and `partial`, and each `untested` row that is not a [manual check](#manual-checks). `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.
+
+**A gap is never dropped by a retry.** An unusable verify report still lists the rows the script could read (`rows` in its output). Before the retry, note its gap rows, by the same rule as above. When the retry's report gives any of those IDs a verdict that is not a gap, the two reports disagree and neither is trusted: end the run with `Stopped: verify-spec gave <ID> <first verdict> in a rejected report and <second verdict> on the retry. Check <ID> against the code, then run build-phase again.`, one `<ID> <first verdict> ... <second verdict>` clause per ID, joined by `; `. A gap row that the retry also calls a gap is reworked as usual.
 
 ## Manual checks
 
@@ -107,12 +107,13 @@ The phase title in the `Next:` line is the text after `### Phase <n>: ` in `task
 - Push, pull, merge, rebase, reset, stash, amend, or switch branches.
 - Implement or verify in your own context: always a subagent, and always a different one for verify. An agent with no subagents [stops](#running-a-task).
 - Retry a stop line, or retry more than once.
+- Retype, shorten, or rebuild a subagent's reply before parsing it, or let a retry clear a gap that a rejected report found.
 - Answer an open question or mark a blocked requirement as a gap.
 
 ## Validation checklist
 
 1. Every task you ran was named, and ran only with its dependencies `Done`.
-2. Every subagent reply went through `parse_reply.py` (unless you cannot run commands); no stop line was retried; no task or verify had more than two attempts.
+2. Every subagent reply went through `parse_reply.py` whole, from a file (unless you cannot run commands); no stop line was retried; no task or verify had more than two attempts; no gap row of a rejected verify report was dropped by its retry.
 3. Verify ran only after every task of the phase was `Done`, in a subagent that implemented nothing.
 4. The only commits you made are `Reopen` commits that change only Status lines of `tasks.md`.
 5. Nothing was pushed, and the branch is the one `implement-task` chose.
