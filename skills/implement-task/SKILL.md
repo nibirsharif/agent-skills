@@ -45,7 +45,7 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 6. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
 7. **Run the check** in Done when, then the full test suite. A failure you cannot fix within the task is the failed-check stop line.
 8. **Validate** against the rules' checklist.
-9. **Set Status to `Done`** in `tasks.md`, **commit** as the rules' git section says (the spec files first, if they were not committed yet), and reply with the done report.
+9. **Set Status to `Done`** in `tasks.md`, **commit** as the rules' git section says (the spec files first, if they were not committed yet), remove the untracked files your commands left behind, as that section says, and reply with the done report.
 
 ## Finding the files
 

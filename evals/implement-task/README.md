@@ -16,6 +16,7 @@ Cases that exercise the implement-task skill's rules on a small made-up project,
 | `spec-only-dirty` | Only the feature's `plan.md` is uncommitted, as after write-tasks: commits it as `Add reading-time spec`, then implements T-1.2 and commits it. |
 | `spec-and-code-dirty` | The spec and a code file are both uncommitted: a one-line stop naming only the code file, no spec commit, no branch switch. |
 | `test-command` | The project config sets `test_command`: the skill runs that exact command, and the done report's Check line names it. |
+| `test-leftover` | Running the tests writes `.last-test-run`, which the project neither commits nor ignores: the skill never commits it, removes it by path with `git clean` after the task's commit, and does not mention it. From the Stage 5 real run ([#4](https://github.com/nibirsharif/agent-skills/issues/4)), where `uv.lock` stopped the next task. |
 | `routing-implement` | Routing: a request to do the next task, without naming the skill. The skill must fire. |
 | `routing-tasks` | Routing: a request to write the task list, which the skill's description excludes. The skill must not fire. |
 
@@ -43,6 +44,8 @@ With the rewording alone, both wrong-feature runs ran `find . -name tasks.md`, f
 With `scripts/pick_task.py` finding the file, checking the working tree, picking the task, and printing the stop line (16 November 2026, `claude-sonnet-5-5`, Claude Code 2.1.322): the five stop-line cases (`blocked`, `dependency-not-done`, `dirty-tree`, `spec-and-code-dirty`, `missing-tasks`) passed 30 of 30 at 6 runs each, against about half before, and the whole suite 11 of 11 at one run each. The stop lines the script cannot decide (task mismatch, failed check, rework with nothing to fix) have no case and are unmeasured.
 
 `config-uncommitted`, from the real run in [../real-runs/2026-11-17.md](../real-runs/2026-11-17.md): 3 of 3 on 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). In every run the commit staged only the task's files by path, so the uncommitted config file stayed out of it.
+
+`test-leftover`, from finding D of the same run ([#4](https://github.com/nibirsharif/agent-skills/issues/4)): 3 of 3 on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). Every run ran `git clean -fd -- .last-test-run` after the commit, then `git status --porcelain`. The whole suite then passed 13 of 13 at one run each.
 
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls, so they show whether code was edited, tests were run, and what git did. Work through each case's "Review by hand" list: the checks cannot see the commit's contents.
 
