@@ -52,6 +52,7 @@ Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (defaul
 - Each "done when" check is a test or command you can run, or starts with `manual:` and says what to do and what to see.
 - No check is `manual:` where the project's tests could make it.
 - No task covers an ID from another phase.
+- Every item the plan lists under a phase's Interface and data changes, such as a helper or a table, has a task that builds it, even when no Verify line names it, or the Overview names the file that already has it.
 
 ## Related skills
 

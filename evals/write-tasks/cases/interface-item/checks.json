@@ -1,0 +1,28 @@
+{
+  "description": "One phase whose Interface and data changes list an export_path helper that no Verify line names. A task builds the helper, before the commands that use it, instead of the export command building the path inline.",
+  "counts": {
+    "tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 4, "max": 12 },
+    "FR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-001\\b", "min": 2 },
+    "FR-002 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-002\\b", "min": 2 },
+    "FR-003 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-003\\b", "min": 2 },
+    "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
+    "verify task last": { "pattern": "^#### T-1\\.\\d+: Verify", "min": 1 }
+  },
+  "must_match": [
+    { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" },
+    { "pattern": "^(#### T-1\\.\\d+: .*|\\*\\*Files:\\*\\*.*)(export_path|(?i:path helper))", "why": "a task names the export_path helper from Interface and data changes in its title or Files" }
+  ],
+  "must_not_match": [
+    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(FR|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
+    { "pattern": "^\\*\\*Files:\\*\\*.*`[\\w.-]+/[\\w./-]+\\.\\w+`", "why": "with no codebase, no file path is named" },
+    { "pattern": "^```", "why": "tasks hold no code" }
+  ],
+  "expectations": [
+    "The task that builds export_path comes before the export and download tasks, and both of those depend on it, directly or through an earlier task.",
+    "The task that builds export_path has a Done when that tests the helper itself, not only a command that uses it.",
+    "No task other than the helper's builds the file path from EXPORT_DIR and EXPORT_PREFIX itself."
+  ],
+  "manual": [
+    "Each task is one focused change."
+  ]
+}

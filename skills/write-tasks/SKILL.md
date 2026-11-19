@@ -38,7 +38,7 @@ Work silently. Write no text between tool calls and none before the reply.
 1. **Find and read the plan**, as [Saving to a file](#saving-to-a-file) says, and the `requirements.md` beside it when it exists. If the plan is missing or has no phase, reply with the stop line and stop. If a `tasks.md` already exists beside the plan, read it: you are updating it.
 2. **Check the plan against the requirements.** Every ID in a phase must be a written requirement. A withdrawn or unknown ID is a stop line.
 3. **Explore the codebase** as the rules' "Exploring the code" section says.
-4. **Split each phase into tasks** as the rules say: shape, size, order, coverage. List the tasks and count them against the limit before writing any; a count over the limit is the stop line, not a reason to merge tasks.
+4. **Split each phase into tasks** as the rules say: shape, size, order, coverage of every ID and of every interface and data change. List the tasks and count them against the limit before writing any; a count over the limit is the stop line, not a reason to merge tasks.
 5. **Validate** against the rules' checklist. Fix what fails; a check you cannot pass is a question, not a task.
 6. **Return** the tasks as [Output](#output) says, and **save** if a path is set.
 

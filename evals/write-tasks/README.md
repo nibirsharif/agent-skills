@@ -10,6 +10,7 @@ Made-up plan files that exercise the write-tasks skill's rules, each with automa
 | `blocked` | The plan has a blocked requirement and open questions: nothing is tasked for it, no question is answered, the `Blocked by` entry is copied once. |
 | `plan-mismatch` | The plan lists an ID that requirements.md withdraws: a one-line stop, no tasks. |
 | `oversized-phase` | A phase needs more tasks than the stated limit: a one-line stop that sends the user to write-plan. |
+| `interface-item` | The phase's Interface and data changes list a helper that no Verify line names: a task builds it, before the commands that use it. |
 | `pasted-not-saved` | `single-phase`'s input sent without the chat-only line: the tasks are in chat, and their last line says they were not saved. |
 | `routing-plan` | Routing: a request to write the plan from requirements, which the skill's description excludes. The skill must not fire. |
 

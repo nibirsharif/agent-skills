@@ -8,6 +8,7 @@ These rules are authoritative for `write-tasks`. A task list is checked against 
 
 - **Tasked:** every phase in section 2, and only those. Phase numbers come from the plan and are never renumbered.
 - **Blocked:** a `Blocked by Q-…: <topic>` entry in the plan's section 3. It gets no task. Copy each entry word for word, on one line, into the tasks file's Blocked section, or write `None.` only when the plan's section 3 is `None.`. A plan entry is never dropped. Never replace an entry with the text of its questions, and never split one into one line per question.
+- **Interface and data changes:** each item a phase lists there is built by a task of that phase, whether or not a Verify line names it. That task names the item in its title or Files, covers the phase's IDs whose behaviour needs it, and its Done when tests the item itself for those IDs. A later task that uses the item depends on that task and uses the item instead of building the same rule again. The one exception is an item the code already has, found while exploring: it gets no task, and the Overview names it and the file that has it. An item that no ID of its phase needs is a question, as for a vague phase.
 - **Open questions:** never tasked, never answered, never listed in the tasks file except inside a `Blocked by` entry.
 - **Requirements file:** when `requirements.md` is beside the plan, check that every ID in a phase is a written requirement there. With a pasted plan and no file, trust the plan.
 
@@ -71,3 +72,4 @@ Run every item on the task list before returning it.
 8. Every path in Files was seen in the code; every other file is `new:`; with no codebase, every file is `new:`.
 9. No code, no new requirement, no change to the plan's phases, and no open question answered.
 10. Every check a person must make starts with `manual:` after its ID, no other check does, and none is manual where a test runner in the project can make it.
+11. Every item under a phase's Interface and data changes is named in the title or Files of a task of that phase, or the Overview names the file that already has it.
