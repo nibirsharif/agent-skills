@@ -5,15 +5,18 @@ Usage: python3 parse_reply.py verify|implement [--strict] [FILE]     (reads stan
 
 Prints one JSON object and exits 0 when the reply is valid, or exits 1 and prints {"kind": "invalid",
 "problems": [...]}. The producer is strict, the consumer tolerant: by default the report, the done report,
-or the stop line is found anywhere in the reply, so a sentence before it does not make the reply invalid.
---strict also fails a reply that has text outside the contract; the evals use it.
+or the stop line is found anywhere in the reply, so a sentence before it does not make the reply invalid,
+and a verify report whose Tally line miscounts its rows is valid, with the tally counted from the rows.
+--strict also fails a reply that has text outside the contract or a wrong Tally; the evals use it.
 
 kind is one of:
-  report  (verify)     rows [{id, verdict, evidence}], tests, tally, drift
+  report  (verify)     rows [{id, verdict, evidence}], tests, tally (counted from the rows), drift,
+                       warnings (only when there are any, such as a Tally line that miscounts)
   done    (implement)  task, title, covers, changed, check, commit
   stop                 line: the one enumerated stop line, word for word; for implement also relay: the
                        line as build-phase passes it on, with "run implement-task again" made "run build-phase again"
-  invalid              problems
+  invalid              problems; for verify, also rows when the table had any, so a gap in a rejected
+                       report can be compared with the retry
 
 Python 3 standard library only.
 """
@@ -61,8 +64,11 @@ def find_stop(lines, stops):
     return None
 
 
-def invalid(*problems):
-    return {"kind": "invalid", "problems": list(problems)}
+def invalid(*problems, rows=None):
+    result = {"kind": "invalid", "problems": list(problems)}
+    if rows:
+        result["rows"] = rows
+    return result
 
 
 def parse_verify(text, strict=False):
@@ -92,11 +98,13 @@ def parse_verify(text, strict=False):
         else:
             fields[name.lower()] = found[0][len(name) + 2:]
     if problems:
-        return invalid(*problems)
+        return invalid(*problems, rows=rows)
     counts = {v: sum(1 for r in rows if r["verdict"] == v) for v in VERDICTS}
     expected = ", ".join(f"{n} {v}" for v, n in counts.items() if n)
+    warnings = []
     if fields["tally"] != expected:
-        problems.append(f"the tally is {fields['tally']!r}, the rows give {expected!r}")
+        (problems if strict else warnings).append(f"the tally is {fields['tally']!r}, the rows give {expected!r}")
+        fields["tally"] = expected
     for r in rows:
         if r["verdict"] == "met" and not (re.search(r"\S+:\d+", r["evidence"]) and "passed" in r["evidence"]):
             problems.append(f"{r['id']} is met without a path:line and a passed test")
@@ -105,7 +113,9 @@ def parse_verify(text, strict=False):
             problems.append("text before the table")
         if len(after) != 3 or [l.split(":")[0] for l in after] != ["Tests", "Tally", "Drift"]:
             problems.append("after the table there must be exactly a Tests, a Tally, and a Drift line")
-    return invalid(*problems) if problems else {"kind": "report", "rows": rows, **fields}
+    if problems:
+        return invalid(*problems, rows=rows)
+    return {"kind": "report", "rows": rows, **fields, **({"warnings": warnings} if warnings else {})}
 
 
 DONE = re.compile(r"^(T-\d+\.\d+) done: (.+)$")
