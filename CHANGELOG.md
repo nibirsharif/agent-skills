@@ -2,13 +2,14 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
-## Unreleased
+## 0.16.0
 
 - build-phase: a gap verify-spec found is no longer lost when its report is rejected and the retry says `met` ([#2](https://github.com/nibirsharif/agent-skills/issues/2)). A `Tally:` line that miscounts the rows no longer rejects a report: the rows decide, and `parse_reply.py` returns the tally counted from them (still a failure with `--strict`, which the evals use). A report rejected for another reason keeps its rows in the script's output, and when the retry gives one of its gap rows a verdict that is not a gap, the run stops with `Stopped: verify-spec gave <ID> <first verdict> in a rejected report and <second verdict> on the retry. ...` instead of trusting either report.
 - build-phase: subagent replies reach `parse_reply.py` through a file in the system temp directory, written whole, never retyped into a heredoc. In a real run the retyped report had lost 24 rows.
 - `Verify:` in the summary is the tally counted from the last report's rows.
 - Evals: `bad-verify-report`'s test double is now invalid for a `met` row with no evidence, since a miscounted Tally no longer is. New case `miscounted-tally`: a report whose Tally miscounts its rows is used, not retried, and the summary has the tally counted from the rows.
 - build-phase: a new script, `scripts/summary.py`, prints the summary from the run's values (feature, phase, branch, counts, the `Verify:` value, any `Check by hand:` checks, and the stop reason or phase title). Every run that `find_tasks.py` does not stop ends with it, and the reply is its output copied whole. Since 0.15.0 made `parse_reply.py` mandatory, a stop the agent decided from the script's JSON was written out as a sentence before the summary: `round-limit` passed 0 of 3, against 3 of 3 before. Wording alone brought it to 2 of 3; with the script, the whole suite passed 36 of 36 at 3 runs on `claude-sonnet-5-5` (Claude Code 2.1.327), and 39 of 39 with the #2 fix above. The reply lines are unchanged, and where the agent cannot run commands it writes the same lines itself.
+- No file format or ID changes. One new reply line: build-phase's stop when a retried verify-spec report no longer calls a gap of its rejected first report a gap. Known issues [#3](https://github.com/nibirsharif/agent-skills/issues/3) to [#10](https://github.com/nibirsharif/agent-skills/issues/10) from 0.15.0 are still open.
 
 ## 0.15.0
 
