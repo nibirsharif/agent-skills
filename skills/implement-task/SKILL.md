@@ -41,7 +41,7 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 2. **Check the working tree**: only the feature's own spec files and `.agent-skills-config.yaml` may be uncommitted, as the rules' git section says.
 3. **Pick the task** as the rules say, and check its dependencies are `Done`.
 4. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
-5. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby.
+5. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby. Then run the test command once, before editing anything: tests that cannot run because a service or tool they need is not available are the missing-service stop line, as the rules' test section says. Never start one yourself.
 6. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
 7. **Run the check** in Done when, then the full test suite. A failure you cannot fix within the task is the failed-check stop line.
 8. **Validate** against the rules' checklist.

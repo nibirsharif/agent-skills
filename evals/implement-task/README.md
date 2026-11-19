@@ -17,6 +17,7 @@ Cases that exercise the implement-task skill's rules on a small made-up project,
 | `spec-and-code-dirty` | The spec and a code file are both uncommitted: a one-line stop naming only the code file, no spec commit, no branch switch. |
 | `test-command` | The project config sets `test_command`: the skill runs that exact command, and the done report's Check line names it. |
 | `test-leftover` | Running the tests writes `.last-test-run`, which the project neither commits nor ignores: the skill never commits it, removes it by path with `git clean` after the task's commit, and does not mention it. From the Stage 5 real run ([#4](https://github.com/nibirsharif/agent-skills/issues/4)), where `uv.lock` stopped the next task. |
+| `service-missing` | The tests need a cache server on `127.0.0.1:6399`, and none is running: before editing anything, the skill stops with the missing-service line, not `check failed`. It starts no server, edits no code or test, commits no task, and removes nothing tracked. From the Stage 5 real run ([#5](https://github.com/nibirsharif/agent-skills/issues/5)), where one task started a PostgreSQL container and the next reported a failed check. |
 | `routing-implement` | Routing: a request to do the next task, without naming the skill. The skill must fire. |
 | `routing-tasks` | Routing: a request to write the task list, which the skill's description excludes. The skill must not fire. |
 
@@ -46,6 +47,8 @@ With `scripts/pick_task.py` finding the file, checking the working tree, picking
 `config-uncommitted`, from the real run in [../real-runs/2026-11-17.md](../real-runs/2026-11-17.md): 3 of 3 on 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). In every run the commit staged only the task's files by path, so the uncommitted config file stayed out of it.
 
 `test-leftover`, from finding D of the same run ([#4](https://github.com/nibirsharif/agent-skills/issues/4)): 3 of 3 on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). Every run ran `git clean -fd -- .last-test-run` after the commit, then `git status --porcelain`. The whole suite then passed 13 of 13 at one run each.
+
+`service-missing`, from finding E of the same run ([#5](https://github.com/nibirsharif/agent-skills/issues/5)): 3 of 3 on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). Every run ran `python3 -m unittest` before any edit, started no server, and replied with the missing-service line; none switched to the phase branch, which the rules allow but do not need here. The whole suite then passed 14 of 14 at one run each.
 
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls, so they show whether code was edited, tests were run, and what git did. Work through each case's "Review by hand" list: the checks cannot see the commit's contents.
 
