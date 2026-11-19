@@ -48,7 +48,13 @@ When every task of the phase is `Done`, start a separate subagent (a fresh one, 
 Call the Skill tool with verify-spec. Verify phase <n> of <path to requirements.md>. Reply as the skill says.
 ```
 
-Parse its reply with `parse_reply.py verify <file>`, passed through a file in the same way. A `Tally:` line that miscounts the rows does not make a report invalid: the rows decide, and the script returns the tally counted from them (count them yourself when you cannot run commands). When the script says `invalid` (no report, or one it rejects for another reason, such as a `met` row without a path:line and a passed test), start one new verify subagent with the same prompt; a verify run changes nothing, so a retry is always safe. A second `invalid` ends the run: `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Never fix a report yourself, and never copy its Tally line: the summary's tally is the script's.
+Parse its reply through a file in the same way, naming the requirements file so the script can check that the report has one row for every ID in it, in file order (the phase's rows and a `skipped` row for each other ID):
+
+```
+python3 <this skill folder>/scripts/parse_reply.py verify --requirements <path to requirements.md> <file>
+```
+
+A report that leaves out an ID, repeats one, or names one the file does not have is `invalid` (check the IDs yourself when you cannot run commands). A `Tally:` line that miscounts the rows does not make a report invalid: the rows decide, and the script returns the tally counted from them (count them yourself when you cannot run commands). When the script says `invalid` (no report, or one it rejects for another reason, such as a `met` row without a path:line and a passed test, or a missing row), start one new verify subagent with the same prompt; a verify run changes nothing, so a retry is always safe. A second `invalid` ends the run: `Verify: no usable report` and `Stopped: verify-spec gave no usable reply twice`. Never fix a report yourself, and never copy its Tally line: the summary's tally is the script's.
 
 - **stop**: end the run with the line.
 - **report**: the `Verify:` line is the script's `tally`. Gaps are the rows `unmet` and `partial`, and each `untested` row that is not a [manual check](#manual-checks). `cannot tell` is not a gap (it needs `write-spec`) and `skipped` is not either; list them in the summary only through the tally. No gaps: run the verify task as [Running a task](#running-a-task) says; the phase is done when it replies done.

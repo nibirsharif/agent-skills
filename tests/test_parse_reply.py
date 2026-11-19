@@ -3,6 +3,7 @@
 import importlib.util
 import json
 import subprocess
+import tempfile
 import sys
 import unittest
 from pathlib import Path
@@ -71,6 +72,59 @@ class Verify(unittest.TestCase):
         self.assertEqual(pr.parse_verify("All requirements look met.")["kind"], "invalid")
 
 
+REQUIREMENTS = """# Requirements Specification: Text stats
+
+## 3. Functional Requirements
+
+FR-001: The counter shall count words. <!-- Source: x -->
+
+FR-002: If the text is not a string, then the counter shall reject it. <!-- Source: x -->
+
+FR-003: Withdrawn.
+
+## 4. Non-Functional Requirements
+
+NFR-001: The counter shall count 1 MB of text within 1 second. <!-- Source: x -->
+"""
+IDS = ["FR-001", "FR-002", "FR-003", "NFR-001"]
+PHASE_REPORT = """| ID | Verdict | Evidence |
+|----|---------|----------|
+| FR-001 | met | textstats/counts.py:17; tests/test_counts.py::test_x passed |
+| FR-002 | untested | textstats/counts.py:15; no test |
+| FR-003 | skipped | outside phase 1 |
+| NFR-001 | skipped | outside phase 1 |
+Tests: python3 -m unittest: 4 tests OK
+Tally: 1 met, 1 untested, 2 skipped
+Drift: none"""
+
+
+class Ids(unittest.TestCase):
+    def test_requirement_ids_in_file_order(self):
+        self.assertEqual(pr.requirement_ids(REQUIREMENTS), IDS)
+
+    def test_every_id_once_in_order(self):
+        r = pr.parse_verify(PHASE_REPORT, strict=True, ids=IDS)
+        self.assertEqual(r["kind"], "report")
+
+    def test_left_out_skipped_rows_are_invalid_and_keep_the_rows(self):
+        # The real run's retry: only the phase's rows, none of the skipped ones (issue #3).
+        r = pr.parse_verify(REPORT, ids=IDS)
+        self.assertEqual(r["kind"], "invalid")
+        self.assertEqual(r["problems"], ["no row for FR-003, NFR-001"])
+        self.assertEqual([x["id"] for x in r["rows"]], ["FR-001", "FR-002"])
+        self.assertEqual(pr.parse_verify(REPORT)["kind"], "report")
+
+    def test_duplicate_unknown_and_order(self):
+        rows = PHASE_REPORT.splitlines()
+        dup = "\n".join(rows[:3] + rows[2:])
+        self.assertIn("more than one row for FR-001", pr.parse_verify(dup, ids=IDS)["problems"])
+        unknown = PHASE_REPORT.replace("| NFR-001 |", "| NFR-009 |")
+        self.assertEqual(pr.parse_verify(unknown, ids=IDS)["problems"],
+                         ["rows for IDs that are not in the requirements file: NFR-009", "no row for NFR-001"])
+        swapped = "\n".join(rows[:4] + [rows[5], rows[4]] + rows[6:])
+        self.assertEqual(pr.parse_verify(swapped, ids=IDS)["problems"], ["the rows are not in file order"])
+
+
 class Implement(unittest.TestCase):
     def test_done(self):
         r = pr.parse_implement(DONE, strict=True)
@@ -99,8 +153,8 @@ class Implement(unittest.TestCase):
 
 
 class Cli(unittest.TestCase):
-    def run_cli(self, mode, text):
-        return subprocess.run([sys.executable, str(SCRIPT), mode], input=text, capture_output=True, text=True)
+    def run_cli(self, mode, text, *options):
+        return subprocess.run([sys.executable, str(SCRIPT), mode, *options], input=text, capture_output=True, text=True)
 
     def test_exit_codes(self):
         ok = self.run_cli("verify", REPORT)
@@ -108,6 +162,17 @@ class Cli(unittest.TestCase):
         bad = self.run_cli("implement", "nothing useful")
         self.assertEqual((bad.returncode, json.loads(bad.stdout)["kind"]), (1, "invalid"))
         self.assertEqual(self.run_cli("other", "").returncode, 2)
+
+    def test_requirements_option(self):
+        with tempfile.TemporaryDirectory() as d:
+            req = Path(d) / "requirements.md"
+            req.write_text(REQUIREMENTS)
+            ok = self.run_cli("verify", PHASE_REPORT, "--requirements", str(req))
+            self.assertEqual((ok.returncode, json.loads(ok.stdout)["kind"]), (0, "report"))
+            bad = self.run_cli("verify", REPORT, f"--requirements={req}")
+            self.assertEqual((bad.returncode, json.loads(bad.stdout)["problems"]), (1, ["no row for FR-003, NFR-001"]))
+            self.assertEqual(self.run_cli("verify", REPORT, "--requirements", str(Path(d) / "none.md")).returncode, 2)
+            self.assertEqual(self.run_cli("implement", DONE, "--requirements", str(req)).returncode, 2)
 
 
 if __name__ == "__main__":
