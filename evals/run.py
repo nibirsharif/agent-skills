@@ -119,13 +119,27 @@ def prepare_work(fixture, case_dir, work):
     one commit on main, then the case's dirty/ is copied over it uncommitted. A case's committed/ folder is
     copied over the fixture before that commit, for a case that needs its own committed config. A case's
     branch/ folder is copied over that and committed on a new branch, BRANCH, which stays checked out. Without
-    a fixture, the folder starts empty."""
+    a fixture, the folder starts empty.
+
+    A case's default-branch file names another default branch, such as master. The fixture is then committed
+    on that branch, which is pushed to a bare repository, origin, beside the work folder, and origin/HEAD names
+    it. main is left behind at an older, empty commit that origin does not have: a stale local main."""
     if fixture:
         shutil.copytree(fixture, work, dirs_exist_ok=True)
         if (case_dir / "committed").is_dir():
             shutil.copytree(case_dir / "committed", work, dirs_exist_ok=True)
         git = ["git", "-c", "user.name=Eval", "-c", "user.email=eval@example.com", "-c", "commit.gpgsign=false"]
-        for cmd in (["git", "init", "-q", "-b", "main"], ["git", "add", "-A"], git + ["commit", "-q", "-m", "Initial commit"]):
+        marker = case_dir / "default-branch"
+        default = marker.read_text().strip() if marker.is_file() else "main"
+        cmds = [["git", "init", "-q", "-b", "main"]]
+        if default != "main":
+            cmds += [git + ["commit", "-q", "--allow-empty", "-m", "Old commit"], ["git", "checkout", "-q", "-b", default]]
+        cmds += [["git", "add", "-A"], git + ["commit", "-q", "-m", "Initial commit"]]
+        if default != "main":
+            origin = str(work.parent / "origin.git")
+            cmds += [["git", "init", "-q", "--bare", origin], ["git", "remote", "add", "origin", origin],
+                     ["git", "push", "-q", "origin", default], ["git", "remote", "set-head", "origin", default]]
+        for cmd in cmds:
             subprocess.run(cmd, cwd=work, check=True, capture_output=True)
         if (case_dir / "branch").is_dir():
             shutil.copytree(case_dir / "branch", work, dirs_exist_ok=True)

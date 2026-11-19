@@ -206,6 +206,23 @@ class Work(unittest.TestCase):
             self.assertEqual(self.git(work, "diff", "--name-only", "main...HEAD").split(), ["b.txt"])
             self.assertEqual(self.git(work, "status", "--porcelain").strip(), "?? c.txt")
 
+    def test_default_branch_is_on_origin_beside_a_stale_main(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture, case, work = Path(tmp) / "fixture", Path(tmp) / "case", Path(tmp) / "work"
+            fixture.mkdir()
+            (fixture / "a.txt").write_text("a\n")
+            case.mkdir()
+            (case / "default-branch").write_text("master\n")
+            work.mkdir()
+            run.prepare_work(fixture, case, work)
+            self.assertEqual(self.git(work, "branch", "--show-current").strip(), "master")
+            self.assertEqual(self.git(work, "symbolic-ref", "--short", "refs/remotes/origin/HEAD").strip(), "origin/master")
+            self.assertEqual(self.git(work, "rev-parse", "master"), self.git(work, "rev-parse", "origin/master"))
+            self.assertEqual(self.git(work, "log", "--format=%s", "main").strip(), "Old commit")
+            self.assertEqual(self.git(work, "ls-tree", "--name-only", "main").strip(), "")
+            self.assertEqual(self.git(work, "branch", "-r", "--list", "origin/main").strip(), "")
+            self.assertEqual(self.git(work, "status", "--porcelain").strip(), "")
+
     def test_without_a_fixture_the_folder_stays_empty(self):
         with tempfile.TemporaryDirectory() as tmp:
             case, work = Path(tmp) / "case", Path(tmp) / "work"

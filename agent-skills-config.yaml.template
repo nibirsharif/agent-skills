@@ -38,7 +38,7 @@ build_max_rework_rounds:
 test_command:
 
 # implement-task, verify-spec, build-phase: the branch phase branches start from and drift is compared against.
-# Leave empty and the skill uses main, master, or the branch origin/HEAD names.
+# Leave empty and the skill uses the branch origin/HEAD names, else main, else master.
 base_branch:
 
 # implement-task, build-phase: text put in front of each phase branch name, so

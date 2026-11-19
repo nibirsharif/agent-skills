@@ -13,7 +13,9 @@ Each case folder (evals/<skill>/cases/<case>/) holds a checks.json with any of t
 - disallowed_tools: ["Agent"], tools the agent is denied in this case, whatever config.json allows.
 
 A case can also hold branch/, files committed over the skill's fixture (config.json "fixture") on the branch
-feature-work, and dirty/, files copied over it after that and left uncommitted. See evals/run.py.
+feature-work, and dirty/, files copied over it after that and left uncommitted. A default-branch file
+naming a branch such as master puts the fixture on that branch, with an origin whose HEAD names it and a
+stale local main. See evals/run.py.
 
 A skill can add its own reply check in evals/<skill>/hooks.py: check(reply) returns a list of failures.
 It runs on every case except one with "fires": false.

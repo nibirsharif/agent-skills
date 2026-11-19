@@ -100,7 +100,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 | `tasks_max_per_phase` | write-tasks | The most tasks one phase may have; a phase that needs more goes back to write-plan to be split. Default 12. write-tasks reads `plan.md` from `spec_output_dir` and writes `tasks.md` beside it; implement-task reads `tasks.md` from there. |
 | `build_max_rework_rounds` | build-phase | The most rework rounds (reopen the tasks behind a requirement verify-spec does not find met, implement them again, verify again) before the run stops. Default 2. |
 | `test_command` | implement-task, verify-spec, build-phase | The command that runs the project's whole test suite, for example `make test`. Empty means the skill finds it from the README, Makefile, package scripts, or CI config. |
-| `base_branch` | implement-task, verify-spec, build-phase | The branch phase branches start from and drift is compared against. Empty means `main`, `master`, or the branch `origin/HEAD` names. |
+| `base_branch` | implement-task, verify-spec, build-phase | The branch phase branches start from and drift is compared against. Empty means the branch `origin/HEAD` names, else `main`, else `master`. |
 | `branch_prefix` | implement-task, build-phase | Text put in front of each phase branch name, so `<feature>/phase-<n>` becomes `<branch_prefix><feature>/phase-<n>`. Include the slash, for example `team/`. Default empty. |
 
 ## Eval results
