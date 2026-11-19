@@ -105,7 +105,7 @@ class OneLineSkills(Project):
             config = self.root / ".agent-skills-config.yaml"
             config.unlink(missing_ok=True)
             (self.home / ".agent-skills-config.yaml").unlink(missing_ok=True)
-            self.assertTrue(find(feature="x").startswith("ask No spec_output_dir is set"))
+            self.assertTrue(find(feature="x").startswith(f"ask Where is {file}? Give its path"))
             (self.home / ".agent-skills-config.yaml").write_text("spec_output_dir: specs   # shared\n")
             self.assertEqual(find(feature="x"), stop.format(f"specs/x/{file}"))
             config.write_text("test_command: make test\nspec_output_dir: 'docs/specs/'\n")

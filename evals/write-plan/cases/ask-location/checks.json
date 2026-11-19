@@ -1,0 +1,32 @@
+{
+  "description": "No spec_output_dir, no path in the request, and nothing earlier in the conversation. The project holds the feature's requirements in a folder the user moved them to, which the skill must not search for. The whole reply is the one location question, and nothing is saved.",
+  "raw": true,
+  "must_match": [
+    {
+      "pattern": "\\AWhere is requirements\\.md\\? Give its path, set `spec_output_dir` in `\\.agent-skills-config\\.yaml`, or paste the requirements\\.\\s*\\Z",
+      "why": "the reply is the location question and nothing else"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Read|Grep) .*notes/",
+      "why": "the moved file is not searched for or read",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Glob .*requirements",
+      "why": "the project is not searched for requirements.md",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*(find|grep).*requirements",
+      "why": "the project is not searched for requirements.md",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Write|Edit) ",
+      "why": "nothing is saved",
+      "target": "trace"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ Drive one phase of a feature from its first `Todo` task to a verified phase bran
 
 ## Reply contract
 
-Your last message is the summary, exactly these lines as plain text, and nothing else:
+Your last message is the summary, exactly these lines as plain text, and nothing else. The one exception is a question the lookup script prints after `ask`, such as where `tasks.md` is: then that question is the whole reply, and the run starts when the user answers.
 
 - `Phase <n> of <feature>: done` or `Phase <n> of <feature>: stopped`
 - `Branch: <branch>`
@@ -32,7 +32,7 @@ This skill only schedules work and reopens tasks. It never edits code, tests, or
 
 ## Workflow
 
-1. **Find the files and the phase**, as the rules say: the lookup script first. When it prints `stop`, the lines after it are your whole reply.
+1. **Find the files and the phase**, as the rules say: the lookup script first. When it prints `stop`, the lines after it are your whole reply; when it prints `ask`, its question is, unless the rules' one exception applies. Never pick a path yourself.
 2. **Implement:** for each build task of the phase in order (not the verify task), start a subagent that calls the Skill tool with `implement-task` for that task. Run [scripts/parse_reply.py](scripts/parse_reply.py) on every reply, a done one too, passing the reply whole through a file, never retyped, and act on its `kind`, not on how the reply reads (by the same shapes only when you cannot run commands). A done report goes on; anything else is handled as the rules say.
 3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report with the script, passing the requirements file so a report that leaves out an ID is rejected: an `invalid` report is retried once and never copied. A Tally that miscounts the rows does not make a report invalid; the script counts it from the rows. A gap in a rejected report that its retry no longer calls a gap is a stop, never dropped.
 4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to the round limit the lookup script printed (`rounds <n>`, from `build_max_rework_rounds`, default 2). At the limit the run stops.

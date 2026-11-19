@@ -13,6 +13,15 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ["write-spec", "write-plan", "implement-task", "verify-spec"]
 # The part of the "find the files" step that every skill must word the same way.
 CONFIG_RULE_RE = re.compile(r"`spec_output_dir` from `\.agent-skills-config\.yaml`.*?against the project root\.")
+# The rule for finding the feature's files without spec_output_dir, the same in every skill of the chain that reads them.
+CHAIN_FILES = [
+    "skills/write-plan/SKILL.md",
+    "skills/write-tasks/SKILL.md",
+    "skills/implement-task/SKILL.md",
+    "skills/verify-spec/SKILL.md",
+    "skills/build-phase/references/build-rules.md",
+]
+CONVERSATION_RULE_RE = re.compile(r"A path to the feature's `requirements\.md`.*?a path you chose yourself\.")
 
 
 class SharedBlockTest(unittest.TestCase):
@@ -22,6 +31,15 @@ class SharedBlockTest(unittest.TestCase):
             text = (ROOT / "skills" / name / "SKILL.md").read_text()
             m = CONFIG_RULE_RE.search(text)
             self.assertIsNotNone(m, f"{name}: no spec_output_dir lookup rule")
+            found[name] = m.group(0)
+        self.assertEqual(len(set(found.values())), 1, found)
+
+    def test_rule_without_spec_output_dir_is_identical(self):
+        found = {}
+        for name in CHAIN_FILES:
+            text = (ROOT / name).read_text()
+            m = CONVERSATION_RULE_RE.search(text)
+            self.assertIsNotNone(m, f"{name}: no rule for finding the files without spec_output_dir")
             found[name] = m.group(0)
         self.assertEqual(len(set(found.values())), 1, found)
 

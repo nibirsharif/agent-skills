@@ -19,7 +19,7 @@ It does not write requirements, the per-phase task list, or code. With no `requi
 
 ## Output
 
-When saved, a short reply: the path, one line per phase (`Phase 2: title (FR-003, NFR-001)`), then the blocked requirements and open question IDs. The full plan is in `plan.md` beside `requirements.md`. In chat only, the plan itself, starting at `## 1. Approach`.
+When saved, a short reply: the path, one line per phase (`Phase 2: title (FR-003, NFR-001)`), then the blocked requirements and open question IDs. The full plan is in `plan.md` beside `requirements.md`. In chat only, the plan itself, starting at `## 1. Approach`. When you pasted the requirements and did not ask for chat only, its last line says so: `Not saved: the requirements were pasted, not read from a file. ...`.
 
 If an open question would change the core approach (an architecture, a data model, a system boundary), it asks that question instead of planning around a guess. The answer belongs in the requirements, through write-spec.
 
@@ -28,6 +28,8 @@ If one requirement alone needs more files than a phase may have, it writes no pl
 Phase size is limited by `plan_max_requirements_per_phase` (default 8) and `plan_max_files_per_phase` (default 10); see [the config](../README.md#configuration).
 
 ## FAQ
+
+**Do I need `spec_output_dir`?** No, but without it each step has to learn where the files are. When write-spec saved to a path you gave, or you named a path earlier in the same conversation, write-plan uses that folder and saves `plan.md` there; write-tasks, implement-task, verify-spec, and build-phase do the same. In a new conversation, or after you move the folder, they ask `Where is requirements.md?` (or `plan.md`, or `tasks.md`) instead of searching the project. Set `spec_output_dir` to skip the question.
 
 **Where does a deadline requirement go?** An `NFR` goes in the phase of the `FR` it constrains, because that phase must meet the threshold. It gets its own later phase only when it can be met afterwards without changing behaviour, such as performance tuning.
 

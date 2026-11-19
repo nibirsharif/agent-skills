@@ -11,6 +11,8 @@ Made-up requirements files that exercise the write-plan skill's rules, each with
 | `multi-phase` | Nineteen requirements with a phase limit of 8: phases by flow, every ID in exactly one phase, no phase over the limits, and a deadline `NFR` placed with its `FR`. |
 | `phase-dependency` | Eleven requirements written with the report first and submission in the middle: the phases follow what each step needs, not the order of the IDs. |
 | `oversized-requirement` | One requirement that alone needs more than the 10-file phase limit: no plan, the requirement is named, and the user is sent to write-spec to split it. |
+| `ask-location` | No `spec_output_dir`, no path, and the requirements sit in a folder the user moved them to (`dirty/notes/`): the whole reply is the location question, and the project is not searched. Sent as written, without the chat-only line. |
+| `pasted-not-saved` | `withdrawn`'s input sent without the chat-only line: the plan is in chat, and its last line says it was not saved. |
 | `routing-requirements` | Routing: a request to write requirements, which the skill's description excludes. The skill must not fire. |
 
 The input requirements pass write-spec's lint (`python3 skills/write-spec/scripts/lint.py`). Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).

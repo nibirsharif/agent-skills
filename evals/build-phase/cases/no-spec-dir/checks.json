@@ -1,0 +1,36 @@
+{
+  "description": "The project's config sets no spec_output_dir and the request names no path. The lookup script asks where tasks.md is: that question is the whole reply, not a summary, and build-phase does not pick a path itself.",
+  "must_match": [
+    {
+      "pattern": "\\AWhere is tasks\\.md\\? Give its path, or set `?spec_output_dir`? in `?\\.agent-skills-config\\.yaml`?\\.\\s*\\Z",
+      "why": "the script's question is the whole reply"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Phase ",
+      "why": "no summary: the run has not started",
+      "target": "reply"
+    },
+    {
+      "pattern": "^Bash .*find_tasks\\.py.*--path",
+      "why": "no path is chosen for the user",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Glob .*tasks",
+      "why": "the project is not searched for tasks.md",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Agent ",
+      "why": "no subagent is started",
+      "target": "trace"
+    },
+    {
+      "pattern": "^(Edit|Write) ",
+      "why": "nothing is written",
+      "target": "trace"
+    }
+  ]
+}

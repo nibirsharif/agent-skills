@@ -1,0 +1,32 @@
+{
+  "description": "The plan is pasted, naming a path that is not on disk, and the user does not ask for chat only. The tasks are in chat, and their last line says they were not saved.",
+  "raw": true,
+  "counts": {
+    "tasks": {
+      "pattern": "^#### T-1\\.\\d+: ",
+      "min": 4,
+      "max": 12
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A## 1\\. Overview",
+      "why": "the reply is the tasks: it starts at the Overview heading"
+    },
+    {
+      "pattern": "^Not saved: the plan was pasted, not read from a file\\. Name a folder to save tasks\\.md in\\.\\s*\\Z",
+      "why": "tasks that are not saved say so, in the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Write|Edit) ",
+      "why": "nothing is saved from a pasted plan",
+      "target": "trace"
+    },
+    {
+      "pattern": "^## \\d+\\. Revision History|^---$|^Note:",
+      "why": "no Revision History, closing note, or rule in a chat reply"
+    }
+  ]
+}

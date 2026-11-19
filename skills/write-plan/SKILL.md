@@ -12,9 +12,9 @@ Turn a feature's `requirements.md` into `plan.md`: the approach, split into phas
 
 Your reply is one of four things, and its first character is the first character of that thing:
 
-1. **The plan:** it starts with `## 1. Approach`. Nothing comes before it: not "Confirmed…", not "The folder is empty…", not "Planning from…". Say that there is no codebase or no file on disk inside the Approach.
+1. **The plan:** it starts with `## 1. Approach`. Nothing comes before it: not "Confirmed…", not "The folder is empty…", not "Planning from…". Say that there is no codebase or no file on disk inside the Approach. A plan in chat only ends with the not-saved line when [Output](#output) says so.
 2. **The stop line**, when the requirements file is missing or holds no requirement: exactly `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.` Never offer options, ask about the feature, describe the empty folder, or draft requirements.
-3. **The questions**, when an open question decides the core approach.
+3. **The questions**, when an open question decides the core approach, or the one location question when no path to the requirements is known.
 4. **The too-large line**, when one requirement alone needs more files than a phase may have: exactly `<ID> needs more than <n> files on its own. Split it with write-spec, then run write-plan again.`, as the rules' "Stop and ask" section says.
 
 Write no text between tool calls. Details are in [Output](#output).
@@ -47,19 +47,19 @@ Work silently. Write no text between tool calls and no text before the reply: no
 ## Output
 
 - Saved: state the path in one line, then one line per phase: `Phase <n>: <title> (<IDs>)`, then the blocked requirements and the open questions' IDs. Never paste the whole file.
-- Chat only: the plan itself, in the file template's order, without the title block and without Revision History. The reply's first line is `## 1. Approach` and it ends with the last open question, or `None.`. No preamble, no closing note, and no account of how you worked: not what you checked, found empty, or are about to produce. That there is no codebase, or no file on disk, goes in the first sentence of Approach, never above the heading.
-- Stopped, or asking: only the one-line reason or the questions, with the same rule. For a missing or empty requirements file, reply exactly: `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.` Never offer options, ask about the feature, or describe the empty folder.
+- Chat only: the plan itself, in the file template's order, without the title block and without Revision History. The reply's first line is `## 1. Approach` and it ends with the last open question, or `None.`. When the requirements were pasted and the user did not ask for chat only, one more line ends it: exactly `Not saved: the requirements were pasted, not read from a file. Name a folder to save plan.md in.` No preamble, no closing note, and no account of how you worked: not what you checked, found empty, or are about to produce. That there is no codebase, or no file on disk, goes in the first sentence of Approach, never above the heading.
+- Stopped, or asking: only the one-line reason or the questions, with the same rule. When no path to the requirements is known, reply exactly: `Where is requirements.md? Give its path, set `spec_output_dir` in `.agent-skills-config.yaml`, or paste the requirements.` For a missing or empty requirements file, reply exactly: `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.` Never offer options, ask about the feature, or describe the empty folder.
 
 ## Saving to a file
 
 Find the requirements, in this order:
 
 1. Requirements the user pasted into the conversation. Plan from them even when they name a path that does not exist on disk.
-2. A path the user named.
+2. A path the user names in this request.
 3. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the feature in kebab-case. If the user names no feature, list the existing `<spec_output_dir>/*/requirements.md` files and ask which one; if only one exists, use it.
-4. None of these: ask for the path.
+4. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
-Write `plan.md` in the same folder as `requirements.md`, and only when that `requirements.md` exists on disk and was found through a path the user named or through `spec_output_dir`. Otherwise, or when the user asks for chat only, reply in chat only.
+Write `plan.md` in the same folder as `requirements.md` whenever the requirements were read from that file, found by one of these steps. Reply in chat only when the requirements were pasted or the user asks for chat only. A plan that is not saved says so, as [Output](#output) says, unless the user asked for chat only.
 
 Phase sizes come from the same config files: `plan_max_requirements_per_phase` (default 8) and `plan_max_files_per_phase` (default 10).
 

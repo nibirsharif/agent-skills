@@ -7,6 +7,8 @@ Two things are graded apart, so a run shows which one went wrong. Each failure s
 
 - "summary: ...": the summary lines themselves are wrong (check_summary).
 - "outside the summary: ...": the summary is wrapped in other text, such as a sentence before it (check_outside).
+
+The one reply that is not a summary is a question find_tasks.py printed after `ask`, alone on its line (ASKS).
 """
 
 import re
@@ -20,6 +22,19 @@ LINES = [
     r"Stopped: .+",
     r"Next: push \S+, open a PR titled \".+\", and run /code-review",
 ]
+
+# The questions find_tasks.py prints after `ask`. Each one, alone, is the whole reply in place of a summary.
+ASKS = [
+    r"Where is tasks\.md\? Give its path, or set `?spec_output_dir`? in `?\.agent-skills-config\.yaml`?\.",
+    r"Which feature: .+",
+    r"No tasks\.md under \S+ and no feature was named: which feature, or the path of tasks\.md",
+    r"\S+ in \.agent-skills-config\.yaml is .+, not a whole number: the number to use",
+]
+
+
+def is_ask(reply):
+    lines = [l for l in reply.strip().splitlines() if l.strip()]
+    return len(lines) == 1 and any(re.fullmatch(p, lines[0].strip()) for p in ASKS)
 
 
 def is_summary_line(line):
@@ -69,4 +84,6 @@ def check_outside(reply):
 
 
 def check(reply):
+    if is_ask(reply):
+        return []
     return check_summary(reply) + check_outside(reply)

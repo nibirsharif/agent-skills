@@ -12,12 +12,12 @@ Turn a feature's `plan.md` into `tasks.md`: each phase split into small tasks, i
 
 Your reply is one of three things, and its first character is the first character of that thing:
 
-1. **The tasks:** they start with `## 1. Overview`. Nothing comes before it. Say that there is no codebase or no file on disk inside the Overview.
+1. **The tasks:** they start with `## 1. Overview`. Nothing comes before it. Say that there is no codebase or no file on disk inside the Overview. Tasks in chat only end with the not-saved line when [Output](#output) says so.
 2. **A stop line**, when the plan cannot be tasked, and nothing else. Use exactly:
    - plan file missing or without a phase: `No plan file found at <path>. Run write-plan first to write the plan, then run write-tasks again.`
    - plan and requirements disagree: one line naming the ID and the conflict, then `Fix it with write-plan or write-spec, then run write-tasks again.`
    - a phase needs more tasks than the limit: `Phase <n> needs more than <limit> tasks. Split it in plan.md with write-plan, then run write-tasks again.`
-3. **The questions**, when a phase is too vague to break into tasks without a guess.
+3. **The questions**, when a phase is too vague to break into tasks without a guess, or the one location question when no path to the plan is known.
 
 Write no text between tool calls. Details are in [Output](#output).
 
@@ -45,19 +45,19 @@ Work silently. Write no text between tool calls and none before the reply.
 ## Output
 
 - Saved: state the path in one line, then one line per phase: `Phase <n>: <count> tasks (<IDs>)`, then the blocked requirements' `Blocked by` IDs. Never paste the whole file.
-- Chat only: the tasks themselves, in the file template's order, without the title block and without Revision History. The reply's first line is `## 1. Overview` and it ends with the last task or blocked entry. No preamble, no closing note, no account of how you worked.
-- Stopped, or asking: only the stop line or the questions.
+- Chat only: the tasks themselves, in the file template's order, without the title block and without Revision History. The reply's first line is `## 1. Overview` and it ends with the last task or blocked entry. When the plan was pasted and the user did not ask for chat only, one more line ends it: exactly `Not saved: the plan was pasted, not read from a file. Name a folder to save tasks.md in.` No preamble, no closing note, no account of how you worked.
+- Stopped, or asking: only the stop line or the questions. When no path to the plan is known, reply exactly: `Where is plan.md? Give its path, set `spec_output_dir` in `.agent-skills-config.yaml`, or paste the plan.`
 
 ## Saving to a file
 
 Find the plan, in this order:
 
 1. A plan the user pasted into the conversation. Task from it even when it names a path that does not exist on disk.
-2. A path the user named.
+2. A path the user names in this request.
 3. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/plan.md`. If the user names no feature, list the existing `<spec_output_dir>/*/plan.md` files and ask which one; if only one exists, use it.
-4. None of these: ask for the path.
+4. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
-Write `tasks.md` in the same folder as `plan.md`, and only when that `plan.md` exists on disk and was found through a path the user named or through `spec_output_dir`. Otherwise, or when the user asks for chat only, reply in chat only.
+Write `tasks.md` in the same folder as `plan.md` whenever the plan was read from that file, found by one of these steps. Reply in chat only when the plan was pasted or the user asks for chat only. Tasks that are not saved say so, as [Output](#output) says, unless the user asked for chat only.
 
 Limits come from the same config files, or from a limit the user states: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 12).
 
