@@ -1,4 +1,4 @@
-"""Tests for repo-wide consistency: release metadata guards and the shared "find the files" rule."""
+"""Tests for repo-wide consistency: release metadata guards and the shared "find the files" and default-branch rules."""
 
 import json
 import re
@@ -22,6 +22,15 @@ CHAIN_FILES = [
     "skills/build-phase/references/build-rules.md",
 ]
 CONVERSATION_RULE_RE = re.compile(r"A path to the feature's `requirements\.md`.*?a path you chose yourself\.")
+# The order that names the default branch when base_branch is not set, the same in each skill that needs it.
+DEFAULT_BRANCH_FILES = [
+    "skills/implement-task/references/implement-rules.md",
+    "skills/verify-spec/references/verify-rules.md",
+]
+DEFAULT_BRANCH_RULE = (
+    "else the branch `origin/HEAD` names, which `git symbolic-ref --short refs/remotes/origin/HEAD` prints as"
+    " `origin/<name>`, else `main`, else `master`"
+)
 
 
 class SharedBlockTest(unittest.TestCase):
@@ -42,6 +51,13 @@ class SharedBlockTest(unittest.TestCase):
             self.assertIsNotNone(m, f"{name}: no rule for finding the files without spec_output_dir")
             found[name] = m.group(0)
         self.assertEqual(len(set(found.values())), 1, found)
+
+
+    def test_default_branch_rule_puts_origin_head_first(self):
+        for name in DEFAULT_BRANCH_FILES:
+            text = (ROOT / name).read_text()
+            self.assertIn(DEFAULT_BRANCH_RULE, text, f"{name}: the default-branch rule differs")
+            self.assertNotIn("`main`, `master`, or", text, f"{name}: the old order is still there")
 
 
 class ReleaseCheckTest(unittest.TestCase):

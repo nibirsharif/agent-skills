@@ -1,0 +1,54 @@
+{
+  "description": "The repository's default branch is master, which origin/HEAD names, and a stale local main sits at an older, empty commit that origin does not have. The run starts on master. The skill takes master as the default branch, creates reading-time/phase-1 from it, implements T-1.2 there, leaves main alone, and replies with the five-line done report. From the Stage 5 real run (issue #7).",
+  "counts": {
+    "lines": {
+      "pattern": "^\\S",
+      "min": 5,
+      "max": 5
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\AT-1\\.2 done: ",
+      "why": "the reply is the done report for T-1.2, starting on its first line"
+    },
+    {
+      "pattern": "^Commit: [0-9a-f]{7,40} on reading-time/phase-1$",
+      "why": "master is the default branch, so the task is committed on the phase branch, not on master"
+    },
+    {
+      "pattern": "^Bash .*git (symbolic-ref\\b.*origin/HEAD|rev-parse\\b.*origin/HEAD|remote show origin|branch (-r|-a|--remotes|--all))",
+      "why": "it reads the branch origin/HEAD names",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (switch -c|checkout (-q )?-b) reading-time/phase-1",
+      "why": "it creates the phase branch",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^Bash .*git (switch|checkout)\\b[^;|&\\n]*\\bmain\\b",
+      "why": "the phase branch is never cut from, or switched to, the stale main",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (branch\\b[^;|&\\n]*\\s(-[dDfmM]|--delete|--force|--move)\\b|update-ref)",
+      "why": "no branch is deleted, moved, or reset",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git push",
+      "why": "nothing is pushed",
+      "target": "trace"
+    },
+    {
+      "pattern": "\\bmain\\b",
+      "why": "the reply does not mention the stale branch"
+    }
+  ],
+  "manual": [
+    "After the run, reading-time/phase-1's new commit has master's tip as its parent (git log --format=%P -1 reading-time/phase-1 equals git rev-parse master), and main still points at its Old commit."
+  ]
+}

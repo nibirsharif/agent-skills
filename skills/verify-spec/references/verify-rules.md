@@ -69,7 +69,7 @@ A value in the statement (200, 15 minutes, `TypeError`) is checked as written. A
 A changed file is drift when it neither implements nor tests any requirement in `requirements.md` (all of them, not only the scoped ones), and is not a spec file. A file that implements or tests a requirement is not drift, whatever that requirement's verdict: a file whose change breaks FR-001 is the evidence for an `unmet` row, not drift.
 
 - Run `git status --porcelain` every time. The branch name alone never decides drift: a change on the default branch still counts.
-- The changed files are the uncommitted ones from `git status --porcelain`, plus, on a branch other than the default (`base_branch` from the same config files when set, else `main`, `master`, or the branch `origin/HEAD` names), `git diff --name-only <default>...HEAD`. Ignore the feature's spec folder.
+- The changed files are the uncommitted ones from `git status --porcelain`, plus, on a branch other than the default (`base_branch` from the same config files when set, else the branch `origin/HEAD` names, which `git symbolic-ref --short refs/remotes/origin/HEAD` prints as `origin/<name>`, else `main`, else `master`), `git diff --name-only <default>...HEAD`. Ignore the feature's spec folder.
 - On the default branch with nothing uncommitted, or outside a git repository, there is nothing to compare: `Drift: not checked (no feature branch)`.
 - Drift is reported, never judged: a file may be a legitimate refactor. List it and let the user decide.
 
