@@ -102,6 +102,28 @@ None.
 - Out of order: `T-1.2` depends on `T-1.4`. Reorder so the dependency comes first.
 - Layers: `T-1.1 Add database`, `T-1.2 Add API`, `T-1.3 Add UI`. Each task should leave the product working; split by behaviour.
 
+## An interface item no Verify line names
+
+The plan's phase lists, under Interface and data changes, an `export_path(report_id)` helper that builds a report's file path from `EXPORT_DIR` and `EXPORT_PREFIX`. `FR-001` writes the export and `FR-002` downloads it; their Verify lines test the two commands and never name the helper.
+
+```
+#### T-1.1: Add the export path helper
+
+**Covers:** FR-001, FR-002
+
+**Files:** new: `export_path` helper, new: its unit test
+
+**Depends on:** None.
+
+**Done when:** FR-001: unit test that `export_path` joins `EXPORT_DIR`, `EXPORT_PREFIX`, and the report ID; FR-002: unit test that `export_path` gives the same path for the same report ID on every call
+
+**Status:** Todo
+```
+
+The export and download tasks then depend on `T-1.1` and call the helper.
+
+- Wrong: no task names the helper, and the export task builds the path inside the export command. The download task then has to copy the rule.
+
 ## A manual check
 
 The project has unit tests and no browser test runner. `FR-003` says the reset page shows "This link has expired" for an expired link. The page's handler can be tested; what the browser shows cannot.
