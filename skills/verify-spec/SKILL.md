@@ -9,7 +9,7 @@ Check a feature's code against its `requirements.md` and report, requirement by 
 
 ## Reply contract
 
-Your reply is one of two things, and its first character is the first character of that thing:
+Your reply is one of three things, and its first character is the first character of that thing:
 
 1. **The report**, exactly this shape, as plain text. The header and separator lines are written exactly as shown, there are no blank lines, and the first character of the reply is the `|` of the header:
 
@@ -28,6 +28,7 @@ Your reply is one of two things, and its first character is the first character 
    - The tally lists only the verdicts that occur, in this order: met, partial, unmet, untested, cannot tell, skipped.
    - The drift line is `Drift: <paths>`, `Drift: none`, or `Drift: not checked (no feature branch)`.
 2. **A stop line**, one of those in [references/verify-rules.md](references/verify-rules.md#stop-lines), word for word, and nothing else. When there is no `requirements.md`, which you find out before reading the rules, it is exactly: `No requirements file found at <path>. Run write-spec first, then run verify-spec again.` with `<path>` the `<spec_output_dir>/<feature>/requirements.md` you looked for.
+3. **The lookup's one question**, when it cannot tell which `requirements.md` to use, as [Finding the files](#finding-the-files) says, and nothing else.
 
 The reply is only that: no preface, no summary or advice after it, no code fence around it, and no text before a stop line. Write no text between tool calls.
 
@@ -69,14 +70,14 @@ Do what it prints:
 
 - `found <path>` and, on the next line, `scope <what>`: that is `requirements.md` and the scope, `all`, one ID, or `phase <n>:` with the IDs of that phase. Use them and no other.
 - `stop <line>`: `<line>` is your whole reply. Run nothing more.
-- `ask <what>`: ask the user that.
+- `ask <question>`: `<question>` is your whole reply, as written. The one exception is `ask Where is requirements.md?`: when a path from earlier in this conversation gives the feature's folder, as [the last step below](#finding-the-files) says, run the script once more with `--path` to the `requirements.md` in that folder, and do what it prints. Never answer a question yourself in any other way.
 
 Only when you cannot run commands, pick the scope as the rules say and find `requirements.md` like this:
 
-1. A path the user named. If no file is there, reply with the no-requirements-file stop line for that path.
+1. A path the user names in this request. If no file is there, reply with the no-requirements-file stop line for that path.
 2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
    - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/requirements.md` and no other. Check that one path and do not look for other `requirements.md` files. If it does not exist, reply with the no-requirements-file stop line for that path.
    - **The user names no feature:** list the existing `<spec_output_dir>/*/requirements.md` files; if only one exists, use it, otherwise ask which one.
-3. None of these: ask for the path.
+3. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
 `plan.md` is in the same folder as `requirements.md`. It is optional: it supplies phase scoping and the list of blocked requirements. `tasks.md` is never read.

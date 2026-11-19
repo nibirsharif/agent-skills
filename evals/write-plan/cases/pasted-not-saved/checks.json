@@ -1,0 +1,47 @@
+{
+  "description": "The requirements are pasted, naming a path that is not on disk, and the user does not ask for chat only. The plan is in chat, and its last line says it was not saved.",
+  "counts": {
+    "phases": {
+      "pattern": "^### Phase \\d+",
+      "min": 1,
+      "max": 2
+    },
+    "FR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-001\\b",
+      "min": 1,
+      "max": 1
+    },
+    "FR-004 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-004\\b",
+      "min": 1,
+      "max": 1
+    },
+    "NFR-001 once": {
+      "pattern": "^\\*\\*Requirements:\\*\\*.*\\bNFR-001\\b",
+      "min": 1,
+      "max": 1
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "\\A## 1\\. Approach",
+      "why": "the reply is the plan: it starts at the Approach heading, with no preamble"
+    },
+    {
+      "pattern": "^Not saved: the requirements were pasted, not read from a file\\. Name a folder to save plan\\.md in\\.\\s*\\Z",
+      "why": "a plan that is not saved says so, in the last line"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(Write|Edit) ",
+      "why": "nothing is saved from pasted requirements",
+      "target": "trace"
+    },
+    {
+      "pattern": "^## 5\\. Revision History|^---$|^Note:",
+      "why": "no Revision History, closing note, or rule in a chat reply"
+    }
+  ],
+  "raw": true
+}

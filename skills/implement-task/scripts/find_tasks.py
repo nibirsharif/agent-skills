@@ -109,7 +109,7 @@ def find(root, home, feature=None, path=None, phase=None):
         return stop(root, Path(path).parent.name or "?", STOP.format(path=path))
     spec = spec_output_dir(root, home)
     if not spec:
-        return f"ask No spec_output_dir is set and no path was given: the path of {FILE}"
+        return f"ask Where is {FILE}? Give its path, or set spec_output_dir in {CONFIG}."
     base = root / Path(spec).expanduser()
     shown = spec.rstrip("/")
     if feature:

@@ -18,7 +18,7 @@ Your reply is one of three things, and its first character is the first characte
    - `Check: <command>: <result>`
    - `Commit: <short hash> on <branch>`
 2. **A stop line**, one of those in [references/implement-rules.md](references/implement-rules.md#stop-lines), word for word, and nothing else. When there is no `tasks.md`, which you find out before reading the rules, it is exactly: `No tasks file found at <path>. Run write-tasks first, then run implement-task again.` with `<path>` the `<spec_output_dir>/<feature>/tasks.md` you looked for.
-3. **The questions**, when the task leaves a choice that the code, the task, the plan, and the requirements do not decide.
+3. **The questions**, when the task leaves a choice that the code, the task, the plan, and the requirements do not decide, or the lookup's one question when it cannot tell which `tasks.md` to use.
 
 The reply is only that: no preface, no reason before a stop line, no summary or next steps after it, and no code fence or backticks around it. Write no text between tool calls.
 
@@ -60,14 +60,14 @@ Do what it prints:
 
 - `found <path>` and, on the next line, `task <T-id>`: that is `tasks.md` and the task to implement. Use them and no other. `task <T-id> rework` means the task is a rework, as the rules say.
 - `stop <line>`: `<line>` is your whole reply. Run nothing more and change nothing.
-- `ask <what>`: ask the user that.
+- `ask <question>`: `<question>` is your whole reply, as written. The one exception is `ask Where is tasks.md?`: when a path from earlier in this conversation gives the feature's folder, as [the last step below](#finding-the-files) says, run the script once more with `--path` to the `tasks.md` in that folder, and do what it prints. Never answer a question yourself in any other way.
 
 Only when you cannot run commands, do steps 1 to 3 yourself: check the working tree and pick the task as the rules say, and find `tasks.md` like this:
 
-1. A path the user named. If no file is there, reply with the no-tasks-file stop line for that path.
+1. A path the user names in this request. If no file is there, reply with the no-tasks-file stop line for that path.
 2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
    - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/tasks.md` and no other. Check that one path and do not look for other `tasks.md` files. If it does not exist, reply with the no-tasks-file stop line for that path.
    - **The user names no feature:** list the existing `<spec_output_dir>/*/tasks.md` files; if only one exists, use it, otherwise ask which one.
-3. None of these: ask for the path.
+3. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
 `plan.md` and `requirements.md` are in the same folder as `tasks.md`. When one is missing, work from the task alone.

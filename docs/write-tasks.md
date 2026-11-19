@@ -19,7 +19,7 @@ It does not write requirements, change the plan, or write code.
 
 ## Output
 
-When saved, one line for the path, then one line per phase (`Phase 1: 5 tasks (FR-001, FR-002, NFR-001)`) and the blocked entries. In chat only, the tasks themselves, starting at `## 1. Overview`.
+When saved, one line for the path, then one line per phase (`Phase 1: 5 tasks (FR-001, FR-002, NFR-001)`) and the blocked entries. In chat only, the tasks themselves, starting at `## 1. Overview`. When you pasted the plan and did not ask for chat only, their last line says so: `Not saved: the plan was pasted, not read from a file. ...`.
 
 It stops with a single line instead of tasking when:
 
