@@ -105,18 +105,18 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 ## Eval results
 
-The latest recorded run of every eval case, on `claude-sonnet-5-5` with Claude Code 2.1.296 in October 2026, graded by the current checks. The build-phase row is from 15 November 2026, on `claude-sonnet-5-5` with Claude Code 2.1.322; on the older `claude-sonnet-5` it passed 7 of 12 the same day, every miss a sentence before a correct summary (see [evals/build-phase/](evals/build-phase/README.md)). Most cases ran 3 times. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format.
+The latest recorded run of each skill's whole suite, on `claude-sonnet-5-5` with Claude Code 2.1.327 unless the row says otherwise. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format. Most of these latest runs are one per case, so they show that every case passes, not how often; each skill's eval README in [evals/](evals/) has the repeated runs and the results on older models.
 
-| Skill | Cases | Runs passed | Misses |
-|-------|-------|-------------|--------|
-| write-spec | 7 | 19 of 21 | 1 run changed the input's terms; 1 run picked the wrong EARS keyword (`Where` for a state that changes at runtime) |
-| write-plan | 8 | 24 of 24 | The two newest cases ran on 16 November 2026 with Claude Code 2.1.322; one of them, a requirement too large for one phase, passed 0 of 3 before a rule was added for it (see [evals/write-plan/](evals/write-plan/README.md)) |
-| write-tasks | 7 | 21 of 21 | |
-| implement-task | 11 | 29 of 33 | 4 runs added a sentence before a correct stop line |
-| verify-spec | 9 | 23 of 27 | 4 runs added a sentence before a correct stop line |
-| build-phase | 4 | 12 of 12 | |
+| Skill | Cases | Latest run | Notes |
+|-------|-------|------------|-------|
+| write-spec | 10 | 19 of 21: the 7 cases of October 2026, 3 runs each (Claude Code 2.1.296) | Not run as a whole suite since. `followup-answers`, `followup-first-requirements`, and `propose-system`, added in 0.11.0, have no recorded pass count. The misses: 1 run changed the input's terms; 1 run picked `Where` for a state that changes at runtime. |
+| write-plan | 10 | 10 of 10, one run each, 18 November 2026 | `oversized-requirement` passed 0 of 3 before a stop rule was added for it, and 4 of 4 after (see [evals/write-plan/](evals/write-plan/README.md)). |
+| write-tasks | 9 | 9 of 9, 19 November 2026: `interface-item` 3 of 3 with the judge, the other 8 one run each | |
+| implement-task | 15 | 15 of 15, one run each, 18 November 2026 | `config-uncommitted`, `test-leftover`, `service-missing`, and `origin-head`, from the real run, passed 3 of 3 each. The five stop-line cases passed 30 of 30 at 6 runs each once `pick_task.py` prints the line. |
+| verify-spec | 9 | 9 of 9, one run each, 18 November 2026 | The two stop-line cases passed 12 of 12 at 6 runs each once `check_scope.py` prints the line. |
+| build-phase | 14 | 39 of 39: 13 cases, 3 runs each, 18 November 2026 | `no-spec-dir`, added after that run, passed 1 of 1. |
 
-In the 8 implement-task and verify-spec misses the stop line itself was right; the agent wrote a sentence before it. No run failed a safety check: none pushed, staged files with `git add -A`, edited the requirements or plan, or marked a requirement `met` without a passing test. Later runs did find one: asked for a feature with no task list, implement-task implemented another feature's task in 4 of 53 runs, which a lookup script now prevents (0 of 60; see [evals/implement-task/](evals/implement-task/README.md)). Run them yourself with `make eval SKILL=<name> RUNS=3` (it costs tokens). The cases are in [evals/](evals/).
+Before the lookup and summary scripts, the usual miss was a sentence written before a correct stop line or summary; the scripts now print those lines, and the eval READMEs record the rates before and after. No run failed a safety check: none pushed, staged files with `git add -A`, edited the requirements or plan, or marked a requirement `met` without a passing test. The closest was implement-task, asked for a feature with no task list, implementing another feature's task in 4 of 53 runs, which its lookup script now prevents (0 of 60; see [evals/implement-task/](evals/implement-task/README.md)). Run them yourself with `make eval SKILL=<name> RUNS=3` (it costs tokens).
 
 ## Adding a skill
 
