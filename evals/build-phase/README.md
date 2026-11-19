@@ -76,6 +76,18 @@ Every run that reached verify-spec ran `parse_reply.py verify`. All four misses 
 
 From the real run in [../real-runs/2026-11-17.md](../real-runs/2026-11-17.md), implement-task's stop lines are passed on with build-phase as the command to rerun, and `subagent-stop-line` expects `... then run build-phase again.`: 3 of 3 on 17 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327).
 
+After the fix for [#2](https://github.com/nibirsharif/agent-skills/issues/2) (a miscounted Tally is recounted, not rejected; replies reach `parse_reply.py` through a file; `bad-verify-report`'s double changed and `miscounted-tally` added), the whole suite at 3 runs on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327): 33 of 39. A single pass the day before had 12 of 13, the miss `round-limit`.
+
+| Case | Passed |
+|---|---|
+| `miscounted-tally` | 3 of 3 |
+| `bad-verify-report` | 2 of 3, the miss a sentence before a correct summary |
+| `off-phase-branch` | 1 of 3: once the gap explained after a correct summary, once verify-spec also gave FR-003 `partial` (rounding down at a custom speed), so the tally, counted right, was `1 met, 2 partial, 1 skipped` |
+| `round-limit` | 0 of 3, each a sentence before a correct summary |
+| the other nine | 3 of 3 each |
+
+In every run that reached verify-spec, build-phase wrote each subagent reply to a file in its temp directory and passed that file to `parse_reply.py`. `round-limit` is the measurement the paragraph above asked for: at 3 runs, the longer rules from 0.15.0 do make a composed stop open with a sentence.
+
 [hooks.py](hooks.py) grades two things apart, so a run shows which one failed: `summary: ...` when the summary lines themselves are wrong, and `outside the summary: ...` when the reply has other text, such as a sentence before a correct summary. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
 
 Known, at 3 runs each on 15 November 2026: 12 of 12 on `claude-sonnet-5-5` (Claude Code 2.1.322). On `claude-sonnet-5` (Claude Code 2.1.267) the same day: 7 of 12, every miss a sentence before a correct summary (`manual-check-done` 1 of 3, `rework-recovers` 1 of 3, `missing-tasks` 3 of 3). `missing-tasks` does this in most runs, on 0.11.0 as well: 16 of 20 runs that day across both versions. The rate depends on the model, not the skill version: those runs were on `claude-sonnet-5` (Claude Code 2.1.267, where `sonnet` is that model), and on `claude-sonnet-5-5` (Claude Code 2.1.322) `missing-tasks` passed 14 of 15 the same day. Three wordings were tried against `claude-sonnet-5` that day and none was kept:
