@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """Parse the reply of verify-spec or implement-task into data, or say why it is not a valid reply.
 
-Usage: python3 parse_reply.py verify|implement [--strict] [FILE]     (reads standard input without FILE)
+Usage: python3 parse_reply.py verify|implement [--strict] [--requirements PATH] [FILE]
+       (reads standard input without FILE)
 
 Prints one JSON object and exits 0 when the reply is valid, or exits 1 and prints {"kind": "invalid",
 "problems": [...]}. The producer is strict, the consumer tolerant: by default the report, the done report,
 or the stop line is found anywhere in the reply, so a sentence before it does not make the reply invalid,
 and a verify report whose Tally line miscounts its rows is valid, with the tally counted from the rows.
 --strict also fails a reply that has text outside the contract or a wrong Tally; the evals use it.
+--requirements (verify only) names the requirements.md the report is of: the report must then have exactly
+one row for every ID in it, in file order, as a whole-file or phase report does (not for one named ID).
 
 kind is one of:
   report  (verify)     rows [{id, verdict, evidence}], tests, tally (counted from the rows), drift,
@@ -28,6 +31,7 @@ import sys
 VERDICTS = ["met", "partial", "unmet", "untested", "cannot tell", "skipped"]
 HEADER = "| ID | Verdict | Evidence |"
 SEPARATOR = "|----|---------|----------|"
+REQ_LINE = re.compile(r"^((?:FR|NFR)-\d+):", re.M)
 ROW = re.compile(r"^\| ((?:FR|NFR)-\d+) \| (" + "|".join(VERDICTS) + r") \| (.+) \|$")
 
 VERIFY_STOPS = [
@@ -71,7 +75,30 @@ def invalid(*problems, rows=None):
     return result
 
 
-def parse_verify(text, strict=False):
+def requirement_ids(text):
+    """The requirement IDs of a requirements.md, in file order, read as verify-spec's check_scope.py reads them."""
+    return list(dict.fromkeys(REQ_LINE.findall(text)))
+
+
+def id_problems(rows, ids):
+    """Why the rows are not exactly one row per ID of the file, in file order; empty when they are."""
+    got = [r["id"] for r in rows]
+    problems = []
+    duplicated = [i for i in dict.fromkeys(got) if got.count(i) > 1]
+    if duplicated:
+        problems.append("more than one row for " + ", ".join(duplicated))
+    unknown = [i for i in dict.fromkeys(got) if i not in ids]
+    if unknown:
+        problems.append("rows for IDs that are not in the requirements file: " + ", ".join(unknown))
+    missing = [i for i in ids if i not in got]
+    if missing:
+        problems.append("no row for " + ", ".join(missing))
+    if not problems and got != ids:
+        problems.append("the rows are not in file order")
+    return problems
+
+
+def parse_verify(text, strict=False, ids=None):
     lines = lines_of(text)
     if HEADER not in lines:
         stop = find_stop(lines, VERIFY_STOPS)
@@ -90,6 +117,8 @@ def parse_verify(text, strict=False):
     problems = []
     if not rows:
         problems.append("the table has no valid rows")
+    elif ids is not None:
+        problems += id_problems(rows, ids)
     fields = {}
     for name in ("Tests", "Tally", "Drift"):
         found = [l for l in after if l.startswith(name + ": ")]
@@ -154,14 +183,45 @@ def parse_implement(text, strict=False):
             "changed": [c.strip() for c in changed.split(",")], "check": check, "commit": commit}
 
 
+USAGE = "Usage: parse_reply.py verify|implement [--strict] [--requirements PATH] [FILE]"
+
+
+def usage(message=None):
+    print((message + "\n" if message else "") + __doc__.split("\n\n")[0] + "\n" + USAGE, file=sys.stderr)
+    return 2
+
+
 def main(argv):
-    args = [a for a in argv if not a.startswith("--")]
-    if not args or args[0] not in ("verify", "implement") or len(args) > 2:
-        print(__doc__.split("\n\n")[0] + "\n" + "Usage: parse_reply.py verify|implement [--strict] [FILE]", file=sys.stderr)
-        return 2
+    args, flags, requirements, i = [], set(), None, 0
+    while i < len(argv):
+        a = argv[i]
+        if a == "--requirements" and i + 1 < len(argv):
+            requirements, i = argv[i + 1], i + 2
+            continue
+        if a.startswith("--requirements="):
+            requirements = a.split("=", 1)[1]
+        elif a.startswith("--"):
+            flags.add(a)
+        else:
+            args.append(a)
+        i += 1
+    if not args or args[0] not in ("verify", "implement") or len(args) > 2 or flags - {"--strict"}:
+        return usage()
+    if requirements is not None and args[0] != "verify":
+        return usage("--requirements is for verify only")
+    ids = None
+    if requirements is not None:
+        try:
+            ids = requirement_ids(open(requirements).read())
+        except OSError as e:
+            return usage(f"cannot read {requirements}: {e.strerror}")
+        if not ids:
+            return usage(f"{requirements} has no FR or NFR requirements")
     text = open(args[1]).read() if len(args) == 2 else sys.stdin.read()
-    parse = parse_verify if args[0] == "verify" else parse_implement
-    result = parse(text, strict="--strict" in argv)
+    if args[0] == "verify":
+        result = parse_verify(text, strict="--strict" in flags, ids=ids)
+    else:
+        result = parse_implement(text, strict="--strict" in flags)
     print(json.dumps(result, indent=2))
     return 1 if result["kind"] == "invalid" else 0
 
