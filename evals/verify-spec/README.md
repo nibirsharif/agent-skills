@@ -34,6 +34,15 @@ With `scripts/find_requirements.py` doing the lookup and printing the stop line,
 
 With `scripts/check_scope.py` finding the file, checking the named ID or phase, and printing the stop line (16 November 2026, `claude-sonnet-5-5`, Claude Code 2.1.322): `unknown-id` and `missing-requirements` passed 12 of 12 at 6 runs each, and the whole suite 9 of 9 at one run each. Every stop line of the skill now comes from the script.
 
+Shorter rules, the next piece of [#24](https://github.com/nibirsharif/agent-skills/issues/24), 19 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). What a run reads went from 3,506 to 2,917 words: `SKILL.md` 1,308 to 1,086, `verify-rules.md` 1,468 to 1,220, `examples.md` 730 to 611. What `check_scope.py` decides (finding `requirements.md`, the four scope stops, and the five stop lines it prints) moved to `without-commands.md` (365 words), read only when commands cannot run. The rules file no longer has a stop-lines section or its wrong-and-right example, the two stop examples are one, and the six entries of "Doing too much" that repeated a rule are gone; the three about text around the reply stay.
+
+| Wording | Suite at 3 runs | Benchmark rows right | Gaps called `met` | Drift right |
+|---|---|---|---|---|
+| Before the change | 27 of 27 | 36 of 36 | 0 of 21 | 6 of 6 |
+| After | 27 of 27 | 35 of 36 | 0 of 21 | 6 of 6 |
+
+The benchmark's one differing row is not from the change: see [benchmark/after-shorter-rules.md](benchmark/after-shorter-rules.md). In the suite run after the change, every run that loaded the skill ran `check_scope.py` and read both `verify-rules.md` and `examples.md` (24 of 27; the other three are `routing-review`), and none read `without-commands.md`: the harness always allows commands, so that file has no case. Also with no case that would show a difference: the stops for a file with no IDs, a phase with no `plan.md`, and a phase `plan.md` does not have, which have unit tests in `tests/` and no eval case, and tests that cannot run.
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls. Work through each case's "Review by hand" list: the checks cannot tell whether a cited line is the right one.
 
 ```bash

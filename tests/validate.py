@@ -23,11 +23,11 @@ PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 # follow-up, an agent that cannot run commands) is not listed. Words are counted as `wc -w` counts them.
 # Each budget is the count when it was set plus about 100 words, so a reworded rule fits and a new paragraph
 # does not: cut words elsewhere, or raise the number in the same commit and say why. Lower it after a trim.
-# verify-spec, write-tasks, and write-plan are not trimmed yet (issue #24).
+# write-tasks and write-plan are not trimmed yet (issue #24).
 WORD_BUDGETS = {
     "build-phase": (2800, ["references/build-rules.md"]),
     "implement-task": (3350, ["references/implement-rules.md", "references/examples.md"]),
-    "verify-spec": (3600, ["references/verify-rules.md", "references/examples.md"]),
+    "verify-spec": (3020, ["references/verify-rules.md", "references/examples.md"]),
     "write-plan": (3400, ["references/plan-rules.md", "references/examples.md"]),
     "write-spec": (4700, ["references/ears-rules.md", "references/examples.md"]),
     "write-tasks": (3500, ["references/task-rules.md", "references/examples.md"]),
