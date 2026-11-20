@@ -20,13 +20,13 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 1. Create `skills/<skill-name>/SKILL.md`. Model its sections on an existing skill such as `implement-task`: Reply contract, Before starting, Scope, Workflow.
 2. Set `name` to exactly the folder name (lowercase, hyphens, at most 64 characters).
 3. Write a `description` (at most 1024 characters) that says what the skill does and when to use it. The agent decides whether to load the skill from this text alone.
-4. Keep `SKILL.md` short: workflow and output contract. Put long rules and examples in `references/` and link them with relative paths.
+4. Keep `SKILL.md` short: workflow and output contract. Put long rules and examples in `references/` and link them with relative paths. Add the skill to `WORD_BUDGETS` in `tests/validate.py`: the most words it may make the agent read on every run, and the references that count besides `SKILL.md`.
 5. Write `docs/<skill-name>.md` from the existing docs' headings: Overview, When to use it, Output, FAQ, Verifying results, Related skills.
 6. Add evals in `evals/<skill-name>/`: a `config.json` and at least one case where the skill must fire, one where a close request must not fire it (`"fires": false`), and one or two that check its behaviour. Give each case that checks the reply a `golden.md`. See [evals/write-spec/](evals/write-spec/) for an example.
 7. Run `make test`, then `make eval SKILL=<skill-name> RUNS=1` until it passes, then once with `RUNS=3 JUDGE=1`.
 8. When the skill is ready to release, add it to the `skills` array in `.claude-plugin/plugin.json` and to `README.md`, then release (below).
 
-`make test` fails a skill when: `SKILL.md` or its frontmatter is missing; `name` is not kebab-case, is longer than 64 characters, differs from the folder name, or duplicates another skill's name; `description` is missing or longer than 1024 characters; the frontmatter has fields other than `name`, `description`, and `disable-model-invocation`, or `disable-model-invocation` is not `true` or `false`; or a relative link in any `.md` file is broken or points outside the skill folder. It also fails when an entry in `plugin.json`'s `skills` array is not a folder directly under `skills/` with a `SKILL.md`.
+`make test` fails a skill when: `SKILL.md` or its frontmatter is missing; `name` is not kebab-case, is longer than 64 characters, differs from the folder name, or duplicates another skill's name; `description` is missing or longer than 1024 characters; the frontmatter has fields other than `name`, `description`, and `disable-model-invocation`, or `disable-model-invocation` is not `true` or `false`; or a relative link in any `.md` file is broken or points outside the skill folder. It also fails a skill that has no entry in `WORD_BUDGETS` in `tests/validate.py`, or whose `SKILL.md` and the references listed there together hold more words than its budget, counted as `wc -w` counts; and when an entry in `plugin.json`'s `skills` array is not a folder directly under `skills/` with a `SKILL.md`.
 
 ## Conventions
 
@@ -34,6 +34,7 @@ A personal collection of skills (`SKILL.md` folders) for coding agents such as C
 - The plugin manifests live in `.claude-plugin/`, never in a skill's frontmatter.
 - A skill that needs another skill says "Call the Skill tool with `<name>`". It never links into another skill's folder.
 - Do not duplicate a rule in two files; state it once and link to it.
+- A fix that adds words to what a skill reads on every run cuts words elsewhere, or raises the skill's word budget in the same commit and says why. Material for one situation goes in a reference read only in that situation, which the budget does not count.
 - A skill never invents values the user did not give. It asks.
 - A skill gets a lint script only when its output has mechanical rules that a script can check with no false positives, and eval runs show the agent breaking them. Most skills need none.
 

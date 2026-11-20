@@ -25,6 +25,7 @@ Write no text between tool calls. [scripts/summary.py](scripts/summary.py) print
 ## Before starting
 
 - Read [references/build-rules.md](references/build-rules.md) in full: picking the phase, the subagent prompts, parsing replies, reopening, limits, stop reasons, and the validation checklist. This file is authoritative.
+- Only when you cannot run commands, also read [references/without-commands.md](references/without-commands.md): how to do by hand what the three scripts do.
 
 ## Scope
 
@@ -33,8 +34,8 @@ This skill only schedules work and reopens tasks. It never edits code, tests, or
 ## Workflow
 
 1. **Find the files and the phase**, as the rules say: the lookup script first. When it prints `stop`, the lines after it are your whole reply; when it prints `ask`, its question is, unless the rules' one exception applies. Never pick a path yourself.
-2. **Implement:** for each build task of the phase in order (not the verify task), start a subagent that calls the Skill tool with `implement-task` for that task. Run [scripts/parse_reply.py](scripts/parse_reply.py) on every reply, a done one too, passing the reply whole through a file, never retyped, and act on its `kind`, not on how the reply reads (by the same shapes only when you cannot run commands). A done report goes on; anything else is handled as the rules say.
-3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report with the script, passing the requirements file so a report that leaves out an ID is rejected: an `invalid` report is retried once and never copied. A Tally that miscounts the rows does not make a report invalid; the script counts it from the rows. A gap in a rejected report that its retry no longer calls a gap is a stop, never dropped.
+2. **Implement:** for each build task of the phase in order (not the verify task), start a subagent that calls the Skill tool with `implement-task` for that task. Run [scripts/parse_reply.py](scripts/parse_reply.py) on every reply, a done one too, passing the reply whole through a file, never retyped, and act on its `kind`, not on how the reply reads. A done report goes on; anything else is handled as the rules say.
+3. **Verify:** when every build task of the phase is `Done`, start a separate subagent that calls the Skill tool with `verify-spec` limited to the phase. Parse its report with the script, passing the requirements file. The tally is the script's, counted from the rows, never the report's own. An `invalid` report is retried once, and a gap it found that the retry no longer calls a gap is a stop, never dropped.
 4. **Rework:** a gap row (`unmet`, `partial`, or an `untested` one that is not a [manual check](references/build-rules.md#manual-checks)) reopens the build tasks behind it and sends them through step 2 again, then step 3, up to the round limit the lookup script printed (`rounds <n>`, from `build_max_rework_rounds`, default 2). At the limit the run stops.
 5. **Close:** with no gaps, run the phase's verify task through `implement-task`.
 6. **Finish:** as soon as the phase is done or a rule ends the run, run `summary.py` as the rules say, and reply with what it printed.

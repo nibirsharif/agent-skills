@@ -97,6 +97,17 @@ So every run that `find_tasks.py` does not stop now ends with `scripts/summary.p
 
 With the #2 fix merged in, the whole suite at 3 runs on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327): 39 of 39, `miscounted-tally` and `round-limit` 3 of 3 each. Every run of the ten cases that compose their summary ran `summary.py`.
 
+Shorter rules, the first piece of [#24](https://github.com/nibirsharif/agent-skills/issues/24), 19 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). `build-rules.md` went from 2,668 to 1,887 words: each rule is stated once, the `Never` list is folded into the checklist, and what an agent without commands does in place of the three scripts moved to `without-commands.md` (374 words), read only then. With `SKILL.md` (818 to 808), a run reads 2,695 words where it read 3,486. The starting point is the 39 of 39 above plus `no-spec-dir`, 3 of 3 that day before the change: 42 of 42. The 39 were run before the rule changes for #3 and #6, which were not followed by a whole-suite run at 3.
+
+After the change, the whole suite at 3 runs: 41 of 42.
+
+| Case | Passed |
+|---|---|
+| `off-phase-branch` | 2 of 3, then 3 of 3 when run again alone |
+| the other thirteen | 3 of 3 each |
+
+The miss had a correct reply. Its T-1.2 implement-task subagent, started with the prompt the rules give, made `reading-time/phase-1` with `git checkout -b`, switched back to `feature-work`, and deleted it, and the trace check for a branch switch cannot tell a subagent's command from build-phase's own. That subagent reads implement-task's rules and none of build-phase's, so no removed text is suspected and none was restored. No run read `without-commands.md`, and no case can: the harness always allows commands.
+
 [hooks.py](hooks.py) grades two things apart, so a run shows which one failed: `summary: ...` when the summary lines themselves are wrong, and `outside the summary: ...` when the reply has other text, such as a sentence before a correct summary. Trace checks cannot tell a subagent's edit from build-phase's own, so "build-phase edits nothing itself" is on the manual list.
 
 Known, at 3 runs each on 15 November 2026: 12 of 12 on `claude-sonnet-5-5` (Claude Code 2.1.322). On `claude-sonnet-5` (Claude Code 2.1.267) the same day: 7 of 12, every miss a sentence before a correct summary (`manual-check-done` 1 of 3, `rework-recovers` 1 of 3, `missing-tasks` 3 of 3). `missing-tasks` does this in most runs, on 0.11.0 as well: 16 of 20 runs that day across both versions. The rate depends on the model, not the skill version: those runs were on `claude-sonnet-5` (Claude Code 2.1.267, where `sonnet` is that model), and on `claude-sonnet-5-5` (Claude Code 2.1.322) `missing-tasks` passed 14 of 15 the same day. Three wordings were tried against `claude-sonnet-5` that day and none was kept:
