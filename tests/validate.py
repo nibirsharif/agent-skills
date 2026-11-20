@@ -18,6 +18,21 @@ MAX_DESCRIPTION = 1024
 ALLOWED_FIELDS = {"name", "description", "disable-model-invocation"}
 PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 
+# The most words each skill may make the agent read on every run, and the files that count besides SKILL.md:
+# the references SKILL.md says to read on every run. A file read only in one situation (saving a file, a
+# follow-up, an agent that cannot run commands) is not listed. Words are counted as `wc -w` counts them.
+# Each budget is the count when it was set plus about 100 words, so a reworded rule fits and a new paragraph
+# does not: cut words elsewhere, or raise the number in the same commit and say why. Lower it after a trim.
+# implement-task, verify-spec, write-tasks, and write-plan are not trimmed yet (issue #24).
+WORD_BUDGETS = {
+    "build-phase": (2800, ["references/build-rules.md"]),
+    "implement-task": (4000, ["references/implement-rules.md", "references/examples.md"]),
+    "verify-spec": (3600, ["references/verify-rules.md", "references/examples.md"]),
+    "write-plan": (3400, ["references/plan-rules.md", "references/examples.md"]),
+    "write-spec": (4700, ["references/ears-rules.md", "references/examples.md"]),
+    "write-tasks": (3500, ["references/task-rules.md", "references/examples.md"]),
+}
+
 
 def unquote(value):
     if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
@@ -134,6 +149,30 @@ def check_skill(skill_dir, seen_names):
     return errors
 
 
+def check_budget(skill_dir, budgets=None):
+    """Return a list of problems with the words one skill reads on every run. See WORD_BUDGETS."""
+    budgets = WORD_BUDGETS if budgets is None else budgets
+    label = f"skills/{skill_dir.name}"
+    if not (skill_dir / "SKILL.md").is_file():
+        return []  # check_skill reports it
+    if skill_dir.name not in budgets:
+        return [f"{label}: no word budget; add the skill to WORD_BUDGETS in tests/validate.py"]
+    limit, extra = budgets[skill_dir.name]
+    errors, counts = [], {}
+    for name in ["SKILL.md", *extra]:
+        path = (skill_dir / name).resolve()
+        if not path.is_file() or not path.is_relative_to(skill_dir.resolve()):
+            errors.append(f"{label}: word budget names '{name}', which is not a file in the skill folder")
+        else:
+            counts[name] = len(path.read_text().split())
+    total = sum(counts.values())
+    if not errors and total > limit:
+        parts = ", ".join(f"{name} {n}" for name, n in counts.items())
+        errors.append(f"{label}: {total} words read on every run, over its budget of {limit} ({parts}). "
+                      "Cut words, or raise the budget in WORD_BUDGETS in tests/validate.py and say why in the commit")
+    return errors
+
+
 def check_plugin():
     """Return a list of problems with the skills listed in .claude-plugin/plugin.json."""
     if not PLUGIN_JSON.is_file():
@@ -191,13 +230,17 @@ def check_release(root=ROOT):
 
 
 def main():
-    errors, count, seen_names = check_plugin() + check_release(), 0, {}
+    errors, count, seen_names, folders = check_plugin() + check_release(), 0, {}, set()
     for root in SKILL_ROOTS:
         if not root.is_dir():
             continue
         for skill_dir in sorted(p for p in root.iterdir() if p.is_dir() and not p.name.startswith(".")):
             count += 1
+            folders.add(skill_dir.name)
             errors += check_skill(skill_dir, seen_names)
+            errors += check_budget(skill_dir)
+    for name in sorted(set(WORD_BUDGETS) - folders):
+        errors.append(f"tests/validate.py: WORD_BUDGETS has '{name}', which is not a skill")
 
     for e in errors:
         print(f"FAIL {e}")
