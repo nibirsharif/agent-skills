@@ -10,7 +10,13 @@ from pathlib import Path
 import validate
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILLS = ["write-spec", "write-plan", "implement-task", "verify-spec"]
+# The file in each skill that holds the "find the files" step. write-spec keeps it with its saving rules.
+CONFIG_RULE_FILES = [
+    "skills/write-spec/references/saving.md",
+    "skills/write-plan/SKILL.md",
+    "skills/implement-task/SKILL.md",
+    "skills/verify-spec/SKILL.md",
+]
 # The part of the "find the files" step that every skill must word the same way.
 CONFIG_RULE_RE = re.compile(r"`spec_output_dir` from `\.agent-skills-config\.yaml`.*?against the project root\.")
 # The rule for finding the feature's files without spec_output_dir, the same in every skill of the chain that reads them.
@@ -36,8 +42,8 @@ DEFAULT_BRANCH_RULE = (
 class SharedBlockTest(unittest.TestCase):
     def test_config_lookup_rule_is_identical(self):
         found = {}
-        for name in SKILLS:
-            text = (ROOT / "skills" / name / "SKILL.md").read_text()
+        for name in CONFIG_RULE_FILES:
+            text = (ROOT / name).read_text()
             m = CONFIG_RULE_RE.search(text)
             self.assertIsNotNone(m, f"{name}: no spec_output_dir lookup rule")
             found[name] = m.group(0)
