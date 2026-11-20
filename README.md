@@ -109,7 +109,7 @@ The latest recorded run of each skill's whole suite, on `claude-sonnet-5-5` with
 
 | Skill | Cases | Latest run | Notes |
 |-------|-------|------------|-------|
-| write-spec | 10 | 19 of 21: the 7 cases of October 2026, 3 runs each (Claude Code 2.1.296) | Not run as a whole suite since. `followup-answers`, `followup-first-requirements`, and `propose-system`, added in 0.11.0, have no recorded pass count. The misses: 1 run changed the input's terms; 1 run picked `Where` for a state that changes at runtime. |
+| write-spec | 10 | 27 of 30: 3 runs each with the judge, 19 November 2026, after its rules were shortened ([#26](https://github.com/nibirsharif/agent-skills/pull/26)) | The misses: `ask-location` twice, a sentence before the location question, about 1 run in 6 before the change too; `nfr-ids` once, 4 questions where the case allows 3. Without the judge, before the last wording fixes: 29 of 30. |
 | write-plan | 10 | 10 of 10, one run each, 18 November 2026 | `oversized-requirement` passed 0 of 3 before a stop rule was added for it, and 4 of 4 after (see [evals/write-plan/](evals/write-plan/README.md)). |
 | write-tasks | 9 | 9 of 9, 19 November 2026: `interface-item` 3 of 3 with the judge, the other 8 one run each | |
 | implement-task | 15 | 15 of 15, one run each, 18 November 2026 | `config-uncommitted`, `test-leftover`, `service-missing`, and `origin-head`, from the real run, passed 3 of 3 each. The five stop-line cases passed 30 of 30 at 6 runs each once `pick_task.py` prints the line. |
