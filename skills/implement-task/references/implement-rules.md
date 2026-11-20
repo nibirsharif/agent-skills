@@ -1,6 +1,8 @@
 # Implement Rules
 
-These rules are authoritative for `implement-task`. A change is checked against the [checklist](#validation-checklist) before it is committed.
+These rules are authoritative for `implement-task`.
+
+The settings named here (`test_command`, `base_branch`, `branch_prefix`) come from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`.
 
 ## Reading tasks.md
 
@@ -8,78 +10,57 @@ These rules are authoritative for `implement-task`. A change is checked against 
 
 ## Picking the task
 
-- **Named:** the task ID the user gave. If it is not in the file, stop. If it is `Done`, stop.
-- **Not named:** the first `Todo` task in file order whose Depends on are all `Done`. If every task is `Done`, stop. If tasks are `Todo` but none has its dependencies `Done`, stop with the dependency line for the first `Todo` task.
-- **Rework:** a `Todo` task that already has a commit (`git log --grep "^T-<p>.<n>:"` finds one) was reopened after a check found a gap. Implement it like any task, with these changes: take the failing requirement rows from the user's request (the verify-spec rows for the task's Covers) as extra context; fix only what they and the task's Done when show to be wrong, inside the task's Files; add or fix the test so it fails without the fix. Its commit subject ends with ` (rework)`. When the request has no rows and the Done when check already passes, stop with the no-gap line.
-- A task whose Depends on lists a task that is not `Done`: stop. Never implement a dependency on the way.
-- A requirement the user asks for that is blocked, or that no task covers: stop. Never implement work outside a task.
-- A file with no Status lines was written before Status existed: stop with the no-Status line. Do not guess which tasks are done.
+[pick_task.py](../scripts/pick_task.py) picks the task: the one the user named, else the first `Todo` task in file order whose Depends on are all `Done`. Its stop is final: never implement a dependency on the way, a blocked requirement, or work no task covers.
+
+**Rework:** `task <T-id> rework` means the task already has a commit and was reopened after a check found a gap. Implement it like any task, with these changes: the failing requirement rows in the user's request (the verify-spec rows for the task's Covers) are extra context; fix only what they and the task's Done when show to be wrong, inside the task's Files; add or fix the test so it fails without the fix. Its commit subject ends with ` (rework)`. When the request has no rows and the Done when check already passes, stop with the no-gap line.
 
 ## Scope
 
 1. **Only the task's Files.** Change only the files the task lists. A `new: <what it is>` file gets a path that follows the codebase's conventions for that kind of file (where the neighbouring modules and their tests live). `Files: None.` (a verify task) means no code changes.
 2. **Only the task's behaviour.** Build what Covers and Done when say, within the phase's scope and interface changes in `plan.md`. No refactors, renames, formatting, or fixes outside the task, even ones that look right. No new dependency unless the plan names it.
-3. **Never** change `requirements.md` or `plan.md`, another task, or a blocked requirement's code; never answer an open question.
-4. **Doesn't fit:** a file the task names as existing is missing, or the task needs a file it does not list: stop with the task-mismatch line. Do not add the file anyway.
-5. **A choice:** when the task, plan, requirements, and code leave a choice that changes behaviour (a value, a message, an error code), ask; do not pick.
+3. **Doesn't fit:** a file the task names as existing is missing, or the task needs a file it does not list: stop with the task-mismatch line. Do not add the file anyway.
+4. **A choice:** when the task, plan, requirements, and code leave a choice that changes behaviour (a value, a message, an error code), ask; do not pick.
 
 ## Tests
 
 - Add the test Done when names, in the task's test file, before or with the code. The test must fail without the change: see it fail by running it before you edit the code (or by reasoning from the old code when the test is added with it), never by stashing or reverting your files.
-- Run the project's test command: `test_command` from `.agent-skills-config.yaml` in the project root, else `~/.agent-skills-config.yaml` when set, else the existing one (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the done report's Check line.
-- The full suite must be green, not only the new test.
-- Never skip, delete, or weaken a test, and never change an assertion to match the code.
+- Run `test_command` when set, else the project's existing test command (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the done report's Check line.
+- The full suite must be green, not only the new test. Never skip, delete, or weaken a test, and never change an assertion to match the code.
+- A failure you cannot fix within the task's Files is the failed-check stop line. Leave the change uncommitted and Status `Todo`.
 - **Manual check:** a Done when check that starts with `manual:` after its ID (`FR-007: manual: ...`) is made by a person, later. Build the behaviour it describes, add no test for it, and never make the check yourself or report it as made. The task's other checks and the full suite still run. A check without the word is never treated as manual.
-- **Verify task:** runs the phase's Verify list from `plan.md` and the full suite, leaving out each ID whose check in its Done when starts with `manual:`. It changes no code. Any failure is the failed-check stop line, except a missing service (below).
-- A failure you cannot fix within the task's Files is the failed-check stop line. Leave the change uncommitted for the user to see and leave Status `Todo`.
-- **A service the tests need is not available.** Before you edit any file, run the test command once as the tree stands. When tests cannot run because something outside the project that they need is not there (a database, cache, queue, or other server they connect to refuses the connection or cannot be found; a tool or credential the command needs is missing), that is not a failed check: the code was never tested. Stop with the missing-service line, naming what is missing and the error that shows it. The user makes it available, never you: never start, stop, install, or configure a service, container, or tool (no `docker run`, `podman run`, `systemctl`, `pg_ctl`, package install, or stand-in server of your own), never point the tests at another one, and never skip or mark the tests that need it. Since nothing was edited, the next run can start from the tree this stop leaves: the phase branch and any spec commit stay, and the untracked files the test command created are removed as the git section's [Leave no new files behind](#git) says. When the service goes away only after you changed files, give the same line, leave the changes uncommitted, and leave Status `Todo`.
+- **Verify task:** runs the phase's Verify list from `plan.md` and the full suite, leaving out each ID whose check in its Done when starts with `manual:`. It changes no code. Any failure is the failed-check stop line, except a missing service.
+- **Missing service.** Before you edit any file, run the test command once as the tree stands. When the tests cannot run because something outside the project is not there (a server they connect to refuses the connection or cannot be found; a tool or credential the command needs is missing), that is not a failed check: the code was never tested. Stop with the missing-service line, naming what is missing and the error that shows it. The user makes it available, never you: never start, stop, install, or configure a service, container, or tool (no `docker run`, `systemctl`, package install, or stand-in server of your own), never point the tests at another one, and never skip the tests that need it. This stop keeps the phase branch and any spec commit. When the service goes away only after you changed files, give the same line and leave the changes uncommitted and Status `Todo`.
 
 ## Git
 
-- **Clean start.** Before changing anything, run `git status --porcelain`. Changes inside the feature's folder (the one holding `tasks.md`) are its spec files, saved by write-spec, write-plan, and write-tasks and not yet committed: they are allowed and are committed first (see Spec commit). `.agent-skills-config.yaml` in the project root holds the user's settings for these skills, which they may keep out of the repository: ignore it here, and never stage it. A change to any other path: stop with the uncommitted-changes line, naming only those paths. With a pasted task list there is no feature folder, so any change stops.
-- **Stops change nothing.** Every stop line that comes from picking the task (no such task, already done, dependency, blocked, no Status) is given before the branch switch and the spec commit.
-- **Branch.** One branch per phase, named `<branch_prefix><feature>/phase-<n>` (`branch_prefix` and `base_branch` come from `.agent-skills-config.yaml` in the project root, else `~/.agent-skills-config.yaml`; the prefix defaults to empty), with `<feature>` the name of the `tasks.md` folder and `<n>` the task's phase. After the task is picked, when the current branch is the repository's default branch (`base_branch` when set, else the branch `origin/HEAD` names, which `git symbolic-ref --short refs/remotes/origin/HEAD` prints as `origin/<name>`, else `main`, else `master`) or any `<branch_prefix><feature>/phase-*` branch, switch to the task's phase branch. If it does not exist, create it: from the default branch for the feature's first phase, otherwise from the previous phase's branch when that branch exists and is not merged into the default branch, else from the default branch. On any other branch, stay on it. A local `main` or `master` that is not the default branch is only another branch: never cut a phase branch from it, and never delete it.
-- **Spec commit.** If the feature's folder had uncommitted changes, stage that folder by path and commit it before implementing, once, with the subject `Add <feature-name> spec` and no body, on the branch the previous rule chose (the first phase's). Later runs find a clean tree and make no spec commit.
+- **Uncommitted changes.** `pick_task.py` stops on any but two: changes inside the feature's folder (the one holding `tasks.md`), which are spec files not yet committed (see Spec commit), and `.agent-skills-config.yaml` in the project root, the user's settings, which you never stage.
+- **Branch.** One branch per phase, named `<branch_prefix><feature>/phase-<n>`: `<feature>` is the name of the `tasks.md` folder, `<n>` the task's phase, and the prefix is empty when not set.
+  - The default branch is `base_branch` when set, else the branch `origin/HEAD` names, which `git symbolic-ref --short refs/remotes/origin/HEAD` prints as `origin/<name>`, else `main`, else `master`. A local `main` or `master` that is not the default branch is only another branch: never cut a phase branch from it, and never delete it.
+  - After the task is picked, when the current branch is the default branch or any `<branch_prefix><feature>/phase-*` branch, switch to the task's phase branch. On any other branch, stay on it.
+  - If the phase branch does not exist, create it from the previous phase's branch when that branch exists and is not merged into the default branch, else from the default branch.
+- **Spec commit.** If the feature's folder had uncommitted changes, stage that folder by path and commit it before implementing, once, with the subject `Add <feature-name> spec` and no body, on the branch the Branch rule chose.
 - **Stage by path.** Stage only the files you changed and `tasks.md`. Never `git add -A`, `git add .`, or `git commit -a`.
 - **One commit per task**, after any spec commit, made only after every check passes and Status is `Done`. Subject `T-<p>.<n>: <task title>` (` (rework)` appended for a rework); body `Covers: <IDs>` and `Tasks: <path to tasks.md>`. Keep any commit trailer the environment requires.
-- **Leave no new files behind.** After the task's commit, run `git status --porcelain` again. The clean start allowed no untracked file but the spec files, which are now committed, so each untracked path (`??`) is one this run's commands created, such as a lock file or cache the test command wrote. Remove each of them by path with `git clean -fd -- <path>`, except `.agent-skills-config.yaml` and the task's own Files. Never run `git clean` without a path, and never remove a tracked file. Otherwise the next task's clean start stops on them. A stop line removes nothing, except the missing-service line, which removes them the same way.
+- **Leave no new files behind.** After the task's commit, run `git status --porcelain`. Each untracked path (`??`) is one this run's commands created, such as a lock file or cache the test command wrote, and the next task would stop on it: remove each by path with `git clean -fd -- <path>`, except `.agent-skills-config.yaml` and the task's own Files. Never run `git clean` without a path, and never remove a tracked file. A stop line removes nothing, except the missing-service line, which removes the files the test command created the same way.
 - **Never** push, pull, merge, amend, rebase, reset, stash, or change another branch.
 - **Not a git repository:** implement, set Status, and end the done report with `Commit: none (not a git repository)`.
 
 ## Stop lines
 
-Reply with exactly one line, and nothing else: no text before it, and no backticks around it (they only mark the line here):
+Reply with exactly one line, and nothing else: no text before it, and no backticks around it (they only mark the line here).
 
 Wrong, because a sentence comes first:
 
 ```
-`textstats/counts.py` is outside the spec folder, so the rules say stop.
+The change also needs `reset/mailer.py`, which T-1.2 does not list, so the rules say stop.
 
-Uncommitted changes in textstats/counts.py. Commit or stash them, then run implement-task again.
+T-1.2 needs reset/mailer.py, which its Files do not list. Fix the task with write-tasks, then run implement-task again.
 ```
 
-Also wrong, because it says what was found before the line:
+Right: the second of those lines alone, as your last message.
 
-```
-The user named the invoice-export feature, and its tasks.md doesn't exist.
+`pick_task.py` prints the stop lines it decides, whole: copy the line after `stop`. These four are yours to write:
 
-No tasks file found at docs/specs/invoice-export/tasks.md. Run write-tasks first, then run implement-task again.
-```
-
-Right, the line alone as your last message, with no backticks:
-
-```
-Uncommitted changes in textstats/counts.py. Commit or stash them, then run implement-task again.
-```
-
-- No tasks file: `No tasks file found at <path>. Run write-tasks first, then run implement-task again.`
-- No such task: `No task <id> in <path>.`
-- Already done: `<id> is already Done.`
-- Nothing left: `Every task in <path> is Done.`
-- Dependency not done: `<id> depends on <ids>, not yet Done. Implement those first.`
-- Blocked or untasked work: `<ID> has no task in <path>. Add it with write-tasks, then run implement-task again.`
-- No Status lines: `<path> has no task Status lines. Re-run write-tasks to add them, then run implement-task again.`
-- Uncommitted changes: `Uncommitted changes in <files outside the feature's folder>. Commit or stash them, then run implement-task again.`
 - Task mismatch: `<id> <what does not fit>. Fix the task with write-tasks, then run implement-task again.`
 - Rework with nothing to fix: `<id> is a rework but its check passes and no gap was given. Pass the failing verify rows, then run implement-task again.`
 - Failed check: `<id> check failed: <command>: <one-line failure>. Status stays Todo; the changes are left uncommitted.`
@@ -90,9 +71,7 @@ Uncommitted changes in textstats/counts.py. Commit or stash them, then run imple
 Run every item before setting Status and committing.
 
 1. Every changed file is in the task's Files (or is the path chosen for one of its `new:` files), plus `tasks.md`.
-2. The test Done when names exists and passed (a `manual:` check names none and was not made); the full suite passed.
-3. No test was skipped, deleted, or weakened.
-4. `requirements.md`, `plan.md`, and every other task are unchanged; only this task's Status line changed in `tasks.md`.
-5. No blocked requirement or open question was implemented or answered.
-6. The commit holds only this task's changes, on the task's phase branch, and nothing was pushed. The only other commit this run made is the spec commit of the feature's folder.
-7. No service, container, or tool was started, stopped, installed, or configured to make the tests run.
+2. The test Done when names exists and passed (a `manual:` check names none and was not made); the full suite passed, with no test skipped, deleted, or weakened.
+3. `requirements.md`, `plan.md`, and every other task are unchanged; only this task's Status line changed in `tasks.md`. No blocked requirement was implemented and no open question answered.
+4. The commit holds only this task's changes, on the task's phase branch, and nothing was pushed. The only other commit this run made is the spec commit of the feature's folder.
+5. Nothing was started, stopped, installed, or configured to make the tests run.

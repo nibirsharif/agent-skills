@@ -39,7 +39,7 @@ It stops with a single line instead when:
 | The check fails | the change is left uncommitted for you to see; Status stays `Todo`. Commit or discard it before the next run |
 | A service the tests need, such as a database, is not running | start it; nothing was changed, so rerun as is |
 
-The full list is in [the rules](../skills/implement-task/references/implement-rules.md#stop-lines).
+The lines the skill writes itself are in [the rules](../skills/implement-task/references/implement-rules.md#stop-lines); the ones its script prints are in [without-commands.md](../skills/implement-task/references/without-commands.md#the-stop-lines-the-script-prints).
 
 ## FAQ
 

@@ -10,11 +10,12 @@ from pathlib import Path
 import validate
 
 ROOT = Path(__file__).resolve().parent.parent
-# The file in each skill that holds the "find the files" step. write-spec keeps it with its saving rules.
+# The file in each skill that holds the "find the files" step. write-spec keeps it with its saving rules, and
+# implement-task with what an agent does by hand when it cannot run its lookup script.
 CONFIG_RULE_FILES = [
     "skills/write-spec/references/saving.md",
     "skills/write-plan/SKILL.md",
-    "skills/implement-task/SKILL.md",
+    "skills/implement-task/references/without-commands.md",
     "skills/verify-spec/SKILL.md",
 ]
 # The part of the "find the files" step that every skill must word the same way.

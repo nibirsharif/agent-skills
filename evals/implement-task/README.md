@@ -53,6 +53,28 @@ With `scripts/pick_task.py` finding the file, checking the working tree, picking
 
 `origin-head`, from finding I of the same run ([#7](https://github.com/nibirsharif/agent-skills/issues/7)): 3 of 3 on 18 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). Every run read `git branch -a`, which shows `origin/HEAD -> origin/master`, and created `reading-time/phase-1` from `master`. With 0.16.0's wording the same case passed 1 of 3, but only the `origin/HEAD` check tells the two wordings apart: those runs also cut the branch from `master`, because they started there and ran `git checkout -b`, so this model does not reproduce the stale-`main` base and the case cannot show that the fix prevents it. (One of those failures was a false match of the moved-branch check, since tightened.) The whole suite then passed 15 of 15 at one run each.
 
+Shorter rules, the next piece of [#24](https://github.com/nibirsharif/agent-skills/issues/24), 19 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). `implement-rules.md` went from 1,947 to 1,501 words: each rule is stated once, the settings lookup is named once, the branch rule is a short list, and the two wrong stop-line examples are one. What `pick_task.py` decides (finding `tasks.md`, the working-tree check, picking the task, and the eight stop lines it prints) moved to `without-commands.md` (573 words), read only when the script cannot run. With `SKILL.md` (1,256 to 1,079) and `examples.md` (660, unchanged), a run reads 3,240 words where it read 3,863. The rules file is a quarter shorter, not the third aimed for: what is left is the reply and commit formats, the default-branch wording shared with verify-spec, and rules stated nowhere else, several of which no case covers (rework, manual checks, the verify task, task mismatch, a failed check).
+
+The whole suite at 3 runs:
+
+| Wording | Passed |
+|---|---|
+| Before the change | 45 of 45 |
+| First cut | 44 of 45: `service-missing` 2 of 3, a sentence before a correct stop line (`Missing service: tests need a server on 127.0.0.1:6399.`) |
+| Final: the first cut with two `SKILL.md` texts restored | 45 of 45 |
+
+The first cut had also taken out of `SKILL.md` the `Work silently` paragraph and, from the workflow step that runs the tests before editing, the sentence that names the missing-service stop. `service-missing` run alone:
+
+| Wording | Passed |
+|---|---|
+| Before the change | 11 of 12 (17 of 18 with the 6 runs recorded above) |
+| First cut | 7 of 9 (9 of 12 with the suite's 3) |
+| Final | 8 of 9 (11 of 12 with the suite's 3) |
+
+The four misses in this table had a correct reply and one cause, on the old wording as on the new: the first test run was piped through `tail -3`, which shows only `FAILED (errors=1)`, and the agent added the task's test before reading why. It then read the error, undid its edit (three times with `git checkout --`, which the check for a reset catches), and stopped with the right line. So the case misses about 1 run in 12 with the rules as they were, and a suite at 3 runs will sometimes show it. The first cut's 3 misses in 12 against 1 in 18 is a small sample, but both removed texts bear on what missed, so both are back, with `as the tree stands` and `the code was never tested` in the missing-service rule. The rules do not yet say to read why a run failed before editing; that would be a new rule, not a trim. The one miss before the change also failed the stand-in-server check falsely: its pattern `ncat` matches `\ncat >>` in a command with a line break.
+
+In the final suite run, every run that loaded the skill ran `pick_task.py` (42 of 45; the other three are `routing-tasks`), and none read `without-commands.md`: the harness always allows commands, so that file, and the pasted-task-list path that now reads it, have no case. Also cut with no case that would show a difference: the second and later phases' branch base (the fixture has one phase), `Later runs find a clean tree and make no spec commit`, and the examples `podman run` and `pg_ctl` in the missing-service rule.
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls, so they show whether code was edited, tests were run, and what git did. Work through each case's "Review by hand" list: the checks cannot see the commit's contents.
 
 ```bash

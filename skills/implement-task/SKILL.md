@@ -17,7 +17,7 @@ Your reply is one of three things, and its first character is the first characte
    - `Changed: <path>, <path>`
    - `Check: <command>: <result>`
    - `Commit: <short hash> on <branch>`
-2. **A stop line**, one of those in [references/implement-rules.md](references/implement-rules.md#stop-lines), word for word, and nothing else. When there is no `tasks.md`, which you find out before reading the rules, it is exactly: `No tasks file found at <path>. Run write-tasks first, then run implement-task again.` with `<path>` the `<spec_output_dir>/<feature>/tasks.md` you looked for.
+2. **A stop line**, word for word, and nothing else: the line [scripts/pick_task.py](scripts/pick_task.py) prints after `stop`, or one of those in [references/implement-rules.md](references/implement-rules.md#stop-lines).
 3. **The questions**, when the task leaves a choice that the code, the task, the plan, and the requirements do not decide, or the lookup's one question when it cannot tell which `tasks.md` to use.
 
 The reply is only that: no preface, no reason before a stop line, no summary or next steps after it, and no code fence or backticks around it. Write no text between tool calls.
@@ -28,6 +28,7 @@ The last message you write is the reply. It starts with `T-` for a done report o
 
 - Read [references/implement-rules.md](references/implement-rules.md) in full before changing anything: picking the task, scope, tests, git, stop lines, and the validation checklist. This file is authoritative.
 - Read [references/examples.md](references/examples.md) before your first reply in a conversation.
+- Only when you cannot run `pick_task.py` (you cannot run commands, or the user pasted the task list), also read [references/without-commands.md](references/without-commands.md): how to do by hand what the script does.
 
 ## Scope
 
@@ -37,21 +38,19 @@ This skill implements the task it picked and nothing else. It does not write or 
 
 Work silently: do not say what you found, which rule applies, or why you stop. A stop line is the whole reply, even when the reason is obvious from the file.
 
-1. **Find `tasks.md`**, as [Finding the files](#finding-the-files) says: one script does this step and the next two, and prints the stop line when there is one.
-2. **Check the working tree**: only the feature's own spec files and `.agent-skills-config.yaml` may be uncommitted, as the rules' git section says.
-3. **Pick the task** as the rules say, and check its dependencies are `Done`.
-4. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
-5. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby. Then run the test command once, before editing anything: tests that cannot run because a service or tool they need is not available are the missing-service stop line, as the rules' test section says. Never start one yourself.
-6. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
-7. **Run the check** in Done when, then the full test suite. A failure you cannot fix within the task is the failed-check stop line.
-8. **Validate** against the rules' checklist.
-9. **Set Status to `Done`** in `tasks.md`, **commit** as the rules' git section says (the spec files first, if they were not committed yet), remove the untracked files your commands left behind, as that section says, and reply with the done report.
+1. **Find `tasks.md`, check the working tree, and pick the task**, as [Finding the files](#finding-the-files) says: one script does all three, and prints the stop line when there is one.
+2. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
+3. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby. Then run the test command once, before editing anything: tests that cannot run because a service or tool they need is not available are the missing-service stop line, as the rules' test section says. Never start one yourself.
+4. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
+5. **Run the check** in Done when, then the full test suite, as the rules' test section says.
+6. **Validate** against the rules' checklist.
+7. **Set Status to `Done`** in `tasks.md`, **commit** as the rules' git section says (the spec files first, if they were not committed yet), remove the untracked files your commands left behind, as that section says, and reply with the done report.
 
 ## Finding the files
 
-A task list the user pasted into the conversation needs no file: implement from it, but there is no Status to set; the done report's last line still names the commit.
+A task list the user pasted into the conversation needs no file: pick the task from it by hand and implement it, but there is no Status to set; the done report's last line still names the commit.
 
-Otherwise run [scripts/pick_task.py](scripts/pick_task.py) by its full path, with the project as the current directory, before any other command. It finds `tasks.md`, checks the working tree, and picks the task, which are steps 1 to 3 of the workflow. Give it:
+Otherwise run [scripts/pick_task.py](scripts/pick_task.py) by its full path, with the project as the current directory, before any other command. It finds `tasks.md`, checks the working tree, and picks the task, which is step 1 of the workflow. Give it:
 
 - `--feature <name>` when the user names a feature, or `--path <path>` when they name a path to `tasks.md`; neither when they name neither.
 - `--task <T-id>` when the user names a task, or `--requirement <ID>` when they ask for an FR or NFR in place of a task; neither for the next task.
@@ -60,14 +59,8 @@ Do what it prints:
 
 - `found <path>` and, on the next line, `task <T-id>`: that is `tasks.md` and the task to implement. Use them and no other. `task <T-id> rework` means the task is a rework, as the rules say.
 - `stop <line>`: `<line>` is your whole reply. Run nothing more and change nothing.
-- `ask <question>`: `<question>` is your whole reply, as written. The one exception is `ask Where is tasks.md?`: when a path from earlier in this conversation gives the feature's folder, as [the last step below](#finding-the-files) says, run the script once more with `--path` to the `tasks.md` in that folder, and do what it prints. Never answer a question yourself in any other way.
+- `ask <question>`: `<question>` is your whole reply, as written. The one exception is `ask Where is tasks.md?`: when a path from earlier in this conversation gives the feature's folder, as the next paragraph says, run the script once more with `--path` to the `tasks.md` in that folder, and do what it prints. Never answer a question yourself in any other way.
 
-Only when you cannot run commands, do steps 1 to 3 yourself: check the working tree and pick the task as the rules say, and find `tasks.md` like this:
-
-1. A path the user names in this request. If no file is there, reply with the no-tasks-file stop line for that path.
-2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root.
-   - **The user names a feature:** the file is `<spec_output_dir>/<feature-name>/tasks.md` and no other. Check that one path and do not look for other `tasks.md` files. If it does not exist, reply with the no-tasks-file stop line for that path.
-   - **The user names no feature:** list the existing `<spec_output_dir>/*/tasks.md` files; if only one exists, use it, otherwise ask which one.
-3. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
+**Without `spec_output_dir`:** A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
 `plan.md` and `requirements.md` are in the same folder as `tasks.md`. When one is missing, work from the task alone.
