@@ -10,11 +10,12 @@ Requirements are the lines that start with an ID: `FR-<n>:` for functional and `
 
 ## Choosing the scope
 
-- **No phase named:** every requirement in `requirements.md`.
-- **Row order is file order,** whatever the scope: skipped rows stay where their requirement is, never grouped at the end.
-- **A phase named:** the IDs in that phase's `**Requirements:**` list in `plan.md`. Every other ID gets a `skipped` row with the evidence `outside phase <n>`, where `<n>` is the phase named. A phase that is not in `plan.md`, or a named phase with no `plan.md`, is a stop.
-- **An ID named** (`FR-003`): only that row. An ID that is not in the file is a stop.
-- **Blocked:** always wins over the phase rule: a blocked requirement's evidence is `Blocked by Q-<n>` even when it is also outside the named phase. A requirement marked `Blocked by Q-<n>`, or listed in the plan's Blocked Requirements, gets a `skipped` row naming the question. It is never checked and never judged `unmet`.
+Rows are in file order, whatever the scope: skipped rows stay where their requirement is, never grouped at the end.
+
+- **No phase or ID named:** every requirement in `requirements.md`.
+- **A phase named:** the IDs in that phase's `**Requirements:**` list in `plan.md`. Every other ID gets a `skipped` row with the evidence `outside phase <n>`.
+- **An ID named** (`FR-003`): only that row.
+- **Blocked:** a requirement marked `Blocked by Q-<n>`, or listed in the plan's Blocked Requirements, gets a `skipped` row with the evidence `Blocked by Q-<n>`, even when it is also outside the named phase. It is never checked and never judged `unmet`.
 
 ## Verdicts
 
@@ -36,16 +37,17 @@ Rules that decide between them:
 - **Failure beats presence.** A test for the requirement that ran and failed makes the row `unmet`, with the failure as evidence.
 - **An NFR with a threshold but no benchmark** (a stated limit and no test that measures it) is `untested`, not `cannot tell`.
 - **When unsure between two verdicts, take the weaker one** (`partial` over `met`, `untested` over `met`). Never round up.
+- **Never mark a row from** a commit message, a task Status, a comment saying "done", or the requirement's own wording.
 
-## What to check per EARS pattern
+## What to check in the sentence
 
 Look for each part of the sentence, not only its verb:
 
-- **Ubiquitous** (`The <system> shall ...`): the behaviour holds on every call.
-- **While** (`While <state>, ...`): the state is detected, and the behaviour holds only in it.
-- **When** (`When <trigger>, ...`): the trigger is handled and the response follows it.
-- **Where** (`Where <feature>, ...`): the behaviour is present when the feature is, and absent when it is not.
-- **If-then** (`If <condition>, then ...`): the unwanted condition is detected and the stated response happens.
+- **While** `<state>`: the state is detected, and the behaviour holds only in it.
+- **When** `<trigger>`: the trigger is handled and the response follows it.
+- **Where** `<feature>`: the behaviour is present when the feature is, and absent when it is not.
+- **If** `<condition>`, **then**: the unwanted condition is detected and the stated response happens.
+- None of these: the behaviour holds on every call.
 
 A value in the statement (200, 15 minutes, `TypeError`) is checked as written. A different value is `partial`.
 
@@ -60,7 +62,6 @@ A value in the statement (200, 15 minutes, `TypeError`) is checked as written. A
 
 - Run the project's test command once: `test_command` from `.agent-skills-config.yaml` in the project root, else `~/.agent-skills-config.yaml` when set, else the existing one (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the `Tests:` line.
 - Read results per test, not only the total, so each row can cite its own test.
-- Run nothing else: no installs, no builds that write outside the project's usual build output, no scripts that change data, no network calls. A command that is not the test runner or a read-only inspection is not allowed.
 - When the tests cannot run (no command found, the runner fails to start, a missing dependency), say `Tests: not run: <reason>`. No row is then `met`; rows that would have been are `untested`.
 - A test that fails for a reason unrelated to the requirements (a broken fixture elsewhere) is not evidence for or against a row; say so in the `Tests:` line.
 
@@ -75,45 +76,17 @@ A changed file is drift when it neither implements nor tests any requirement in 
 
 ## Never
 
-- Edit, create, or delete any file. This skill's tool use is reading, searching, running the tests, and read-only git commands (`status`, `diff`, `log`, `branch`).
-- Commit, stage, push, stash, switch branches, or change any state.
-- Change a requirement, the plan, or a task, or answer an open question.
-- Say how to fix a gap. A row says what is missing; fixing it is `implement-task` or `write-spec`.
-- Mark a row from a commit message, a task Status, a comment saying "done", or the requirement's own wording.
-
-## Stop lines
-
-Reply with exactly one line, and nothing else: no text before it, and no backticks around it (they only mark the line here):
-
-Wrong, because a sentence comes first:
-
-```
-There is no requirements file for invoice-export, so I cannot verify it.
-
-No requirements file found at docs/specs/invoice-export/requirements.md. Run write-spec first, then run verify-spec again.
-```
-
-Right, the line alone as your last message, with no backticks:
-
-```
-No requirements file found at docs/specs/invoice-export/requirements.md. Run write-spec first, then run verify-spec again.
-```
-
-- No requirements file: `No requirements file found at <path>. Run write-spec first, then run verify-spec again.`
-- No requirement IDs: `<path> has no FR or NFR requirements. Run write-spec first, then run verify-spec again.`
-- No such ID: `No requirement <ID> in <path>.`
-- No such phase: `No phase <n> in <path>.`
-- Phase named, no plan: `No plan file found at <path>, so phase <n> has no requirements list. Run write-plan first, then run verify-spec again.`
+- Edit, create, or delete any file, or commit, stage, push, stash, switch branches, or change any other state. This skill's tool use is reading, searching, running the tests, and read-only git commands (`status`, `diff`, `log`, `branch`).
+- Run anything but the test runner and read-only inspection: no installs, no builds that write outside the project's usual build output, no scripts that change data, no network calls.
+- Answer an open question, or say how to fix a gap. A row says what is missing; fixing it is `implement-task` or `write-spec`.
 
 ## Validation checklist
 
 Run every item before replying.
 
 1. Every requirement in scope has exactly one row, in file order; every blocked or out-of-phase one is `skipped`.
-2. Every `met` row cites an implementation line and a test that ran and passed in this run.
+2. Every `met` row cites an implementation line and a test that ran and passed in this run. Where two verdicts fit, the weaker one is used.
 3. Every cited path and line exists, and you opened it.
-4. No row is `met` because of a commit message, task Status, or comment.
-5. Where two verdicts fit, the weaker one is used.
-6. A `Tests:` line names the command and its result, or why the tests did not run.
-7. `Tally:` counts match the rows; `Drift:` lists paths or says why it was not checked.
-8. Nothing was edited, created, staged, or committed.
+4. A `Tests:` line names the command and its result, or why the tests did not run.
+5. `Tally:` counts match the rows; `Drift:` lists paths or says why it was not checked.
+6. Nothing was edited, created, staged, or committed.

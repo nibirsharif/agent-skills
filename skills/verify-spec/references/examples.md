@@ -2,25 +2,15 @@
 
 The code in these examples is made up. In your work, cite only files and lines you have opened. The fences below only mark the reply off: your reply has no fence and no text around it.
 
-## Missing requirements file
+## A stop
 
-User: `Does the invoice-export feature meet its spec?` No `requirements.md` exists for it.
-
-```
-No requirements file found at docs/specs/invoice-export/requirements.md. Run write-spec first, then run verify-spec again.
-```
-
-Nothing else: no review of the code from the feature name.
-
-## Unknown ID
-
-User: `Is FR-009 met?` `requirements.md` has FR-001 to FR-005.
+User: `Is FR-009 met?` `requirements.md` has FR-001 to FR-005, so the script prints `stop` and this line:
 
 ```
 No requirement FR-009 in docs/specs/reading-time/requirements.md.
 ```
 
-Nothing else: no verdicts for the requirements that do exist, no remarks on the code.
+Nothing else: no verdicts for the requirements that do exist, no remarks on the code. A feature with no `requirements.md` is the same: its stop line alone, and no review of the code from the feature name.
 
 ## A mixed report
 
@@ -90,9 +80,3 @@ Drift: none
 - Explaining the scope or the branch before the table ("On the default branch, so no drift check applies."). That belongs in the Drift line.
 - Following a stop line with what the code turned out to hold. The stop line is the whole reply.
 - Opening with a sentence ("Most requirements are met, but two have gaps."), or closing with advice ("Next, implement FR-003."). The report alone is the reply.
-- Marking FR-002 `met` because `tasks.md` says T-1.2 is `Done`. Status is never evidence.
-- Marking a row `met` from the test's name without reading its body.
-- Rounding up: a test that passes only for easy inputs is `partial` or `untested`, never `met`.
-- Fixing the missing check while verifying, or adding the missing test. This skill changes nothing.
-- Checking FR-004 and calling it `unmet` when it is `Blocked by Q-001`. It is `skipped`, and its evidence is the question, even when a phase was named.
-- Listing a refactor as a defect. Drift lists the file and leaves the judgement to the user.

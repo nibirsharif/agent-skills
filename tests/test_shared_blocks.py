@@ -11,12 +11,12 @@ import validate
 
 ROOT = Path(__file__).resolve().parent.parent
 # The file in each skill that holds the "find the files" step. write-spec keeps it with its saving rules, and
-# implement-task with what an agent does by hand when it cannot run its lookup script.
+# implement-task and verify-spec with what an agent does by hand when it cannot run its lookup script.
 CONFIG_RULE_FILES = [
     "skills/write-spec/references/saving.md",
     "skills/write-plan/SKILL.md",
     "skills/implement-task/references/without-commands.md",
-    "skills/verify-spec/SKILL.md",
+    "skills/verify-spec/references/without-commands.md",
 ]
 # The part of the "find the files" step that every skill must word the same way.
 CONFIG_RULE_RE = re.compile(r"`spec_output_dir` from `\.agent-skills-config\.yaml`.*?against the project root\.")

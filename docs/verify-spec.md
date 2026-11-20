@@ -44,7 +44,7 @@ Drift: textstats/formatting.py
 
 `Drift` lists changed files that no requirement covers: uncommitted files, plus the files changed on the feature branch. It lists them and leaves the judgement to you; a refactor is not necessarily a defect.
 
-It stops with a single line instead when there is no `requirements.md` for the feature, the file has no `FR` or `NFR` requirements, or the ID or phase you named does not exist. The full list is in [the rules](../skills/verify-spec/references/verify-rules.md#stop-lines).
+It stops with a single line instead when there is no `requirements.md` for the feature, the file has no `FR` or `NFR` requirements, or the ID or phase you named does not exist. Its script prints each of these lines; the full list is in [without-commands.md](../skills/verify-spec/references/without-commands.md#the-stop-lines-the-script-prints).
 
 ## FAQ
 
