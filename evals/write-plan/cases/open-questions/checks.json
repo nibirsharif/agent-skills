@@ -59,8 +59,12 @@
       "why": "Q-003 is closed: it is neither a blocker nor an open question"
     },
     {
-      "pattern": "^(#+ .*|\\*\\*Scope:\\*\\*.*)\\brate.limit",
-      "why": "the blocked requirement is not planned as a phase or scope"
+      "pattern": "^#+ .*\\b[Rr]ate.limit",
+      "why": "the blocked requirement is not planned as a phase"
+    },
+    {
+      "pattern": "^\\*\\*Scope:\\*\\*(?:[^.\\n]*\\.)*?(?![^.\\n]*\\b(?:not|without|no [Rr]ate.limit\\w*|left|leaves|leaving|later|waits?|waiting|blocked|deferred|excluded?|excluding|out of scope|outside|until)\\b)[^.\\n]*\\b[Rr]ate.limit",
+      "why": "the blocked requirement is not planned in a phase's scope: a sentence there that names rate limiting says it is left out or waits"
     },
     {
       "pattern": "^Q-00[12]: Closed",
