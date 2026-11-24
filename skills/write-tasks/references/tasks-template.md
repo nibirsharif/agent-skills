@@ -1,23 +1,14 @@
 # Tasks File Template
 
-Use the template below the line for every new `tasks.md`. Everything above the line is instructions and is never copied into the file. Task rules are in [task-rules.md](task-rules.md); a filled-in file is in [examples.md](examples.md#a-saved-file).
+Use the template below the line for every new `tasks.md`. Everything above the line is instructions and is never copied into the file. A filled-in file is in [examples.md](examples.md#a-saved-file). To change a `tasks.md` that already exists, read [updating.md](updating.md).
 
 - Replace every `[...]` and `<...>`, and `YYYY-MM-DD` with today's date.
-- `tasks.md` sits next to the `plan.md` it breaks down. **Plan** names that file's version, so a reader can tell when the tasks are stale.
-- Overview is one to three sentences: how the tasks are ordered and the code they build on. Where there is no codebase, say so in its first sentence.
-- One `### Phase <n>: <title>` per phase of the plan, with the plan's number and title. Every task has all six parts; write `None.` for an empty Depends on.
+- **Plan** names the version of the `plan.md` the file sits beside, so a reader can tell when the tasks are stale.
+- Where there is no codebase, the Overview says so in its first sentence.
+- One `### Phase <n>: <title>` per phase of the plan, with the plan's number and title.
 - The file has no status of its own: only each task's **Status** says where the work stands.
-- **Status** is `Todo` or `Done`. Every task of a new file is `Todo`; `implement-task` sets it to `Done`.
-- Section 3 copies each `Blocked by` entry from the plan's section 3 word for word, once, on one line (`Blocked by Q-001, Q-002: <topic>`). It never lists the questions' text. It holds `None.` when nothing is blocked.
-- A new file is version 1.0. Each update raises the minor version and adds one Revision History row naming the phases and task IDs added, changed, or removed.
-
-## Updating an existing file
-
-- A phase has started when any of its tasks is `Done`. Ask which phases have started only when the file has no Status lines; never assume. Tasks of started phases stay as they are, with their IDs and Status.
-- A phase whose requirements changed and has not started is re-split from the plan; its task IDs may change and every task is `Todo`. Say so in the Revision History.
-- A phase already started that gains a requirement gets new tasks after the existing ones, with the next numbers, Status `Todo`, and a new last verify task. Earlier tasks keep their IDs.
-- A new phase in the plan is appended. A requirement that left the plan is removed from its tasks; a task left with no ID is removed.
-- Update Plan with the new `plan.md` version.
+- Section 3 holds the plan's `Blocked by` entries, one on each line, or `None.` when nothing is blocked.
+- A new file is version 1.0.
 
 ---
 

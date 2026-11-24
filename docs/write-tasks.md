@@ -37,7 +37,7 @@ Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (defaul
 
 **What is the verify task?** The last task of a phase. It ties the earlier checks together and runs the full test suite, citing each requirement ID the phase covers.
 
-**What happens to Status when I re-run it?** A phase with any `Done` task has started: its tasks keep their IDs and Status, and new work is appended as `Todo` tasks.
+**What happens to Status when I re-run it?** A phase with any `Done` task has started: its tasks keep their IDs and Status, and new work is appended as `Todo` tasks. The rules are in [updating.md](../skills/write-tasks/references/updating.md).
 
 **When is a check `manual:`?** Only when no test runner the project has can make it: something a person sees in a browser, on a device, or in a real inbox. The check then reads `FR-007: manual: <what to do and what to see>`. The rule is in [task-rules.md](../skills/write-tasks/references/task-rules.md#manual-checks). [implement-task](implement-task.md) builds the behaviour without making the check, and [build-phase](build-phase.md) lists it for you at the end of the phase.
 

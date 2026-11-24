@@ -14,6 +14,25 @@ Made-up plan files that exercise the write-tasks skill's rules, each with automa
 | `pasted-not-saved` | `single-phase`'s input sent without the chat-only line: the tasks are in chat, and their last line says they were not saved. |
 | `routing-plan` | Routing: a request to write the plan from requirements, which the skill's description excludes. The skill must not fire. |
 
+Shorter rules, the next piece of [#24](https://github.com/nibirsharif/agent-skills/issues/24), 19 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). What a run reads went from 3,928 to 3,225 words: `SKILL.md` 1,062 to 925, `task-rules.md` 1,449 to 1,274, `examples.md` 904 to 745, `tasks-template.md` 513 to 281. The template is counted because the runs read it for a chat reply too (22 of 24 before and after), so the word budget now lists it. `SKILL.md`'s Output section is merged into the reply contract; each stop is stated once, with its line in the contract and what not to do in the rules; the checklist is 9 items where it was 11; the examples that repeated a rule or a line of the contract are gone (the missing-plan and oversized-phase stops, three of five wrong splits); and the rules for changing a `tasks.md` that exists moved from the template to `updating.md` (185 words), read only then.
+
+The whole suite at 3 runs with the judge:
+
+| Wording | Passed | Passed, the checks without the judge |
+|---|---|---|
+| Before the change | 22 of 27 | 26 of 27 |
+| First cut: `SKILL.md`, the rules, the examples | 23 of 27 | 27 of 27 |
+| Second cut: the template too, with `updating.md` | 24 of 27 | 27 of 27 |
+| Final: the second cut with two examples restored | 23 of 27 | 27 of 27 |
+
+The one miss of a check was before the change: a `single-phase` reply with a `## 4. Revision History` table in chat. Every other miss is the judge's, on three expectations. A reply like the golden one fails the first two:
+
+- `single-phase`, "No requirement is added, reworded, or split, and no task is a layer such as Database or UI": 3 of 3 before, then 3, 2, and 3 of 3. The judge reads a requirement covered by two tasks as split, the token store task as a Database layer, and a check the plan's Verify list does not have as added. The golden reply and the skill's own example do all three, as the rules ask.
+- `oversized-phase`, "does not merge unrelated work into fewer tasks and does not split the phase itself": 0 of 3 before, then 1 of 3 each time, on a reply that is the golden line word for word. The judge reads "Split it in plan.md with write-plan" as splitting the phase.
+- `interface-item`, "No task other than the helper's builds the file path": 2 of 3 before, 0 of 9 after. In both, the judge's own evidence finds no such task ("Under a strict reading, no other task builds the path, so this should pass") and marks the expectation failed all the same.
+
+The two examples restored are about `manual:`; the benchmark showed the need, not the suite: see [benchmark/after-shorter-rules.md](benchmark/after-shorter-rules.md), which also has the benchmark before and after (no column moved by more than the spread between runs). In the final suite run every run that loaded the skill read `task-rules.md` (24 of 24; the other three runs are `routing-plan`), 23 read `examples.md`, and none read `updating.md`: no case has a `tasks.md` to update, before or after, so that path is untested. Also cut with no case that would show a difference: saving to a file (every case replies in chat), and a phase too vague to task.
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).
 
 ```bash
