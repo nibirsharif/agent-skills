@@ -35,7 +35,7 @@ This skill writes the plan only: no requirements, no per-phase task breakdown, n
 
 Work silently. Write no text between tool calls and none before the reply: the only text you write is the reply the contract describes.
 
-1. **Find and read the requirements**, as [Saving to a file](#saving-to-a-file) says. A missing file, or one with no written requirement, is the stop line. If a `plan.md` already exists beside the file, read it: you are updating it, as [references/updating.md](references/updating.md) says.
+1. **Find and read the requirements**, as [Saving to a file](#saving-to-a-file) says. A path comes only from the request, the conversation, or the two config files: until one of them gives it, run no `ls`, `find`, or Glob over the project, and open no file in it but `.agent-skills-config.yaml`. With no path from them, reply with the location question, even with a `requirements.md` in plain sight: the reply's first word is `Where`. A missing file, or one with no written requirement, is the stop line. If a `plan.md` already exists beside the file, read it: you are updating it, as [references/updating.md](references/updating.md) says.
 2. **Sort the requirements** as the rules' "Reading the requirements file" section says: written, withdrawn, and blocked.
 3. **Check for a stop** as the rules' "Stop and ask" section says: an open question that changes the core approach, or one requirement too large for a phase.
 4. **Explore the codebase** as the rules' "Exploring the code" section says.

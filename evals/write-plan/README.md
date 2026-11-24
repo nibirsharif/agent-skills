@@ -11,7 +11,7 @@ Made-up requirements files that exercise the write-plan skill's rules, each with
 | `multi-phase` | Nineteen requirements with a phase limit of 8: phases by flow, every ID in exactly one phase, no phase over the limits, and a deadline `NFR` placed with its `FR`. |
 | `phase-dependency` | Eleven requirements written with the report first and submission in the middle: the phases follow what each step needs, not the order of the IDs. |
 | `oversized-requirement` | One requirement that alone needs more than the 10-file phase limit: no plan, the requirement is named, and the user is sent to write-spec to split it. |
-| `ask-location` | No `spec_output_dir`, no path, and the requirements sit in a folder the user moved them to (`dirty/notes/`): the whole reply is the location question, and the project is not searched. Sent as written, without the chat-only line. |
+| `ask-location` | No `spec_output_dir`, no path, and the requirements sit in a folder the user moved them to (`dirty/notes/`): the whole reply is the location question, and the project is not listed or searched. Sent as written, without the chat-only line. |
 | `pasted-not-saved` | `withdrawn`'s input sent without the chat-only line: the plan is in chat, and its last line says it was not saved. |
 | `routing-requirements` | Routing: a request to write requirements, which the skill's description excludes. The skill must not fire. |
 
@@ -47,5 +47,22 @@ The whole suite at 3 runs with the judge:
 - The judge has written its evidence before its verdict since 23 November. In the four suite runs here it gave 156 verdicts and failed 3, each with evidence that concludes a failure.
 
 In the final run every run that loaded the skill read `plan-rules.md` and `examples.md` (27 of 27; the other three runs are `routing-requirements`). No case saves a file or has a `plan.md` to update, before or after, so the saved reply, the template's title block, and `updating.md` are untested, and the [benchmark](benchmark/README.md) was not run again.
+
+The location question without a search, 23 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). On the trimmed wording `ask-location` passed 3 of 12, and all 12 runs listed or searched the project. The search is in the agent's first command, after it has read `SKILL.md`, `plan-rules.md`, and usually `examples.md`: one Bash call that lists the folder, prints the two config files, and runs `find . -name requirements.md` (7 runs), or else a recursive `ls` or `Glob **/*`. Four runs then read the file they found and one saved a `plan.md` beside it. The three passing runs listed the project too, with `ls -R` or `Glob **/*`, which the checks did not catch. So the rule was read before it was broken: it is the last sentence of a long lookup item, some 1,700 words before the first command.
+
+Workflow step 1 now says that a path comes only from the request, the conversation, or the two config files, names what not to run until one of them gives it (`ls`, `find`, Glob), and says the question is asked even with a `requirements.md` in plain sight. That is 60 words: `SKILL.md` goes from 954 to 1,014 and a run reads 3,072, inside the budget of 3,100. The lookup rule shared with four other skills is unchanged. The case has one more check on the tool calls, which fails `find`, a recursive `ls`, and an `ls` or Glob with a wildcard; by it the runs before the change pass 0 of 12.
+
+| Step 1 | Passed | Listed or searched | Read the file | Saved a plan | A sentence before the question |
+|---|---|---|---|---|---|
+| Before the change | 3 of 12 | 12 | 4 | 1 | 0 |
+| First wording: "the location question is your whole reply" | 9 of 12 | 0 | 0 | 0 | 3 |
+| Final: "the reply's first word is `Where`" | 11 of 12, and 3 of 3 in the suite | 0 | 0 | 0 | 1 |
+| A third, adding that no sentence before the question says what was looked for | 11 of 12 | 0 | 0 | 0 | 1 |
+
+- No run of the 39 since the change lists the project, reads the file, or saves a plan: each reads the two config files and replies.
+- The miss that is left is new. Five of those 39 replies put one sentence before the question, such as `No path is known, and neither config file exists.`, which none of the 11 question replies before the change did. The reply contract already forbids it. The third wording forbids it again in step 1 with 16 more words and did no better, so the final wording is the shorter one.
+- The whole suite at 3 runs with the judge passed 29 of 30. The miss is `phase-dependency`, 2 of 3: a Reuse line that reads `None found. The notification service from Phase 1 is reused for the email.`, the fault noted above, which 4 of the 12 `phase-dependency` replies saved from the runs above also have and which this change does not touch. The judge gave 39 verdicts and failed that one.
+- `open-questions` passed 3 of 3 with its check fixed. The one pattern is now two. A heading that names rate limiting fails in either case of its first letter (before, `### Phase 2: Rate limiting` passed by its capital). A Scope sentence that names rate limiting fails unless the same sentence says it is left out or waits (`not`, `without`, `left`, `later`, `waits`, `blocked`, `until`, and the like). The 12 Scope lines in the replies saved from the runs above pass, among them `Rate limiting waits on open questions.` and `This phase leaves rate limiting for later`; four more correct ones made by hand pass, and eight violations made by hand fail: three headings and five Scope lines, such as `Send the reset link and rate limit requests per account.` and a Scope whose only "not" is in another sentence. `bad.md` has a Scope that plans rate limiting.
+- write-tasks has the same fault and no case for it. A copy of this case made for it and not committed (a `plan.md` and `requirements.md` under `notes/`, and "Break the room-booking plan into tasks.") passed 3 of 6: all six runs listed or searched the project first, and two saved a `tasks.md` beside the plan they found. Its step 1 is not changed here.
 
 [benchmark/](benchmark/README.md) measures the quality of the phase cuts, which these cases do not.

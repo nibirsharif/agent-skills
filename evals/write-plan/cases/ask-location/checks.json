@@ -24,6 +24,11 @@
       "target": "trace"
     },
     {
+      "pattern": "^Glob .*\\*\\*|^Bash \\{\"command\": \"[^\"]*\\b(find\\b|ls -\\w*R\\b|ls [^;|&\"]*\\*)",
+      "why": "the project is not listed: no find, no recursive ls, no ls or Glob with a wildcard",
+      "target": "trace"
+    },
+    {
       "pattern": "^(Write|Edit) ",
       "why": "nothing is saved",
       "target": "trace"
