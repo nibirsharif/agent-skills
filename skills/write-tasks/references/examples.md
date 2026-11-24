@@ -2,16 +2,6 @@
 
 The code in these examples is made up. In your work, name only files you have read.
 
-## Missing plan
-
-User: `Break the invoice-export plan into tasks.` No `plan.md` exists for it.
-
-```
-No plan file found at docs/specs/invoice-export/plan.md. Run write-plan first to write the plan, then run write-tasks again.
-```
-
-Nothing else: no tasks from the feature name.
-
 ## One phase (chat only)
 
 The password-reset plan has one phase with `FR-001`, `FR-002`, `NFR-001`, and there is no codebase.
@@ -97,9 +87,6 @@ None.
 ## Splitting a task
 
 - Too big: `T-1.3: Build password reset` with six files. Split by behaviour: token store, expiry, email, deadline.
-- No check: `Done when: FR-002: it works`. Name the test and the inputs.
-- Tests left to the end: tasks 1 to 4 add code, task 5 "add tests". Each task carries its own check.
-- Out of order: `T-1.2` depends on `T-1.4`. Reorder so the dependency comes first.
 - Layers: `T-1.1 Add database`, `T-1.2 Add API`, `T-1.3 Add UI`. Each task should leave the product working; split by behaviour.
 
 ## An interface item no Verify line names
@@ -138,16 +125,10 @@ The project has unit tests and no browser test runner. `FR-003` says the reset p
 
 ## A plan that cannot be tasked
 
-The plan lists `FR-003`, and `requirements.md` has `FR-003: Withdrawn.`. Reply with the stop line only:
+The plan lists `FR-003`, and `requirements.md` has `FR-003: Withdrawn.`. Reply with the stop line only, and task nothing:
 
 ```
 plan.md plans FR-003, which requirements.md withdraws. Fix it with write-plan or write-spec, then run write-tasks again.
-```
-
-A phase that needs 14 tasks when the limit is 12:
-
-```
-Phase 2 needs more than 12 tasks. Split it in plan.md with write-plan, then run write-tasks again.
 ```
 
 ## A saved file
@@ -161,5 +142,3 @@ Blocked: Q-001, Q-002 (rate limiting)
 ```
 
 The file is the template filled in, with the Overview, phases, and Blocked section above, `**Plan:** plan.md, version 1.0`, and one Revision History row: `1.0 | 2026-03-03 | Initial tasks from plan.md 1.0`.
-
-After `write-plan` adds Phase 2 for rate limiting, run the skill again: it reads which phases have started from their Status lines, appends `Phase 2`, removes the blocked entry, raises the version to 1.1, and adds a Revision History row.

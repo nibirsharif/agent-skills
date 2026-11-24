@@ -12,41 +12,35 @@ Turn a feature's `plan.md` into `tasks.md`: each phase split into small tasks, i
 
 Your reply is one of three things, and its first character is the first character of that thing:
 
-1. **The tasks:** they start with `## 1. Overview`. Nothing comes before it. Say that there is no codebase or no file on disk inside the Overview. Tasks in chat only end with the not-saved line when [Output](#output) says so.
+1. **The tasks.**
+   - Saved: the path in one line, then one line per phase, `Phase <n>: <count> tasks (<IDs>)`, then the blocked requirements' `Blocked by` IDs. Never paste the whole file.
+   - Chat only: the tasks themselves, in the file template's order, without the title block and without Revision History. The first line is `## 1. Overview`, which says when there is no codebase or no file on disk, and the last is the last task or blocked entry. When the plan was pasted and the user did not ask for chat only, one more line ends it: exactly `Not saved: the plan was pasted, not read from a file. Name a folder to save tasks.md in.` No preamble, no closing note, no account of how you worked.
 2. **A stop line**, when the plan cannot be tasked, and nothing else. Use exactly:
    - plan file missing or without a phase: `No plan file found at <path>. Run write-plan first to write the plan, then run write-tasks again.`
    - plan and requirements disagree: one line naming the ID and the conflict, then `Fix it with write-plan or write-spec, then run write-tasks again.`
    - a phase needs more tasks than the limit: `Phase <n> needs more than <limit> tasks. Split it in plan.md with write-plan, then run write-tasks again.`
-3. **The questions**, when a phase is too vague to break into tasks without a guess, or the one location question when no path to the plan is known.
-
-Write no text between tool calls. Details are in [Output](#output).
+3. **The questions**, and nothing else, when a phase is too vague to break into tasks without a guess. When no path to the plan is known, reply exactly: `Where is plan.md? Give its path, set `spec_output_dir` in `.agent-skills-config.yaml`, or paste the plan.`
 
 ## Before writing
 
-- Read [references/task-rules.md](references/task-rules.md) in full before producing anything: how to read the plan, what to explore, task shape and size, ordering, coverage, and the validation checklist. This file is authoritative.
-- Before writing or updating a file, read [references/tasks-template.md](references/tasks-template.md).
+- Read [references/task-rules.md](references/task-rules.md) in full before producing anything. It is authoritative.
+- Before writing a file, read [references/tasks-template.md](references/tasks-template.md).
 - Read [references/examples.md](references/examples.md) before your first reply in a conversation, and again when unsure of a task split or a saved file.
 
 ## Scope
 
-This skill writes the task list only. It does not write requirements, change the plan, or write code. Never invent a requirement, a file, or a utility. A task names only what the plan states and what you found in the code. Never answer, close, or assume an open question; answering belongs to `write-spec`.
+This skill writes the task list only: no requirements, no change to the plan, no code. Never invent a requirement, a file, or a utility. A task names only what the plan states and what you found in the code. Never answer, close, or assume an open question; answering belongs to `write-spec`.
 
 ## Workflow
 
 Work silently. Write no text between tool calls and none before the reply.
 
-1. **Find and read the plan**, as [Saving to a file](#saving-to-a-file) says, and the `requirements.md` beside it when it exists. If the plan is missing or has no phase, reply with the stop line and stop. If a `tasks.md` already exists beside the plan, read it: you are updating it.
-2. **Check the plan against the requirements.** Every ID in a phase must be a written requirement. A withdrawn or unknown ID is a stop line.
+1. **Find and read the plan**, as [Saving to a file](#saving-to-a-file) says, and the `requirements.md` beside it when it exists. A missing plan, or one without a phase, is the stop line. If a `tasks.md` already exists beside the plan, read it: you are updating it, as [references/updating.md](references/updating.md) says.
+2. **Check the plan against the requirements.** A phase ID that is withdrawn or not written there is the stop line.
 3. **Explore the codebase** as the rules' "Exploring the code" section says.
-4. **Split each phase into tasks** as the rules say: shape, size, order, coverage of every ID and of every interface and data change. List the tasks and count them against the limit before writing any; a count over the limit is the stop line, not a reason to merge tasks.
+4. **Split each phase into tasks** as the rules say. List a phase's tasks and count them against the limit before writing any: a count over the limit is the stop line, not a reason to merge tasks.
 5. **Validate** against the rules' checklist. Fix what fails; a check you cannot pass is a question, not a task.
-6. **Return** the tasks as [Output](#output) says, and **save** if a path is set.
-
-## Output
-
-- Saved: state the path in one line, then one line per phase: `Phase <n>: <count> tasks (<IDs>)`, then the blocked requirements' `Blocked by` IDs. Never paste the whole file.
-- Chat only: the tasks themselves, in the file template's order, without the title block and without Revision History. The reply's first line is `## 1. Overview` and it ends with the last task or blocked entry. When the plan was pasted and the user did not ask for chat only, one more line ends it: exactly `Not saved: the plan was pasted, not read from a file. Name a folder to save tasks.md in.` No preamble, no closing note, no account of how you worked.
-- Stopped, or asking: only the stop line or the questions. When no path to the plan is known, reply exactly: `Where is plan.md? Give its path, set `spec_output_dir` in `.agent-skills-config.yaml`, or paste the plan.`
+6. **Reply** as the [Reply contract](#reply-contract) says, and save as [Saving to a file](#saving-to-a-file) says.
 
 ## Saving to a file
 
@@ -57,10 +51,8 @@ Find the plan, in this order:
 3. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/plan.md`. If the user names no feature, list the existing `<spec_output_dir>/*/plan.md` files and ask which one; if only one exists, use it.
 4. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
-Write `tasks.md` in the same folder as `plan.md` whenever the plan was read from that file, found by one of these steps. Reply in chat only when the plan was pasted or the user asks for chat only. Tasks that are not saved say so, as [Output](#output) says, unless the user asked for chat only.
+Write `tasks.md` in the same folder as `plan.md` whenever the plan was read from a file, whichever step found it. Reply in chat only when the plan was pasted or the user asks for chat only.
 
 Limits come from the same config files, or from a limit the user states: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 12).
 
-If `tasks.md` already exists, update it as the template says. If it exists but does not follow the template, change nothing yet: say so and ask before rewriting it.
-
-After writing, state the path in one line.
+If the `tasks.md` that exists does not follow the template, change nothing yet: say so and ask before rewriting it.
