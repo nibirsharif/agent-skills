@@ -27,7 +27,7 @@
   ],
   "expectations": [
     "No task depends on a later task, and each requirement's check is in the task that builds it or an earlier task, not only in a final task.",
-    "No requirement is added, reworded, or split, and no task is a layer such as Database or UI."
+    "The reply states no requirement of its own (it cites only FR-001, FR-002, and NFR-001 and writes no requirement sentence), and no task title is only a layer name with no behaviour, such as 'Database', 'Add API', or 'UI'. These are not violations: one requirement covered by two tasks, a task that adds the token store or its table, and a Done when check that the plan's Verify list does not have."
   ],
   "manual": [
     "Each task is one focused change."

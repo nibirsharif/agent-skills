@@ -141,12 +141,14 @@ JUDGE_SCHEMA = {
             "type": "array",
             "items": {
                 "type": "object",
+                # evidence comes before passed: a judge that writes the verdict first sometimes reasons
+                # its way to the opposite one in the evidence and cannot take the verdict back.
                 "properties": {
                     "id": {"type": "integer"},
-                    "passed": {"type": "boolean"},
                     "evidence": {"type": "string"},
+                    "passed": {"type": "boolean"},
                 },
-                "required": ["id", "passed", "evidence"],
+                "required": ["id", "evidence", "passed"],
             },
         },
     },
@@ -175,7 +177,8 @@ Expectations:
 
 For each expectation, decide whether the reply meets it. Quote or point to the part of the reply that
 decides it as evidence. When the reply gives no clear evidence either way, the expectation fails.
-Return one entry per expectation, with its number as id."""
+Return one entry per expectation, with its number as id. In each entry, write evidence before passed,
+and set passed to what the evidence concludes."""
 
 
 def parse_judgement(data, expectations):
