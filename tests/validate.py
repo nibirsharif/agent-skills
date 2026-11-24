@@ -21,15 +21,15 @@ PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 # The most words each skill may make the agent read on every run, and the files that count besides SKILL.md:
 # the references SKILL.md says to read on every run. A file read only in one situation (saving a file, a
 # follow-up, an agent that cannot run commands) is not listed. Words are counted as `wc -w` counts them.
-# write-tasks lists its file template: its runs read it for a chat reply too, which follows the template's order.
+# write-tasks and write-plan list their file template: their runs read it for a chat reply too, which follows the
+# template's order.
 # Each budget is the count when it was set plus about 100 words, so a reworded rule fits and a new paragraph
 # does not: cut words elsewhere, or raise the number in the same commit and say why. Lower it after a trim.
-# write-plan is not trimmed yet (issue #24).
 WORD_BUDGETS = {
     "build-phase": (2800, ["references/build-rules.md"]),
     "implement-task": (3350, ["references/implement-rules.md", "references/examples.md"]),
     "verify-spec": (3020, ["references/verify-rules.md", "references/examples.md"]),
-    "write-plan": (3400, ["references/plan-rules.md", "references/examples.md"]),
+    "write-plan": (3100, ["references/plan-rules.md", "references/examples.md", "references/plan-template.md"]),
     "write-spec": (4700, ["references/ears-rules.md", "references/examples.md"]),
     "write-tasks": (3330, ["references/task-rules.md", "references/examples.md", "references/tasks-template.md"]),
 }

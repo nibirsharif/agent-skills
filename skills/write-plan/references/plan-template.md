@@ -1,22 +1,13 @@
 # Plan File Template
 
-Use the template below the line for every new `plan.md`. Everything above the line is instructions and is never copied into the file. Planning rules are in [plan-rules.md](plan-rules.md); a filled-in file is in [examples.md](examples.md#a-saved-file).
+Use the template below the line for every new `plan.md`. Everything above the line is instructions and is never copied into the file. A filled-in file is in [examples.md](examples.md#a-saved-file). To change a `plan.md` that already exists, read [updating.md](updating.md).
 
 - Replace every `[...]` and `<...>`, and `YYYY-MM-DD` with today's date.
-- `plan.md` sits next to the `requirements.md` it plans. **Requirements** names that file's version, so a reader can tell when the plan is stale.
-- Fill Approach only with what the requirements and the code you read support. Where there is nothing to reuse, write `**Reuse:** None found.` on one line.
-- One section per phase, numbered from 1 in build order. Every phase has all seven fields; write `None.` for one that is empty.
-- Section 3 lists each requirement that waits on open questions, once, as `Blocked by <every Q- ID it waits on>: <topic>`, as [plan-rules.md](plan-rules.md#reading-the-requirements-file) says. It holds `None.` when nothing is blocked.
+- **Requirements** names the version of the `requirements.md` the file sits beside, so a reader can tell when the plan is stale.
+- One section per phase, numbered from 1 in build order. Every phase has all seven fields; write `None.` for one that is empty, and `**Reuse:** None found.` on one line where there is nothing to reuse.
+- Section 3 lists each blocked requirement once, as `Blocked by <every Q- ID it waits on>: <topic>`, or holds `None.` when nothing is blocked.
 - Section 4 lists every open `Q-` ID from the requirements file, copied without rewording, each followed by `(touches Phase <n>)` or `(touches the blocked <topic> requirement)`, in chat replies too. Closed questions are not listed.
-- A new file is version 1.0. Each update raises the minor version and adds one Revision History row naming the phases and IDs added, changed, or moved.
-
-## Updating an existing plan
-
-- Keep every phase number. Never renumber.
-- A requirement that was blocked and is now written goes into a phase: an existing phase whose scope it fits and that the user says is not yet merged, else a new phase at the end. Ask which phases have merged before choosing; never assume. Remove its blocked entry.
-- A changed requirement stays in its phase; update that phase's Verify and changes.
-- A withdrawn requirement is removed from its phase; note it in the Revision History.
-- Update Requirements with the new `requirements.md` version.
+- A new file is version 1.0.
 
 ---
 

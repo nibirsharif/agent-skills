@@ -12,43 +12,37 @@ Turn a feature's `requirements.md` into `plan.md`: the approach, split into phas
 
 Your reply is one of four things, and its first character is the first character of that thing:
 
-1. **The plan:** it starts with `## 1. Approach`. Nothing comes before it: not "Confirmed…", not "The folder is empty…", not "Planning from…". Say that there is no codebase or no file on disk inside the Approach. A plan in chat only ends with the not-saved line when [Output](#output) says so.
-2. **The stop line**, when the requirements file is missing or holds no requirement: exactly `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.` Never offer options, ask about the feature, describe the empty folder, or draft requirements.
-3. **The questions**, when an open question decides the core approach, or the one location question when no path to the requirements is known.
-4. **The too-large line**, when one requirement alone needs more files than a phase may have: exactly `<ID> needs more than <n> files on its own. Split it with write-spec, then run write-plan again.`, as the rules' "Stop and ask" section says.
+1. **The plan.**
+   - Saved: the path in one line, then one line per phase, `Phase <n>: <title> (<IDs>)`, then the blocked requirements and the open questions' IDs. Never paste the whole file.
+   - Chat only: the plan itself, in the file template's order, without the title block and without Revision History. The first line is `## 1. Approach`, whose first sentence says when there is no codebase or no file on disk, and the last is the last open question, or `None.`. When the requirements were pasted and the user did not ask for chat only, one more line ends it: exactly `Not saved: the requirements were pasted, not read from a file. Name a folder to save plan.md in.`
+2. **The stop line**, and nothing else, when the requirements file is missing or holds no requirement: exactly `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.`
+3. **The questions**, and nothing else, when an open question decides the core approach, or the one location question when no path to the requirements is known: exactly `Where is requirements.md? Give its path, set `spec_output_dir` in `.agent-skills-config.yaml`, or paste the requirements.`
+4. **The too-large line**, and nothing else, when one requirement alone needs more files than a phase may have: exactly `<ID> needs more than <n> files on its own. Split it with write-spec, then run write-plan again.`
 
-Write no text between tool calls. Details are in [Output](#output).
+Whichever it is, the reply has no preamble, no closing note, and no account of how you worked: not what you checked, counted, found empty, or are about to produce.
 
 ## Before writing
 
-- Read [references/plan-rules.md](references/plan-rules.md) in full before producing anything: how to read the requirements file, what to explore, how to size and order phases, where each `NFR` goes, blocked requirements, and the validation checklist. This file is authoritative.
-- Before writing or updating a file, read [references/plan-template.md](references/plan-template.md): the file template and how to fill it.
+- Read [references/plan-rules.md](references/plan-rules.md) in full before producing anything. It is authoritative.
+- Before writing a file, read [references/plan-template.md](references/plan-template.md).
 - Read [references/examples.md](references/examples.md) before your first reply in a conversation, and again when unsure of a phase split, a blocked entry, or a saved file.
 
 ## Scope
 
-This skill writes the plan only. It does not write requirements, the per-phase task breakdown, or code. When asked for one, say so: for requirements or answers to open questions, point to `write-spec`; never write them here.
-
-Never invent a requirement, a file, or a utility. A plan line names only what the requirements file states and what you found in the code.
+This skill writes the plan only: no requirements, no per-phase task breakdown, no code. Never invent a requirement, a file, or a utility: a plan line names only what the requirements file states and what you found in the code. Never answer, close, or assume an open question; asked for an answer or for requirements, point to `write-spec`.
 
 ## Workflow
 
-Work silently. Write no text between tool calls and no text before the reply: no "confirmed", "the folder is empty", or "planning from…" lines. The only text you write is the reply that [Output](#output) describes.
+Work silently. Write no text between tool calls and none before the reply: the only text you write is the reply the contract describes.
 
-1. **Find and read the requirements.** Find them as [Saving to a file](#saving-to-a-file) says. If none were pasted and the file is missing or holds no requirement, reply with one line that names the path and suggests `write-spec`, and stop. Do not ask about the feature, draft requirements, or offer to run `write-spec` yourself. If a `plan.md` already exists beside the file, read it too: you are updating it.
-2. **Sort the requirements**, as the rules' "Reading the requirements file" section says: written `FR` and `NFR` requirements, withdrawn lines, and open `Q-` questions with the requirements that wait on them.
-3. **Check the approach.** If an open question would change the core approach (the architecture, a data model, a system boundary), stop and ask it in chat, and say the answer belongs in the requirements through `write-spec`. Do not plan around a guess. Otherwise go on. If one requirement alone needs more files than a phase may have, stop with the too-large line.
+1. **Find and read the requirements**, as [Saving to a file](#saving-to-a-file) says. A missing file, or one with no written requirement, is the stop line. If a `plan.md` already exists beside the file, read it: you are updating it, as [references/updating.md](references/updating.md) says.
+2. **Sort the requirements** as the rules' "Reading the requirements file" section says: written, withdrawn, and blocked.
+3. **Check for a stop** as the rules' "Stop and ask" section says: an open question that changes the core approach, or one requirement too large for a phase.
 4. **Explore the codebase** as the rules' "Exploring the code" section says.
 5. **Choose the approach and the phases** as the rules say: group, order, split, and place each `NFR`.
-6. **Fill each phase**: scope, requirement IDs, code to reuse, interface and data changes, how to verify, open questions.
+6. **Fill each phase** with the seven fields the rules list.
 7. **Validate** against the rules' checklist. Fix what fails; a check you cannot pass is a question, not a plan line.
-8. **Return** the plan as [Output](#output) says, and **save** if a path is set.
-
-## Output
-
-- Saved: state the path in one line, then one line per phase: `Phase <n>: <title> (<IDs>)`, then the blocked requirements and the open questions' IDs. Never paste the whole file.
-- Chat only: the plan itself, in the file template's order, without the title block and without Revision History. The reply's first line is `## 1. Approach` and it ends with the last open question, or `None.`. When the requirements were pasted and the user did not ask for chat only, one more line ends it: exactly `Not saved: the requirements were pasted, not read from a file. Name a folder to save plan.md in.` No preamble, no closing note, and no account of how you worked: not what you checked, found empty, or are about to produce. That there is no codebase, or no file on disk, goes in the first sentence of Approach, never above the heading.
-- Stopped, or asking: only the one-line reason or the questions, with the same rule. When no path to the requirements is known, reply exactly: `Where is requirements.md? Give its path, set `spec_output_dir` in `.agent-skills-config.yaml`, or paste the requirements.` For a missing or empty requirements file, reply exactly: `No requirements file found at <path>. Run write-spec first to write the requirements, then run write-plan again.` Never offer options, ask about the feature, or describe the empty folder.
+8. **Reply** as the [Reply contract](#reply-contract) says, and save as [Saving to a file](#saving-to-a-file) says.
 
 ## Saving to a file
 
@@ -59,10 +53,8 @@ Find the requirements, in this order:
 3. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the feature in kebab-case. If the user names no feature, list the existing `<spec_output_dir>/*/requirements.md` files and ask which one; if only one exists, use it.
 4. None of these: A path to the feature's `requirements.md`, `plan.md`, or `tasks.md` that appears earlier in this conversation, named by the user or reported saved by a skill of this chain, gives the feature's folder, since the three files live together: use it when the file you need is in that folder and the user names no other feature. Otherwise ask for the path, and the question is your whole reply. Never search the project for the file or use a path you chose yourself.
 
-Write `plan.md` in the same folder as `requirements.md` whenever the requirements were read from that file, found by one of these steps. Reply in chat only when the requirements were pasted or the user asks for chat only. A plan that is not saved says so, as [Output](#output) says, unless the user asked for chat only.
+Write `plan.md` in the same folder as `requirements.md` whenever the requirements were read from that file, found by one of these steps. Reply in chat only when the requirements were pasted or the user asks for chat only.
 
 Phase sizes come from the same config files: `plan_max_requirements_per_phase` (default 8) and `plan_max_files_per_phase` (default 10).
 
-If `plan.md` already exists, extend it as the template says and keep every phase number. When a newly written requirement could join an existing phase, ask which phases have merged before placing it. If `plan.md` exists but does not follow the template, change nothing yet: say so and ask before rewriting it.
-
-After writing, state the path in one line.
+If the `plan.md` that exists does not follow the template, change nothing yet: say so and ask before rewriting it.
