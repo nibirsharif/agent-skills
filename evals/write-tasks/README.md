@@ -16,6 +16,8 @@ Made-up plan files that exercise the write-tasks skill's rules, each with automa
 
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).
 
+Judge wording, 23 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). Two expectations failed correct replies on 19 November: `single-phase`'s second in 11 of 12 runs, and `oversized-phase`'s in 3 of 12. Both now say what counts as meeting them. Reworded, they passed in 6 of 6 new runs, on the nine `single-phase` replies saved from 19 November, and on the golden replies (3 and 8 judgings), and failed five hand-made violations in 10 of 10 judgings: layer-name titles, an added `FR-003`, a rewritten requirement sentence, three merged tasks, and Phase 1 divided into two phases. The run was 5 of 6: one `single-phase` run failed its first expectation, which is unchanged. There the judge answered "failed" with evidence that ends "Marking pass is warranted", as it did for one of the nine saved replies.
+
 ```bash
 make eval SKILL=write-tasks
 ```
