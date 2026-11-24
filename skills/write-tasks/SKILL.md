@@ -35,7 +35,7 @@ This skill writes the task list only: no requirements, no change to the plan, no
 
 Work silently. Write no text between tool calls and none before the reply.
 
-1. **Find and read the plan**, as [Saving to a file](#saving-to-a-file) says, and the `requirements.md` beside it when it exists. A missing plan, or one without a phase, is the stop line. If a `tasks.md` already exists beside the plan, read it: you are updating it, as [references/updating.md](references/updating.md) says.
+1. **Find and read the plan**, as [Saving to a file](#saving-to-a-file) says, and the `requirements.md` beside it when it exists. A path comes only from the request, the conversation, or the two config files: until one of them gives it, run no `ls`, `find`, or Glob over the project, and open no file in it but `.agent-skills-config.yaml`. With no path from them, reply with the location question, even with a `plan.md` in plain sight: the reply's first word is `Where`. A missing plan, or one without a phase, is the stop line. If a `tasks.md` already exists beside the plan, read it: you are updating it, as [references/updating.md](references/updating.md) says.
 2. **Check the plan against the requirements.** A phase ID that is withdrawn or not written there is the stop line.
 3. **Explore the codebase** as the rules' "Exploring the code" section says.
 4. **Split each phase into tasks** as the rules say. List a phase's tasks and count them against the limit before writing any: a count over the limit is the stop line, not a reason to merge tasks.
