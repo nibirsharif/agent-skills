@@ -2,6 +2,8 @@
 
 The change for [#20](https://github.com/nibirsharif/agent-skills/issues/20): what write-spec reads on every run (`SKILL.md`, `ears-rules.md`, `examples.md`) went from about 8,000 to about 4,600 words. Saving and updating a file, follow-up replies, and the banned-word list moved to files read only in that situation. A run that saves a file read about 8,500 words before, with the template, and reads about 6,100 now, with `saving.md`; the benchmark runs are chat only, so they read the 4,600. One run per input on `claude-sonnet-5-5` with Claude Code 2.1.327, 2026-11-19, scored by hand the same way as [baseline-0.10.0.md](baseline-0.10.0.md). The benchmark ran before the last two wording fixes (the timeout keyword and the deadline percentage), which the eval cases cover.
 
+The first turn was scored again on 2026-11-23, after hold-workspaces R1 was withdrawn ([#27](https://github.com/nibirsharif/agent-skills/issues/27)): no reply was run again. R1 asked what the notes service does with an invite opened after its 72 hours. This run's reply wrote the reject as FR-002, which counted as a missed gap and as an invented value, the only one in a first turn. "Valid for 72 hours" gives that refusal, as the skill's own example writes it for a link that expires, so it is now neither. Before, this record had 41 of 50 gaps found against the baseline's 44 of 50, and 1 invented value.
+
 ## First turn
 
 | Input | Requirements written | Gaps found | Needed questions | Invented values |
@@ -16,9 +18,9 @@ The change for [#20](https://github.com/nibirsharif/agent-skills/issues/20): wha
 | hold-search-api | 1 | 4 of 5 | 10 of 10 | 0 |
 | hold-signup-form | 0 | 5 of 5 | 9 of 10 | 0 |
 | hold-smart-lock | 2 | 4 of 5 | 5 of 6 | 0 |
-| hold-workspaces | 6 | 2 of 5 | 5 of 5 | 1 |
-| **hold total** | 11 | 18 of 24 | 34 of 37 | 1 |
-| **Total** | 14 | 41 of 50 | 73 of 79 | 1 |
+| hold-workspaces | 6 | 2 of 4 | 5 of 5 | 0 |
+| **hold total** | 11 | 18 of 23 | 34 of 37 | 0 |
+| **Total** | 14 | 41 of 49 | 73 of 79 | 0 |
 
 Questions held back behind `<N> more open questions after these.` are not counted: 3 in dev-invoice-export, 1 in hold-search-api, 2 in hold-signup-form.
 
@@ -29,7 +31,7 @@ Questions held back behind `<N> more open questions after these.` are not counte
 - hold-reminders R2: a moved appointment.
 - hold-search-api R5: FR-001 wrote "sorted by relevance" into a requirement without asking what it means.
 - hold-smart-lock R4: the reply asked where the 20% boundary falls, not whether the warning repeats.
-- hold-workspaces R1, R2, R5: what an expired invite returns (the reply wrote a reject without asking), an invite to an existing member, and what "leaves" means. R2 and R5 were missed in both earlier records too.
+- hold-workspaces R2, R5: an invite to an existing member, and what "leaves" means. Both were missed in both earlier records too.
 
 ## Follow-up turn
 
@@ -55,15 +57,15 @@ Questions held back behind `<N> more open questions after these.` are not counte
 
 | | Baseline 0.10.0 | After coverage gaps | After shorter instructions |
 |---|---|---|---|
-| First turn: gaps found | 44 of 50 | 39 and 43 of 50 (two dev runs) | 41 of 50 |
-| First turn: invented values | 0 | | 1 |
+| First turn: gaps found | 43 of 49 | 39 and 43 of 49 (two dev runs) | 41 of 49 |
+| First turn: invented values | 0 | | 0 |
 | Follow-up turn: gaps found | 7 of 14 | 10 of 14 | 8 of 14 |
 | Follow-up turn: needed questions | 25 of 33 | 30 of 40 | 26 of 29 |
 | Follow-up turn: invented values | 1 | | 0 |
 
 ## Reading
 
-- First-turn gaps found are 3 below the baseline (44 to 41). The [README](README.md) treats only a difference of fewer than three as no change, so this is a drop by its measure. All of it is in the held-out half (21 to 18 of 24); the dev half is unchanged (23 of 26). Against the coverage-gaps record the total is within that record's two-run spread, and the held-out half is 1 lower (19 to 18).
+- First-turn gaps found are 2 below the baseline (43 to 41 of 49). The [README](README.md) treats a difference of fewer than three as no change, so this is no change by its measure. With R1 counted it was 3, a drop. Both items are in the held-out half (20 to 18 of 23); the dev half is unchanged (23 of 26). Against the coverage-gaps record the total is within that record's two-run spread, and the held-out half is 1 lower (19 to 18).
 - Follow-up gaps found are 2 below the coverage-gaps record and 1 above the baseline: no change by the README's measure.
-- One first-turn requirement decides an open item: hold-workspaces FR-002 rejects an acceptance made more than 72 hours after the invite was sent, where the input says only that an invite is valid for 72 hours. By the README's rule that is an invented value, the first in a first turn. No follow-up reply invented a value. Two follow-up requirements, an expired code and an expired cursor, look invented until you check the first reply: it had asked about "incorrect or expired" codes and "invalid or expired" cursors.
+- No reply invented a value, in either turn. hold-workspaces FR-002 rejects an acceptance made more than 72 hours after the invite was sent, from "an invite is valid for 72 hours": that was scored as one until R1 was withdrawn. Two follow-up requirements, an expired code and an expired cursor, look invented until you check the first reply: it had asked about "incorrect or expired" codes and "invalid or expired" cursors.
 - Every follow-up requirement carries its marker, as in the coverage-gaps record.
