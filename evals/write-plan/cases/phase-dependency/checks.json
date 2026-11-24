@@ -112,7 +112,7 @@
   "expectations": [
     "Each phase can merge on its own: no phase needs something that only a later phase builds.",
     "No phase lists as Reuse something an earlier phase of this plan builds.",
-    "No requirement is added, reworded, or split."
+    "The reply states no requirement of its own: it cites only FR-001 to FR-010 and NFR-001, each whole (no FR-005a and no part of an ID), writes no new requirement sentence, and changes no threshold (1,000 EUR, 1 minute, 99%). These are not violations: reading FR-005 as the exception to FR-003 for expenses over 1,000 EUR, whether the plan says so or tests FR-003 with an expense of 1,000 EUR or less; a Verify line that paraphrases its requirement; and design details such as a held or paid state, an event, or a table."
   ],
   "manual": [
     "The Approach says the phases follow the flow, not the order of the IDs in the file."
