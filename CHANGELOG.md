@@ -2,6 +2,32 @@
 
 Versions follow `.claude-plugin/plugin.json`. Claude Code uses that version to decide when installed users get an update, so every release bumps it.
 
+## 0.18.0
+
+Shorter instructions for every skill ([#20](https://github.com/nibirsharif/agent-skills/issues/20), [#24](https://github.com/nibirsharif/agent-skills/issues/24)), and write-plan and write-tasks no longer search the project before they ask where a file is. Every count below was run on `claude-sonnet-5-5` (Claude Code 2.1.327).
+
+- Every skill reads less on every run. Each rule is stated once, incident detail is cut down to the rule, and examples stay only where an eval run showed the need. What a run reads, in words, counting `SKILL.md` and the references read every time:
+
+  | Skill | 0.17.0 | 0.18.0 |
+  |-------|--------|--------|
+  | write-spec | 7,970 | 4,633 |
+  | write-plan | 3,783 | 3,072 |
+  | write-tasks | 3,928 | 3,285 |
+  | implement-task | 3,863 | 3,240 |
+  | verify-spec | 3,506 | 2,917 |
+  | build-phase | 3,486 | 2,695 |
+
+- Rules needed in one situation moved to references read only then:
+  - write-spec: `references/saving.md` (was `ears-template.md`: the `spec_output_dir` lookup, a new file, updating a file, and the template), `references/follow-ups.md` (the `(new)` and `(changed)` markers, accepting a proposal, and existing, withdrawn, and moved IDs), and `references/banned-words.md` (the full list, which `lint.py` now reads).
+  - implement-task, verify-spec, build-phase: `references/without-commands.md`, what the agent does in place of the scripts when it cannot run commands. With commands, the rules say to run the script, which finds the files and prints the stop lines.
+  - write-plan, write-tasks: `references/updating.md`, the rules for changing a `plan.md` or `tasks.md` that exists.
+- write-spec: a new requirements file keeps each question answered before it was written, closed as `Q-NNN: Closed. <the question> Answer: <the answer>`. `lint.py`'s finding for a banned word names the group the word is listed under.
+- write-plan, write-tasks: with no `spec_output_dir` and no path in the request or the conversation, the reply is the location question, with no `ls`, `find`, or Glob over the project first ([#34](https://github.com/nibirsharif/agent-skills/pull/34), [#35](https://github.com/nibirsharif/agent-skills/pull/35)). Before, the first command listed or searched the project in 12 of 12 runs of each skill's `ask-location` case, and some runs saved a `plan.md` or `tasks.md` beside the file they found (1 of 12 and 2 of 12). After, no run does: the cases passed 11 of 12 and 12 of 12, against 3 of 12 and 0 of 12. write-plan's one miss is a sentence before the question. The rule against searching was already there, as the last sentence of the lookup rule; Workflow step 1 of each skill now states it where the first command is chosen.
+- `tests/validate.py` fails a skill whose `SKILL.md` and every-run references together hold more words than its entry in `WORD_BUDGETS`, or that has no entry, so the files cannot grow back unnoticed. A fix that adds words cuts words elsewhere or raises the budget and says why.
+- Evals: the judge writes its evidence before its verdict, since it sometimes answered "failed" and then reasoned to "met". Three expectations that failed correct replies now say what meets them (write-tasks `single-phase` and `oversized-phase`, write-plan `phase-dependency`), and write-plan's `open-questions` check no longer depends on the case of a letter. New case: write-tasks `ask-location`.
+- Each suite at 3 runs, after its last change: write-spec 27 of 30, write-plan 29 of 30, and write-tasks 30 of 30 with the judge; implement-task 45 of 45, verify-spec 27 of 27, build-phase 41 of 42. Before the changes: write-plan 26 of 30, write-tasks 22 of 27 on its nine cases of that time, implement-task 45 of 45, verify-spec 27 of 27, and build-phase 42 of 42; write-spec's 10 cases had no whole-suite run. build-phase's miss had a correct reply and passed 3 of 3 run again alone; the README's [Eval results](README.md#eval-results) has the other misses.
+- No ID, reply line, stop line, or commit format changes. One change to what a saved file holds: write-spec's new file keeps the questions already answered, closed. `lint.py`'s banned-word finding has new text. [#9](https://github.com/nibirsharif/agent-skills/issues/9), [#10](https://github.com/nibirsharif/agent-skills/issues/10), [#21](https://github.com/nibirsharif/agent-skills/issues/21) to [#23](https://github.com/nibirsharif/agent-skills/issues/23), and [#27](https://github.com/nibirsharif/agent-skills/issues/27) stay open.
+
 ## 0.17.0
 
 Fixes for the remaining bugs from the first real run ([evals/real-runs/2026-11-17.md](evals/real-runs/2026-11-17.md)), [#3](https://github.com/nibirsharif/agent-skills/issues/3) to [#8](https://github.com/nibirsharif/agent-skills/issues/8). Each case below was run on `claude-sonnet-5-5` (Claude Code 2.1.327).
