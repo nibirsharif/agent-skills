@@ -1,6 +1,6 @@
 # write-tasks evals
 
-Made-up plan files that exercise the write-tasks skill's rules, each with automatic checks and a short list to review by hand. Every run starts in an empty folder, so the plan is pasted into the prompt and there is no codebase: a good reply marks every file `new:` instead of naming paths.
+Made-up plan files that exercise the write-tasks skill's rules, each with automatic checks and a short list to review by hand. Every run but `ask-location`'s starts in an empty folder, so the plan is pasted into the prompt and there is no codebase: a good reply marks every file `new:` instead of naming paths.
 
 | Case | Tests |
 |------|-------|
@@ -12,6 +12,7 @@ Made-up plan files that exercise the write-tasks skill's rules, each with automa
 | `oversized-phase` | A phase needs more tasks than the stated limit: a one-line stop that sends the user to write-plan. |
 | `interface-item` | The phase's Interface and data changes list a helper that no Verify line names: a task builds it, before the commands that use it. |
 | `pasted-not-saved` | `single-phase`'s input sent without the chat-only line: the tasks are in chat, and their last line says they were not saved. |
+| `ask-location` | No `spec_output_dir`, no path in the request, and a `plan.md` in a folder of the project: the reply is the location question alone, with no search of the project and nothing saved. The project is in the case's `dirty/` folder, and the input is sent as written, without the chat-only line. |
 | `routing-plan` | Routing: a request to write the plan from requirements, which the skill's description excludes. The skill must not fire. |
 
 Shorter rules, the next piece of [#24](https://github.com/nibirsharif/agent-skills/issues/24), 19 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). What a run reads went from 3,928 to 3,225 words: `SKILL.md` 1,062 to 925, `task-rules.md` 1,449 to 1,274, `examples.md` 904 to 745, `tasks-template.md` 513 to 281. The template is counted because the runs read it for a chat reply too (22 of 24 before and after), so the word budget now lists it. `SKILL.md`'s Output section is merged into the reply contract; each stop is stated once, with its line in the contract and what not to do in the rules; the checklist is 9 items where it was 11; the examples that repeated a rule or a line of the contract are gone (the missing-plan and oversized-phase stops, three of five wrong splits); and the rules for changing a `tasks.md` that exists moved from the template to `updating.md` (185 words), read only then.
@@ -36,6 +37,17 @@ The two examples restored are about `manual:`; the benchmark showed the need, no
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md).
 
 Judge wording, 23 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). Two expectations failed correct replies on 19 November: `single-phase`'s second in 11 of 12 runs, and `oversized-phase`'s in 3 of 12. Both now say what counts as meeting them. Reworded, they passed in 6 of 6 new runs, on the nine `single-phase` replies saved from 19 November, and on the golden replies (3 and 8 judgings), and failed five hand-made violations in 10 of 10 judgings: layer-name titles, an added `FR-003`, a rewritten requirement sentence, three merged tasks, and Phase 1 divided into two phases. The run was 5 of 6: one `single-phase` run failed its first expectation, which is unchanged. There the judge answered "failed" with evidence that ends "Marking pass is warranted", as it did for one of the nine saved replies: it wrote the verdict before the evidence. [grading.py](../grading.py) now asks for the evidence first, in the judge's schema and in its prompt (the schema alone moved it in 8 of 36 judgings). On 12 saved `single-phase` replies the first expectation then failed 0 of 72 judgings, against 3 of 72 before, two of the three with evidence that concludes it is met. The violations still failed 10 of 10, and the two cases passed 6 of 6.
+
+The location question without a search, 23 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). With no `spec_output_dir` and no path in the request, the skill asks where `plan.md` is and never searches the project for it. The new `ask-location` case has a `plan.md` and its `requirements.md` under `notes/room-booking/`, and its checks on the tool calls fail a read of `notes/`, a `find`, a recursive `ls`, an `ls` or Glob with a wildcard, and a Write or Edit. Before the change it passed 0 of 12. Every run listed or searched the project in its first command, after reading `SKILL.md` and the rules: `ls` with `find . -name plan.md` in one Bash call (7 runs), or else a `find` over every file, `ls -laR`, or a Glob with `**`. Ten runs then asked the question all the same, nine as their whole reply and one after a sentence (`Per the skill, I can't use a path I found by searching the project.`). Two read the plan and the requirements they found and saved a six-task `tasks.md` beside them.
+
+Workflow step 1 now says that a path comes only from the request, the conversation, or the two config files, names what not to run until one of them gives it (`ls`, `find`, Glob), and says the question is asked even with a `plan.md` in plain sight: the reply's first word is `Where`. write-plan has the same fault, and its step 1 gets the same two sentences. That is 60 words: `SKILL.md` goes from 925 to 985 and a run reads 3,285, inside the budget of 3,330. The lookup rule shared with four other skills is unchanged.
+
+| Step 1 | Passed | Listed or searched | Read the plan | Saved a `tasks.md` | A sentence before the question |
+|---|---|---|---|---|---|
+| Before the change | 0 of 12 | 12 | 2 | 2 | 1 |
+| After | 12 of 12, and 3 of 3 in the suite | 0 | 0 | 0 | 0 |
+
+Each of the 15 runs after the change reads the two config files, by Read or `cat`, and replies with the question alone. The whole suite at 3 runs with the judge passed 30 of 30, with 33 judge verdicts and none failed; the nine cases that were there before passed 27 of 27. Every one of them that pastes a plan also names its path, so a probe that is not committed sent `single-phase`'s plan with no path anywhere: 6 of 6 runs wrote the tasks in chat and none asked for a location.
 
 ```bash
 make eval SKILL=write-tasks
