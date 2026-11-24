@@ -20,9 +20,23 @@ idea → write-spec → write-plan → write-tasks → implement-task → verify
 - **Safe by default.** Nothing pushes or opens a PR. Verification is read-only.
 - **Tested.** `make test` validates every skill, and `make eval` runs each skill through an agent against graded cases: it must fire when it should, stay quiet when it should not, and keep its reply format. See [Eval results](#eval-results).
 
-Each skill is a folder with a `SKILL.md` that the agent loads when the task matches its description. Start with `/nibirsharif-skills:write-spec` on a feature description.
+Each skill is a folder with a `SKILL.md` that the agent loads when the task matches its description. Start with `/nibirsharif-skills:write-spec` on a feature description, or see [How much of the chain to run](#how-much-of-the-chain-to-run) for a smaller change.
 
 Requirements are written in [EARS](https://alistairmavin.com/ears/) (Easy Approach to Requirements Syntax): one `shall` sentence per requirement, with a fixed pattern for its trigger or condition, for example `When a user submits the reset form, the auth service shall send a reset link to the address.`
+
+## How much of the chain to run
+
+Four commands before any code is too much for a small feature. Scale the process to the change:
+
+| Change | What to run |
+|--------|-------------|
+| Small change or bug fix | No spec. Write a specific prompt: name the file, describe the symptom, and say what "fixed" looks like. |
+| Normal feature, one PR | `write-spec`, then ask the agent to build from `requirements.md`, then `verify-spec`. Skip the plan and the tasks. |
+| Large feature, several PRs | The full chain: `write-spec`, `write-plan`, `write-tasks`, then `build-phase` for each phase, or `implement-task` and `verify-spec` by hand. |
+
+In the middle row the build is a plain prompt, not a skill: `implement-task` and `build-phase` need a `tasks.md`. The rules they enforce are then yours to state in the prompt: work on a feature branch, commit in small steps, and do not push. `verify-spec` needs only `requirements.md`, so it works the same without a plan or a task list.
+
+The eval results below and the recorded [real run](evals/real-runs/2026-11-17.md) cover the full chain. The middle row has no recorded run yet.
 
 ## Skills
 
