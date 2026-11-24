@@ -33,7 +33,7 @@ Phase size is limited by `plan_max_requirements_per_phase` (default 8) and `plan
 
 **Where does a deadline requirement go?** An `NFR` goes in the phase of the `FR` it constrains, because that phase must meet the threshold. It gets its own later phase only when it can be met afterwards without changing behaviour, such as performance tuning.
 
-**A requirement I added later is not in the plan.** Run it again. It extends `plan.md` and keeps phase numbers. If a new requirement could join a phase, it asks which phases have already merged before placing it.
+**A requirement I added later is not in the plan.** Run it again. It extends `plan.md` and keeps phase numbers. If a new requirement could join a phase, it asks which phases have already merged before placing it. The rules are in [updating.md](../skills/write-plan/references/updating.md).
 
 **There is no codebase yet.** It plans from the requirements alone and says so in the first sentence of the Approach.
 

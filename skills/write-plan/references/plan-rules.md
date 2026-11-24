@@ -1,26 +1,22 @@
 # Plan Rules
 
-These rules are authoritative for `write-plan`. A plan is checked against the [checklist](#validation-checklist) before it is returned.
-
 ## Reading the requirements file
 
 `requirements.md` has three ID sequences that are never renumbered: `FR-nnn` (functional, section 3), `NFR-nnn` (non-functional, section 4), and `Q-nnn` (open questions, section 5).
 
-- **Written requirement:** an `FR` or `NFR` line with text. These, and only these, are planned.
+- **Written requirement:** an `FR` or `NFR` line with text. These, and only these, are planned, each in exactly one phase.
 - **Withdrawn:** a line whose text is `Withdrawn.` is skipped. `Withdrawn. Moved to <ID>.` is skipped too; plan the new ID instead.
 - **Open question:** a `Q-` line that is not `Closed.` A closed question is history; ignore it.
 - **Blocked requirement:** a requirement that is not written yet because it waits on open questions. A section's `Pending:` line names only those questions (`Pending: Q-001, Q-002.`), so take the topic from each question's text and its `Source` comment. Questions on one topic block one requirement: list them together as `Blocked by Q-001, Q-002: <topic>`, with no approach, no phase, and no guess at what it will say.
 
-The plan covers every written requirement exactly once, and plans nothing else.
-
 ## Stop and ask
 
-- The file is missing or has no written requirement: reply with one line that names the path and suggests `write-spec`, and stop. Do not plan from the feature name, and do not ask what the feature should do.
-- An open question changes the core approach: ask it in chat before planning, say the answer belongs in the requirements through `write-spec`, and write no plan. A question changes the core approach when different answers lead to a different architecture, data model, or system boundary, not merely a different value or message.
-- The requirements contradict each other, or two requirements cannot both be met by one design: ask which wins. Do not pick.
-- One requirement alone needs more than `plan_max_files_per_phase` files: reply with exactly `<ID> needs more than <n> files on its own. Split it with write-spec, then run write-plan again.` and stop, with `<n>` the limit. A requirement belongs to exactly one phase, so do not spread it over several phases, do not write a phase that lists no requirement ID, and do not plan it as one phase over the limit. Count only what that requirement needs by its own words (14 modules, each in its own format, is at least 14 files); when the count is unsure or near the limit, plan it as one phase. Splitting a requirement is `write-spec`'s job.
+Each stop is its line or its question from the reply contract and nothing else: no plan.
 
-Answering open questions is `write-spec`'s job. Never close, answer, or assume one.
+- **No requirements file, or no written requirement in it.** Do not plan from the feature name, ask what the feature should do, offer options, or draft requirements.
+- **An open question changes the core approach:** different answers lead to a different architecture, data model, or system boundary, not merely a different value or message. Ask it in chat and say the answer belongs in the requirements through `write-spec`. Do not plan around a guess.
+- **The requirements contradict each other,** or one design cannot meet two of them. Ask which wins. Do not pick.
+- **One requirement alone needs more than `plan_max_files_per_phase` files.** Reply with exactly `<ID> needs more than <n> files on its own. Split it with write-spec, then run write-plan again.` and stop, with `<n>` the limit. Do not spread the requirement over several phases, write a phase that lists no requirement ID, or plan it as one phase over the limit. Count only what the requirement needs by its own words (14 modules, each in its own format, is at least 14 files); when the count is unsure or near the limit, plan it as one phase.
 
 ## Exploring the code
 
@@ -30,19 +26,16 @@ Explore before choosing anything. Look for:
 - existing patterns to follow (how similar features are structured, tested, and configured);
 - utilities, components, and tests to reuse, instead of new ones.
 
-Name a file or function only after you have seen it. When there is no codebase, or none of it relates to the feature, say so in the approach and plan from the requirements alone: write `None found.` for reuse. Never list a plausible-sounding file.
+Name a file or function only after you have seen it, never a plausible-sounding one. When there is no codebase, or none of it relates to the feature, say so in the Approach and plan from the requirements alone.
 
 ## Phases
 
-A phase is one PR that can merge with every test green and leaves the product working, with a smaller feature.
+A phase is one PR that can merge with every test green and leaves the product working, with a smaller feature. It is not a layer: do not split "database", "API", "UI" into phases unless each one leaves the product working and is reviewable alone.
 
-1. **Group** requirements into coherent slices: the same system, flow, or data. A phase holds at most `plan_max_requirements_per_phase` requirements (default 8), counting `FR` and `NFR` IDs together. A feature that fits the limits is one phase; do not merge unrelated flows to fill a phase, and do not split a flow to shrink one below the limits.
+1. **Group** requirements into coherent slices: the same system, flow, or data. A phase holds at most `plan_max_requirements_per_phase` requirements, counting `FR` and `NFR` IDs together. A feature that fits the limits is one phase; do not merge unrelated flows to fill a phase, and do not split a flow to shrink one below the limits.
 2. **Order** phases so each depends only on earlier ones: foundations (data, interfaces) first, then behaviour, then failure handling.
-3. **Split** a phase estimated at more than `plan_max_files_per_phase` files (default 10), however few requirements it has. Estimate from the code you explored: files to add or change, tests included. A phase of one requirement cannot be split: that is a [stop](#stop-and-ask).
+3. **Split** a phase estimated at more than `plan_max_files_per_phase` files, however few requirements it has. Estimate from the code you explored: files to add or change, tests included. A phase of one requirement cannot be split: that is a [stop](#stop-and-ask).
 4. **Place each `NFR`** in the phase of the `FR` it constrains, because the phase that builds the behaviour must meet its threshold. Give an `NFR` its own later phase only when it can be met afterwards without changing behaviour: performance tuning, availability, or an accessibility level. Say why in that phase's scope.
-5. **Cover each written requirement in exactly one phase**, by ID. An `FR`/`NFR` pair for one response stays together unless step 4 separates them.
-
-A phase is not a layer. Do not split "database", "API", "UI" into phases unless each one leaves the product working and is reviewable alone.
 
 ## What each phase holds
 
@@ -64,6 +57,6 @@ Run every item on the plan before returning it.
 4. Every phase is mergeable on its own: it depends only on earlier phases, and nothing it needs is left to a later one.
 5. No phase exceeds the requirement or file limit, each phase states its size, and each phase lists at least one requirement ID.
 6. Each `NFR` sits with the `FR` it constrains, or has a stated reason for a later phase.
-7. Every file or utility named in Reuse was seen in the code. Nothing an earlier phase builds is listed as Reuse; with no codebase, every Reuse is `None found.`
+7. Every file or utility named in Reuse was seen in the code, and none is built by an earlier phase; with no codebase, every Reuse is `None found.`
 8. Every requirement ID in Verify names a check a reviewer can run or observe.
 9. No code, no task breakdown, and no new requirement.
