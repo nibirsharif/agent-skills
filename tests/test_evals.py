@@ -256,5 +256,45 @@ class Plugin(unittest.TestCase):
         self.assertNotIn("--disallowedTools", run.default_agent({}, Path("plugin"), None))
 
 
+class CheckCommandCases(unittest.TestCase):
+    """What implement-task's check-commands, ci-checks, and check-fails cases rest on: the check each case's
+    project runs passes or fails on its tree as the case's description says."""
+
+    CASES = EVALS / "implement-task" / "cases"
+    NAMES = ("check-commands", "ci-checks", "check-fails")
+
+    def run_check(self, case, counts=None):
+        with tempfile.TemporaryDirectory() as tmp:
+            run.prepare_work(EVALS / "implement-task" / "fixture", self.CASES / case, Path(tmp))
+            if counts:
+                path = Path(tmp) / "textstats" / "counts.py"
+                path.write_text(path.read_text() + counts)
+            done = subprocess.run([sys.executable, "tools/check_docstrings.py"], cwd=tmp, capture_output=True, text=True)
+            return done.returncode, done.stdout.strip()
+
+    def test_every_case_runs_the_same_check(self):
+        texts = {(self.CASES / n / "committed" / "tools" / "check_docstrings.py").read_text() for n in self.NAMES}
+        self.assertEqual(len(texts), 1)
+
+    def test_passes_on_the_tree_as_committed(self):
+        for case in ("check-commands", "ci-checks"):
+            with self.subTest(case=case):
+                self.assertEqual(self.run_check(case), (0, "docstrings OK"))
+
+    def test_fails_on_a_raise_the_docstring_does_not_name(self):
+        change = '\n\ndef strict(text):\n    """The text, when it is a string."""\n    if not isinstance(text, str):\n        raise TypeError("no")\n    return text\n'
+        code, out = self.run_check("check-commands", change)
+        self.assertEqual(code, 1)
+        self.assertIn("strict raises TypeError, which its docstring does not name", out)
+        named = change.replace("when it is a string.", "when it is a string. Raises TypeError otherwise.")
+        self.assertEqual(self.run_check("check-commands", named), (0, "docstrings OK"))
+
+    def test_check_fails_names_the_file_outside_the_task(self):
+        code, out = self.run_check("check-fails")
+        self.assertEqual(code, 1)
+        self.assertEqual(out, "textstats/slugs.py:9: slug raises ValueError, which its docstring does not name")
+        self.assertIn(out, (self.CASES / "check-fails" / "golden.md").read_text())
+
+
 if __name__ == "__main__":
     unittest.main()

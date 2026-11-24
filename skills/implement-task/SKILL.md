@@ -1,6 +1,6 @@
 ---
 name: implement-task
-description: Implement one task from a saved task list (tasks.md from write-tasks), the one the user names (T-1.2) or the next Todo task whose dependencies are Done. Reads the task's plan phase, its requirements, and the code first; changes only the task's files; runs its Done when check and the test suite; then sets its Status to Done and commits it on the feature branch. Never pushes, never changes the requirements, the plan, or other tasks, and stops with one line when the task cannot be done as written. Use when the user asks to implement, build, do, start, or continue a task, the next task, or a T- ID, even when the skill is not named. Load it before looking for tasks.md, because it says what to reply when the file does not exist. Not for writing requirements, the plan, or the task list, or for code changes that have no tasks.md.
+description: Implement one task from a saved task list (tasks.md from write-tasks), the one the user names (T-1.2) or the next Todo task whose dependencies are Done. Reads the task's plan phase, its requirements, and the code first; changes only the task's files; runs its Done when check, the test suite, and the project's lint and format checks; then sets its Status to Done and commits it on the feature branch. Never pushes, never changes the requirements, the plan, or other tasks, and stops with one line when the task cannot be done as written. Use when the user asks to implement, build, do, start, or continue a task, the next task, or a T- ID, even when the skill is not named. Load it before looking for tasks.md, because it says what to reply when the file does not exist. Not for writing requirements, the plan, or the task list, or for code changes that have no tasks.md.
 ---
 
 # Implement Task
@@ -40,9 +40,9 @@ Work silently: do not say what you found, which rule applies, or why you stop. A
 
 1. **Find `tasks.md`, check the working tree, and pick the task**, as [Finding the files](#finding-the-files) says: one script does all three, and prints the stop line when there is one.
 2. **Read the context:** the task's phase in `plan.md` (scope, interface and data changes, Verify) and each requirement in its Covers in `requirements.md`.
-3. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby. Then run the test command once, before editing anything: tests that cannot run because a service or tool they need is not available are the missing-service stop line, as the rules' test section says. Never start one yourself.
+3. **Explore the code:** the task's Files, the tests beside them, how tests are run, and the patterns nearby. Then run the test command and the check commands once, before editing anything: tests or checks that cannot run because a service or tool they need is not available are the missing-service stop line, as the rules' test section says. Never start one yourself.
 4. **Implement** within the task's Files, test included, as the rules' scope and test sections say.
-5. **Run the check** in Done when, then the full test suite, as the rules' test section says.
+5. **Run the check** in Done when, then the full test suite, then the check commands (the project's lint, format, and type checks), as the rules' test section says.
 6. **Validate** against the rules' checklist.
 7. **Set Status to `Done`** in `tasks.md`, **commit** as the rules' git section says (the spec files first, if they were not committed yet), remove the untracked files your commands left behind, as that section says, and reply with the done report.
 

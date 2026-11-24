@@ -2,7 +2,7 @@
 
 These rules are authoritative for `implement-task`.
 
-The settings named here (`test_command`, `base_branch`, `branch_prefix`) come from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`.
+The settings named here (`test_command`, `check_commands`, `base_branch`, `branch_prefix`) come from `.agent-skills-config.yaml` in the project root, else from `~/.agent-skills-config.yaml`.
 
 ## Reading tasks.md
 
@@ -26,10 +26,11 @@ The settings named here (`test_command`, `base_branch`, `branch_prefix`) come fr
 - Add the test Done when names, in the task's test file, before or with the code. The test must fail without the change: see it fail by running it before you edit the code (or by reasoning from the old code when the test is added with it), never by stashing or reverting your files.
 - Run `test_command` when set, else the project's existing test command (from its README, Makefile, package scripts, or CI config; else the language's standard runner). Use the same command in the done report's Check line.
 - The full suite must be green, not only the new test. Never skip, delete, or weaken a test, and never change an assertion to match the code.
-- A failure you cannot fix within the task's Files is the failed-check stop line. Leave the change uncommitted and Status `Todo`.
+- **Check commands** are the project's other checks: the list in `check_commands` when set (`none` means no command), else the lint, format-check, and type-check commands the project's CI config runs, as written there, and never a command that builds, installs, publishes, or deploys. Run each once the suite is green. Each must pass, and each follows the test command in the Check line as `; <command>: <result>`. Fix what one reports only inside the task's Files, running a formatter on those files by path, never on the whole project.
+- A failure you cannot fix within the task's Files, or a check command that fails before you edit anything, is the failed-check stop line. Leave the change uncommitted and Status `Todo`.
 - **Manual check:** a Done when check that starts with `manual:` after its ID (`FR-007: manual: ...`) is made by a person, later. Build the behaviour it describes, add no test for it, and never make the check yourself or report it as made. The task's other checks and the full suite still run. A check without the word is never treated as manual.
-- **Verify task:** runs the phase's Verify list from `plan.md` and the full suite, leaving out each ID whose check in its Done when starts with `manual:`. It changes no code. Any failure is the failed-check stop line, except a missing service.
-- **Missing service.** Before you edit any file, run the test command once as the tree stands. When the tests cannot run because something outside the project is not there (a server they connect to refuses the connection or cannot be found; a tool or credential the command needs is missing), that is not a failed check: the code was never tested. Stop with the missing-service line, naming what is missing and the error that shows it. The user makes it available, never you: never start, stop, install, or configure a service, container, or tool (no `docker run`, `systemctl`, package install, or stand-in server of your own), never point the tests at another one, and never skip the tests that need it. This stop keeps the phase branch and any spec commit. When the service goes away only after you changed files, give the same line and leave the changes uncommitted and Status `Todo`.
+- **Verify task:** runs the phase's Verify list from `plan.md`, the full suite, and the check commands, leaving out each ID whose check in its Done when starts with `manual:`. It changes no code. Any failure is the failed-check stop line, except a missing service.
+- **Missing service.** Before you edit any file, run the test command and each check command once as the tree stands. When the tests or a check cannot run because something outside the project is not there (a server they connect to refuses the connection or cannot be found; a tool or credential the command needs is missing), that is not a failed check: the code was never tested. Stop with the missing-service line, naming what is missing and the error that shows it. The user makes it available, never you: never start, stop, install, or configure a service, container, or tool (no `docker run`, `systemctl`, package install, or stand-in server of your own), never point the tests at another one, and never skip the tests that need it. This stop keeps the phase branch and any spec commit. When the service goes away only after you changed files, give the same line and leave the changes uncommitted and Status `Todo`.
 
 ## Git
 
@@ -71,7 +72,7 @@ Right: the second of those lines alone, as your last message.
 Run every item before setting Status and committing.
 
 1. Every changed file is in the task's Files (or is the path chosen for one of its `new:` files), plus `tasks.md`.
-2. The test Done when names exists and passed (a `manual:` check names none and was not made); the full suite passed, with no test skipped, deleted, or weakened.
+2. The test Done when names exists and passed (a `manual:` check names none and was not made); the full suite and every check command passed, with no test skipped, deleted, or weakened.
 3. `requirements.md`, `plan.md`, and every other task are unchanged; only this task's Status line changed in `tasks.md`. No blocked requirement was implemented and no open question answered.
 4. The commit holds only this task's changes, on the task's phase branch, and nothing was pushed. The only other commit this run made is the spec commit of the feature's folder.
 5. Nothing was started, stopped, installed, or configured to make the tests run.

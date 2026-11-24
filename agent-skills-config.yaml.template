@@ -37,6 +37,16 @@ build_max_rework_rounds:
 # Example: make test
 test_command:
 
+# implement-task, build-phase: the project's other checks (lint, format, types), one command per list item.
+# Each task runs them before it edits anything and again before its commit, and commits only when all pass.
+# Leave empty and the skill uses the lint, format-check, and type-check commands the project's CI config
+# runs, or none when it has no CI config. Set to none to run no checks.
+# Example:
+#   check_commands:
+#     - ruff check .
+#     - ruff format --check .
+check_commands:
+
 # implement-task, verify-spec, build-phase: the branch phase branches start from and drift is compared against.
 # Leave empty and the skill uses the branch origin/HEAD names, else main, else master.
 base_branch:
