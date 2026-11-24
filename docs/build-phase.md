@@ -73,7 +73,7 @@ It does not fall back to doing the work in one context. Do what the line says: r
 
 **What if `spec_output_dir` is not set?** Name the path to `tasks.md` in the request, or run build-phase in the conversation where write-tasks saved it. Otherwise the whole reply is one question, `Where is tasks.md? Give its path, or set spec_output_dir in .agent-skills-config.yaml.`, and the run starts when you answer.
 
-**Can I raise the rework limit?** Yes: set `build_max_rework_rounds` in `.agent-skills-config.yaml`. `test_command`, `base_branch`, and `branch_prefix` there also apply to the subagents.
+**Can I raise the rework limit?** Yes: set `build_max_rework_rounds` in `.agent-skills-config.yaml`. `test_command`, `check_commands`, `base_branch`, and `branch_prefix` there also apply to the subagents.
 
 **What does a run cost?** Each task and each verify is its own agent run. In the eval fixture (two tasks, one rework) a run took about two minutes and under a dollar.
 

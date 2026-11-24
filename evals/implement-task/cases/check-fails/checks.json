@@ -1,0 +1,43 @@
+{
+  "description": "The project config sets check_commands to `python3 tools/check_docstrings.py`, and the check already fails on main: textstats/slugs.py, which is not in T-1.2's Files, raises ValueError without naming it. The skill runs the check before editing anything and stops with the failed-check line. It does not fix slugs.py, which is outside the task, and it changes and commits nothing.",
+  "must_match": [
+    {
+      "pattern": "\\AT-1\\.2 check failed: python3 tools/check_docstrings\\.py: .*slug.*\\. Status stays Todo; the changes are left uncommitted\\.\\s*\\Z",
+      "why": "the failed-check stop line, naming the check command and what it reported, is the whole reply"
+    },
+    {
+      "pattern": "^Bash .*python3 tools/check_docstrings\\.py",
+      "why": "the check command is run to find out",
+      "target": "trace"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "cannot run its tests",
+      "why": "the check ran and failed; nothing it needs is missing"
+    },
+    {
+      "pattern": "^T-\\d+\\.\\d+ done:",
+      "why": "no task is reported done"
+    },
+    {
+      "pattern": "^(Edit|Write) .*(textstats/|tests/|tools/|agent-skills-config)",
+      "why": "nothing is edited: slugs.py is outside the task's Files, and the check fails before the task's own change",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git commit[^\"]*T-1\\.2",
+      "why": "the task is not committed",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Bash .*git (push|stash|reset|checkout --|restore)",
+      "why": "nothing is pushed, stashed, or reset",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "After the run, git status --porcelain shows nothing, and tasks.md still has T-1.2 as Todo.",
+    "The trace has no Edit or Write, and no Bash command that changes textstats/slugs.py."
+  ]
+}

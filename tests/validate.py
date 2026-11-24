@@ -27,7 +27,7 @@ PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 # does not: cut words elsewhere, or raise the number in the same commit and say why. Lower it after a trim.
 WORD_BUDGETS = {
     "build-phase": (2800, ["references/build-rules.md"]),
-    "implement-task": (3350, ["references/implement-rules.md", "references/examples.md"]),
+    "implement-task": (3480, ["references/implement-rules.md", "references/examples.md"]),
     "verify-spec": (3020, ["references/verify-rules.md", "references/examples.md"]),
     "write-plan": (3100, ["references/plan-rules.md", "references/examples.md", "references/plan-template.md"]),
     "write-spec": (4700, ["references/ears-rules.md", "references/examples.md"]),

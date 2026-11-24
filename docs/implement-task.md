@@ -4,7 +4,7 @@ Instructions the agent follows: [skills/implement-task/SKILL.md](../skills/imple
 
 ## Overview
 
-Implements one task from a saved `tasks.md`: the task you name (`T-1.2`), or the next `Todo` task whose dependencies are `Done`. It reads the task's phase in `plan.md`, the requirements the task covers, and the code; changes only the files the task lists; adds the test its Done when names; and runs the full test suite. A check marked `manual:` is for a person: the skill builds the behaviour, adds no test for it, and does not make the check ([rule](../skills/implement-task/references/implement-rules.md#tests)). When everything passes, it sets the task's Status to `Done` and commits the change on the feature branch, one commit per task. It never pushes.
+Implements one task from a saved `tasks.md`: the task you name (`T-1.2`), or the next `Todo` task whose dependencies are `Done`. It reads the task's phase in `plan.md`, the requirements the task covers, and the code; changes only the files the task lists; adds the test its Done when names; and runs the full test suite, then the project's lint, format, and type checks. A check marked `manual:` is for a person: the skill builds the behaviour, adds no test for it, and does not make the check ([rule](../skills/implement-task/references/implement-rules.md#tests)). When everything passes, it sets the task's Status to `Done` and commits the change on the feature branch, one commit per task. It never pushes.
 
 Run it again for the next task. When every task is `Done`, each phase branch holds one commit per task, ready for review as one PR.
 
@@ -27,6 +27,8 @@ Check: python3 -m unittest: 14 tests OK
 Commit: 3f9c2e1 on password-reset/phase-1
 ```
 
+When the project has other checks, the Check line names each one after the tests: `Check: uv run pytest: 14 passed; ruff check .: passed; ruff format --check .: passed`.
+
 It stops with a single line instead when:
 
 | Situation | Where to go |
@@ -36,8 +38,9 @@ It stops with a single line instead when:
 | The work is blocked or has no task | write-tasks |
 | The task's files do not fit the code | fix the task with write-tasks |
 | Files outside the feature's folder have uncommitted changes | commit or stash them |
-| The check fails | the change is left uncommitted for you to see; Status stays `Todo`. Commit or discard it before the next run |
-| A service the tests need, such as a database, is not running | start it; nothing was changed, so rerun as is |
+| The check fails: a test, or a lint, format, or type check the task cannot fix inside its own files | the change is left uncommitted for you to see; Status stays `Todo`. Commit or discard it before the next run |
+| A lint, format, or type check already fails before the task starts | fix it on the branch, or change `check_commands`; nothing was changed, so rerun as is |
+| A service the tests need, such as a database, is not running, or a tool a check needs is not installed | start or install it; nothing was changed, so rerun as is |
 
 The lines the skill writes itself are in [the rules](../skills/implement-task/references/implement-rules.md#stop-lines); the ones its script prints are in [without-commands.md](../skills/implement-task/references/without-commands.md#the-stop-lines-the-script-prints).
 
@@ -52,6 +55,8 @@ The lines the skill writes itself are in [the rules](../skills/implement-task/re
 **My test command creates a file, such as `uv.lock`. Will it stop the next task?** No. The skill starts from a clean tree, so after its commit any new untracked file came from its own commands, and it removes each one by path. It leaves your `.agent-skills-config.yaml` and anything `.gitignore` covers alone. To keep such a file, commit it or add it to `.gitignore`.
 
 **My tests need a database (or another service). Will the skill start one?** No. It never starts, stops, or installs a service, container, or tool. Before it edits anything it runs the tests once; when they cannot reach something they need, it stops with `T-1.2 cannot run its tests: <what> is not available (...). Make it available, then run implement-task again.` That is not a failed check, since the code was never tested, and nothing was edited, so after you start the service the next run picks up from the same tree.
+
+**Does it run my linter and formatter?** Yes, when it can tell which they are. It runs the commands in `check_commands` from `.agent-skills-config.yaml`; when that is empty, the lint, format-check, and type-check commands your CI config runs, and nothing when the project has no CI config. It runs them once before it edits anything and again before the commit, and commits only when all pass, so a phase branch does not fail CI on a check the tests do not make. It fixes what a check reports only in the task's own files, and runs a formatter on those files only. A check that already fails before the task starts stops the run with `T-1.2 check failed: <command>: ...`: fix it first, or set `check_commands` to the checks you want (`none` for no checks). It never runs a CI step that builds, installs, publishes, or deploys.
 
 **What about the spec files that write-spec, write-plan, and write-tasks just saved?** They are the one exception. On its first run the skill commits the feature's folder as `Add <feature-name> spec` on the first phase's branch, then commits the task. It does this without asking, so review those files first if you want to change them; the commit is local and you can amend or drop it before merging.
 
