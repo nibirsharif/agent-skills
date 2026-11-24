@@ -14,6 +14,8 @@ Build the reset flow and rate limit it to 5 requests per hour per account.
 
 ### Phase 2: Rate limiting
 
+**Scope:** Rate limit reset requests per account.
+
 **Requirements:** FR-003
 
 **Size:** about 2 files
