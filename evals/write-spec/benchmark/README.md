@@ -27,10 +27,12 @@ Score each reply by hand, or with a judge model, against its `reference.md`:
 
 - **Gaps found:** how many `R` items the reply asks about. An item that the reply decides on its own, in a requirement, counts as not found and as an invented value.
 - **Needed questions:** how many of the reply's questions a reviewer needs answered before the feature can be built and tested. A question that matches an `R` item is needed. A question outside the list is judged on its own.
-- **Invented values:** how many systems, values, names, or behaviours appear in a requirement that the input did not give.
+- **Invented values:** how many systems, values, names, or behaviours appear in a requirement that the input did not give. A time that something expires after, or is valid for, gives the refusal that follows it: a requirement that rejects the late use is not invented, as in the skill's own example for "The link expires 30 minutes after it is sent" ([#27](https://github.com/nibirsharif/agent-skills/issues/27)).
 
 Compare the totals across all inputs, not single inputs: each input runs once, so one reply can vary. Treat a difference of fewer than three items in a total as no change.
 
 ## Changing the references
 
 A reference list is a reviewer's opinion of what the input leaves open. Change it only for a reason that does not depend on what the skill replied, and score the baseline again when it changes.
+
+An item that is withdrawn keeps its number and says why, so the records that name the other items still read correctly. It is not counted: hold-workspaces has four items since R1 was withdrawn, and the totals are of 49.

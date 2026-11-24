@@ -2,6 +2,8 @@
 
 One run per input on Claude Sonnet 5.5, 2026-11-09, first reply only. Scored by hand against each `reference.md` as the [README](README.md) says. The reference lists were drafts when this was scored.
 
+Scored again on 2026-11-23, after hold-workspaces R1 was withdrawn ([#27](https://github.com/nibirsharif/agent-skills/issues/27)). That reply's Q-002 asked what the notes service does with an invite accepted after its 72 hours, which was R1: it found 2 of 5 and now finds 1 of 4. Q-002 is also no longer a needed question, because the input states its answer. Before, the totals were 44 of 50 gaps found and 73 of 81 needed questions.
+
 | Input | Requirements written | Gaps found | Needed questions | Invented values |
 |-------|----------------------|------------|------------------|-----------------|
 | dev-invoice-export | 0 | 6 of 7 | 9 of 10 | 0 |
@@ -14,9 +16,9 @@ One run per input on Claude Sonnet 5.5, 2026-11-09, first reply only. Scored by 
 | hold-search-api | 1 | 5 of 5 | 10 of 10 | 0 |
 | hold-signup-form | 0 | 5 of 5 | 9 of 10 | 0 |
 | hold-smart-lock | 0 | 5 of 5 | 6 of 8 | 0 |
-| hold-workspaces | 5 | 2 of 5 | 6 of 6 | 0 |
-| **hold total** | 8 | 21 of 24 | 37 of 41 | 0 |
-| **Total** | 12 | 44 of 50 | 73 of 81 | 0 |
+| hold-workspaces | 5 | 1 of 4 | 5 of 6 | 0 |
+| **hold total** | 8 | 20 of 23 | 36 of 41 | 0 |
+| **Total** | 12 | 43 of 49 | 72 of 81 | 0 |
 
 Questions held back behind `<N> more open questions after these.` are not counted: 3 in dev-invoice-export, 2 in dev-webhooks, 4 in hold-search-api.
 

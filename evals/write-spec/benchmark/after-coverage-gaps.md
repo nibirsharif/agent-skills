@@ -2,10 +2,12 @@
 
 One run per input on Claude Sonnet 5.5, 2026-11-09, scored by hand the same way as [baseline-0.10.0.md](baseline-0.10.0.md). The dev first turn was run twice to see how much one run varies.
 
+The held-out first-turn row was scored again on 2026-11-23, after hold-workspaces R1 was withdrawn ([#27](https://github.com/nibirsharif/agent-skills/issues/27)). The baseline reply had found R1, so its 21 of 24 is now 20 of 23. The reply of this run asked only from which event the 72 hours are measured, so R1 was one of its five misses, and its 19 of 24 is now 19 of 23. This record never listed its misses by input: scoring the five saved replies again gives 3 of 4, 5 of 5, 5 of 5, 4 of 5, and 2 of 5 with R1 missed, which is the 19.
+
 | | Baseline 0.10.0 | After |
 |---|---|---|
 | First turn, dev: gaps found | 23 of 26 | 20 of 26 and 24 of 26 (two runs) |
-| First turn, held out: gaps found | 21 of 24 | 19 of 24 |
+| First turn, held out: gaps found | 20 of 23 | 19 of 23 |
 | Follow-up turn, dev: gaps found | 4 of 8 | 6 of 8 |
 | Follow-up turn, held out: gaps found | 3 of 6 | 4 of 6 |
 | Follow-up turn, all: needed questions | 25 of 33 | 30 of 40 |
