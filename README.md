@@ -119,7 +119,7 @@ Optional. Copy [agent-skills-config.yaml.template](agent-skills-config.yaml.temp
 
 ## Eval results
 
-The latest recorded run of each skill's whole suite, on `claude-sonnet-5-5` with Claude Code 2.1.327 unless the row says otherwise. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format. Most of these latest runs are one per case, so they show that every case passes, not how often; each skill's eval README in [evals/](evals/) has the repeated runs and the results on older models.
+The latest recorded run of each skill's whole suite, on `claude-sonnet-5-5` with Claude Code 2.1.327 unless the row says otherwise. A run passes only when every check passes: routing, the tool calls it made (for example, nothing pushed, files staged by path), and the exact reply format. Each of these latest runs is three per case, enough to show a miss that turns up often but not a rare one; each skill's eval README in [evals/](evals/) has single cases run more often and the results on older models.
 
 | Skill | Cases | Latest run | Notes |
 |-------|-------|------------|-------|
