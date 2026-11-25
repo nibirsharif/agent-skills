@@ -22,15 +22,21 @@ It does not write Given/When/Then scenarios, PRDs, design documents, or code. As
 
 ## Output
 
-A reply that is only requirement lines followed by question lines, at most 10 questions at a time. When more are open, the last line says how many.
+A reply that is only requirement lines, then question lines, then draft lines, at most 10 questions at a time. When more are open, a line after the questions says how many.
 
 ```
 FR-001: When a user submits an email address on the Forgot Password page, the auth service shall send a reset link to that address.
 
 Q-001: What does the auth service do when the address is not registered? Proposed: send no email.
+
+Q-002: In which time zone is 02:00 measured?
+
+Draft: When the time reaches 02:00 [Q-002], the auth service shall delete every reset link that was sent more than 24 hours earlier.
 ```
 
-Answer by ID. `accept Q-001, Q-004` takes those proposals; `accept all proposed` takes every proposal. Changed requirements come back marked `(changed)`, newly unblocked ones `(new)`.
+A `Draft:` line is a statement that lacks only a system name or a value. It shows the requirement your answer will produce, with the question's ID where the missing part goes, so a reply of questions still shows what each answer unblocks. A draft is not a requirement: it has no ID and is never saved.
+
+Answer by ID. `accept Q-001, Q-004` takes those proposals; `accept all proposed` takes every proposal. Changed requirements come back marked `(changed)`, newly unblocked ones `(new)`, and a draft whose questions are all answered comes back as a requirement.
 
 Set `spec_output_dir` in [the config](../README.md#configuration) and the result is saved to `<spec_output_dir>/<feature-name>/requirements.md`, which write-plan reads next. Without it, and with no path in your request, it asks where to save before writing anything; answer with a path or `chat only`, and nothing is written for `chat only`.
 

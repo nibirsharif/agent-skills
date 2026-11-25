@@ -27,7 +27,7 @@ def errors(text):
 
 class SkillExamplesPass(unittest.TestCase):
     def test_examples_have_no_findings(self):
-        for name in ("examples.md", "follow-ups.md"):
+        for name in ("examples.md", "follow-ups.md", "drafts.md"):
             with self.subTest(name=name):
                 self.assertEqual(run((SKILL / "references" / name).read_text()), [])
 
@@ -152,6 +152,30 @@ class LintCatches(unittest.TestCase):
                           "FR-002: The billing service shall log the receipt.", "blank line")
         self.assertCaught("- Q-001: What is the limit?", "no bullet")
 
+    def test_draft_lines(self):
+        asks = "Q-001: Which system emails the receipt?\n\nQ-002: In which time zone is 09:00 measured?\n\n"
+        self.assertEqual(run(asks + "Draft: When a payment succeeds, the [Q-001] shall email a receipt to the payer.\n\n"
+                             "Draft: When the time reaches 09:00 [Q-002], the billing service shall email "
+                             "a usage summary to each account admin."), [])
+        self.assertCaught(asks + "Draft: The billing service shall email a receipt to the payer.", "in place of each missing part")
+        self.assertCaught(asks + "Draft: The [Q-003] shall email a receipt to the payer.", "does not ask")
+        self.assertCaught("Q-001: Closed. Which system emails the receipt? Answer: the billing service.\n\n"
+                          "Draft: The [Q-001] shall email a receipt to the payer.", "does not ask")
+        self.assertCaught(asks + "Draft: The [Q-001] should email a receipt to the payer.", "exactly one `shall`")
+        self.assertCaught(asks + "Draft: The [Q-001] shall handle receipts gracefully.", "`gracefully`")
+        self.assertCaught(asks + "FR-001: The [Q-001] shall email a receipt to the payer.", "is a draft")
+        self.assertCaught(asks + "Draft: The [Q-001] shall email a receipt to the payer.\n"
+                          "Draft: The [Q-001] shall log the receipt.", "blank line")
+        self.assertCaught(asks + "- Draft: The [Q-001] shall email a receipt to the payer.", "no bullet")
+        self.assertCaught("Draft: The [Q-001] shall email a receipt to the payer.\n\n" + asks.strip(), "come last")
+
+    def test_follow_up_draft_needs_no_marker(self):
+        linter = lint.Linter(PATTERNS)
+        linter.lint("t.md", "FR-001 (new): The billing service shall send a receipt.\n\n"
+                    "Q-002: Which system emails the usage summary?\n\n"
+                    "Draft: The [Q-002] shall email a usage summary to each account admin.", follow_up=True)
+        self.assertEqual(linter.findings, [])
+
 
 class FileChecks(unittest.TestCase):
     def file_text(self, body):
@@ -191,6 +215,12 @@ class FileChecks(unittest.TestCase):
         found = self.file_errors("## 4. Non-Functional Requirements\n\n"
                                  "FR-001: The billing service shall comply with WCAG 2.2 level AA.")
         self.assertTrue(any("only NFR lines" in m for m in found), found)
+
+    def test_draft_in_a_file(self):
+        found = self.file_errors("## 3. Functional Requirements\n\nDraft: The [Q-001] shall send a receipt.\n\n"
+                                 "## 5. Open Questions\n\nQ-001: Which system sends the receipt?")
+        self.assertTrue(any("never saved" in m for m in found), found)
+        self.assertFalse(any("not an ID line" in m for m in found), found)
 
     def test_duplicate_ids_and_placeholders(self):
         found = self.file_errors("## 3. Functional Requirements\n\nFR-001: The billing service shall send a receipt.\n\n"

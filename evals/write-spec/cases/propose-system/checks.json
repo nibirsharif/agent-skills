@@ -1,5 +1,5 @@
 {
-  "description": "The input names no system. The project's README names one, the meter service, so the system question proposes it. The name comes from the project, not from the user, so no requirement is written until the user confirms.",
+  "description": "The input names no system. The project's README names one, the meter service, so the system question proposes it. The name comes from the project, not from the user, so no requirement is written until the user confirms. The statement lacks only its system, so it is shown as a draft with the question's ID where the system goes.",
   "counts": {
     "questions": {
       "pattern": "^Q-\\d+: (?!Closed\\.)",
@@ -11,12 +11,20 @@
     {
       "pattern": "^Q-\\d+: Which (system|service|component)[^\\n]*\\? Proposed: the meter service\\.$",
       "why": "the project names one candidate, so the system question proposes it"
+    },
+    {
+      "pattern": "^Draft: [^\\n]*the \\[Q-\\d+\\] shall reject the reading and return HTTP status 422\\.",
+      "why": "the statement lacks only its system: a draft with the system question's ID in its place"
     }
   ],
   "must_not_match": [
     {
       "pattern": "^(FR|NFR)-\\d+",
       "why": "a system name found in the project is not written into a requirement before the user confirms it"
+    },
+    {
+      "pattern": "^Draft:[^\\n]*meter service",
+      "why": "a system name found in the project is not written into a draft either before the user confirms it"
     }
   ]
 }

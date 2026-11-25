@@ -21,7 +21,7 @@ A new file copies the [template](#template) at the end of this file.
 - Write the Author only when the user gave a name; otherwise write `Not given.` Do not ask for it.
 - The requirement lines in sections 3 and 4 show the pattern shapes. Replace them with the real requirements, `FR` lines in section 3 and `NFR` lines in section 4, and keep no line the input does not support. When requirements the input states for a section wait on open questions, end the section with `Pending: Q-011, Q-020.`, naming those questions; update it as questions close and remove it when none are left. A section with no requirements and nothing pending holds `None given.`
 - End each requirement and question line with `<!-- Source: <the input statement or answer it comes from> -->`. For a coverage-gap question, name the requirement: `<!-- Source: coverage gap in FR-001 -->`.
-- Keep one requirement or question per line, with a blank line between lines, and no `(new)` or `(changed)` markers. No priority, dependencies, user story, or titled subsections.
+- Keep one requirement or question per line, with a blank line between lines, no `(new)` or `(changed)` markers, and no `Draft:` lines: a statement shown as a draft is in the file only as its questions. No priority, dependencies, user story, or titled subsections.
 - The Systems line lists every system the requirements name, spelled as they spell it.
 - Section 5 holds every open question, including those not yet asked in chat, and every question answered before the file was written, closed in the form [Updating a file](#updating-a-file) gives. It holds `None.` only while there has never been a question.
 - A new file is version 1.0.

@@ -7,6 +7,7 @@ Read this when the user answers questions or adds input after an earlier reply i
 - The requirements the answers or new input change, marked `(changed)` after the ID.
 - The requirements they unblock or add, marked `(new)`. A requirement written for the first time is `(new)`, also when every earlier reply held only questions.
 - The next open questions, at most 10.
+- The drafts step 7 of the workflow adds, for the statements that still wait on a question. A draft whose slots are all answered is written as a requirement, marked `(new)`.
 
 A requirement that did not change is not returned. Every requirement line carries one of the two markers; the lint's `--follow-up` option fails a line without one. The first reply of a conversation is the exception, also when it changes the target file: it carries no markers and is linted without `--follow-up`, so a withdrawn line there is `<ID>: Withdrawn.`
 

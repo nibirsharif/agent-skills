@@ -33,11 +33,12 @@ Stop and ask instead of writing when:
 3. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
 4. **Write each requirement** from the input, the user's answers, and the target file only, as the rules say.
 5. **Check** each requirement and the set against the rules' [checklist](references/ears-rules.md#checklist), including coverage gaps. A requirement that still fails is not output: ask about its gap instead.
-6. **Lint** the draft reply, as [Lint](#lint) says, which is required. Then return it, and save if a target path is set.
+6. **Lint** the draft reply, as [Lint](#lint) says, which is required.
+7. **Read [references/drafts.md](references/drafts.md)** once the lint is clean, and never before, and do what it says. Then return the reply, and save if a target path is set.
 
 ## Output
 
-The reply holds `FR` lines, then `NFR` lines, then `Q` lines, with a blank line between lines, and nothing else: no preamble, summary, or closing note, no title, priority, or rationale, and no word about the lint, the rules, or how you worked. Its first line is an `FR-`, `NFR-`, or `Q-` line.
+The reply holds `FR` lines, then `NFR` lines, then `Q` lines, then the `Draft:` lines step 7 adds, with a blank line between lines, and nothing else: no preamble, summary, or closing note, no title, priority, or rationale, and no word about the lint, the rules, or how you worked. Its first line is an `FR-`, `NFR-`, or `Q-` line.
 
 ```
 FR-001: <EARS sentence>

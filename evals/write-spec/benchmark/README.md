@@ -25,9 +25,10 @@ Add `--file turn2.md` to run the follow-up turn instead. Each `turn2.md` holds t
 
 Score each reply by hand, or with a judge model, against its `reference.md`:
 
-- **Gaps found:** how many `R` items the reply asks about. An item that the reply decides on its own, in a requirement, counts as not found and as an invented value.
+- **Gaps found:** how many `R` items the reply asks about. An item that the reply decides on its own, in a requirement or a draft, counts as not found and as an invented value.
+- **Requirements written** and **drafts shown:** counts of `FR` and `NFR` lines, and of `Draft:` lines. A reply with neither wrote nothing ([#21](https://github.com/nibirsharif/agent-skills/issues/21)).
 - **Needed questions:** how many of the reply's questions a reviewer needs answered before the feature can be built and tested. A question that matches an `R` item is needed. A question outside the list is judged on its own.
-- **Invented values:** how many systems, values, names, or behaviours appear in a requirement that the input did not give. A time that something expires after, or is valid for, gives the refusal that follows it: a requirement that rejects the late use is not invented, as in the skill's own example for "The link expires 30 minutes after it is sent" ([#27](https://github.com/nibirsharif/agent-skills/issues/27)).
+- **Invented values:** how many systems, values, names, or behaviours appear in a requirement or a draft that the input did not give. A `[Q-NNN]` slot in a draft is not a value. A time that something expires after, or is valid for, gives the refusal that follows it: a requirement that rejects the late use is not invented, as in the skill's own example for "The link expires 30 minutes after it is sent" ([#27](https://github.com/nibirsharif/agent-skills/issues/27)).
 
 Compare the totals across all inputs, not single inputs: each input runs once, so one reply can vary. Treat a difference of fewer than three items in a total as no change.
 

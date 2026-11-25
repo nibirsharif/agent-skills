@@ -1,5 +1,5 @@
 {
-  "description": "Only impressions and no system. Nothing can be written, so the reply is questions only.",
+  "description": "Only impressions and no system. Nothing can be written, so the reply is questions only, with no drafts.",
   "counts": {
     "requirements": {
       "pattern": "^(FR|NFR)-\\d+",
@@ -10,6 +10,11 @@
       "pattern": "^Q-\\d+: (?!Closed\\.)",
       "min": 2,
       "max": 6
+    },
+    "drafts": {
+      "pattern": "^Draft: ",
+      "min": 0,
+      "max": 0
     }
   },
   "must_match": [

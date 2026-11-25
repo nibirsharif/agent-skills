@@ -47,3 +47,7 @@ Q-009: What is the maximum delay, in seconds, from the arrival of a production r
 Q-010: What does the alert service do when an Offline alert cannot be delivered?
 
 11 more open questions after these.
+
+Draft: When a production reading becomes older than 5 years, the [Q-001] shall archive that production reading.
+
+Draft: While the inverter gateway is offline, the inverter gateway shall buffer production readings for [Q-002].

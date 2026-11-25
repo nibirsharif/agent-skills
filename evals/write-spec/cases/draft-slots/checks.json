@@ -1,0 +1,65 @@
+{
+  "description": "One statement is complete, one lacks only a time zone, one lacks only its system, and one gives only an impression. The complete one is written. The two that lack a value or a system are shown as drafts, each with the ID of the question that fills it in the missing part's place, and are not written as requirements. The impression gets questions and no draft (#21).",
+  "counts": {
+    "requirements": {
+      "pattern": "^(FR|NFR)-\\d+",
+      "min": 1,
+      "max": 1
+    },
+    "drafts": {
+      "pattern": "^Draft: ",
+      "min": 2,
+      "max": 2
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 3,
+      "max": 10
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^FR-001: When a driver scans a ticket at the exit terminal, the parking service shall open the exit barrier\\.",
+      "why": "the complete statement is written as a requirement, not as a draft"
+    },
+    {
+      "pattern": "^Draft: [^\\n]*07:00[^\\n]*\\[Q-\\d+\\][^\\n]*the parking service shall email",
+      "why": "the statement lacks only a time zone: a draft with the time-zone question's ID in its place"
+    },
+    {
+      "pattern": "^Draft: [^\\n]*the \\[Q-\\d+\\] shall add a late fee of 5 EUR",
+      "why": "the statement lacks only its system: a draft with the system question's ID in its place"
+    },
+    {
+      "pattern": "(?i)^Q-\\d+:[^\\n]*time[ -]?zone",
+      "why": "the draft's time-zone slot has its question"
+    },
+    {
+      "pattern": "^Q-\\d+: Which (system|service|component)[^\\n]*late fee",
+      "why": "the draft's system slot has its question"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(FR|NFR)-\\d+[^\\n]*(07:00|late fee|\\[Q-)",
+      "why": "a statement that waits on a question is a draft with no ID, never a requirement"
+    },
+    {
+      "pattern": "(?i)^Draft:[^\\n]*\\b(quick|fast|UTC|local time)\\b",
+      "why": "a draft holds only the input's words and its slots, and an impression gets no draft"
+    },
+    {
+      "pattern": "(?i)^Q-\\d+:[^\\n]*time[ -]?zone[^\\n]*Proposed:",
+      "why": "a time zone is a business decision: no proposal"
+    }
+  ],
+  "expectations": [
+    "Every Draft line holds only words that come from the task's input plus [Q-NNN] slots: no system, value, or name that the input does not give.",
+    "Each [Q-NNN] in a Draft line is the ID of a question in the reply that asks for exactly the part the slot stands for.",
+    "No Draft line is written for \"Paying must be quick\"; the reply asks what quick means in terms a tester can check."
+  ],
+  "manual": [
+    "Each draft would be a correct EARS requirement once its slots are filled.",
+    "The questions about \"Paying must be quick\" ask which system and what measurable threshold, as two questions."
+  ]
+}
