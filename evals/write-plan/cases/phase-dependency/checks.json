@@ -1,5 +1,5 @@
 {
-  "description": "Eleven requirements, written in the file with the monthly report first and expense submission in the middle. Each step needs the one before it: approval needs submitted expenses, payment needs approved ones, and the report reads approved ones. The plan orders its phases by that dependency, not by the order of the IDs, and every ID lands in exactly one phase.",
+  "description": "Eleven requirements, written in the file with the monthly report first and expense submission in the middle. Each step needs the one before it: approval needs submitted expenses, payment needs approved ones, and the report reads approved ones. The plan orders its phases by that dependency, not by the order of the IDs, every ID lands in exactly one phase, and there are no more than three phases: the limit of 8 needs two. There is no codebase, so no size is checked against the file limit.",
   "counts": {
     "FR-001 once": {
       "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-001\\b",
@@ -58,14 +58,11 @@
     },
     "phases": {
       "pattern": "^### Phase \\d+",
-      "min": 2
+      "min": 2,
+      "max": 3
     },
     "phase over 8 requirements": {
       "pattern": "^\\*\\*Requirements:\\*\\*(?:[^\\n]*?(?:FR|NFR)-\\d+){9}",
-      "max": 0
-    },
-    "phase over 10 files": {
-      "pattern": "^\\*\\*Size:\\*\\* about (1[1-9]|[2-9]\\d|\\d{3,}) files",
       "max": 0
     }
   },

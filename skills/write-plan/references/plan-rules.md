@@ -20,42 +20,44 @@ Each stop is its line or its question from the reply contract and nothing else: 
 
 ## Exploring the code
 
-Explore before choosing anything. Look for:
+Look for:
 
 - the files and modules the requirements' systems live in, by the names the requirements use;
-- existing patterns to follow (how similar features are structured, tested, and configured);
+- existing patterns to follow;
 - utilities, components, and tests to reuse, instead of new ones.
 
 Name a file or function only after you have seen it, never a plausible-sounding one. When there is no codebase, or none of it relates to the feature, say so in the Approach and plan from the requirements alone.
 
 ## Phases
 
-A phase is one PR that can merge with every test green and leaves the product working, with a smaller feature. It is not a layer: do not split "database", "API", "UI" into phases unless each one leaves the product working and is reviewable alone.
+A phase is one PR, read in one sitting, that merges with every test green and leaves the product working, with a smaller feature. It holds at most `plan_max_requirements_per_phase` requirements, `FR` and `NFR` together, and `plan_max_files_per_phase` files, tests included. Cut the fewest phases that fit: that a slice could merge alone is no reason to make it a phase, and a layer ("database", "API", "UI") is never one.
 
-1. **Group** requirements into coherent slices: the same system, flow, or data. A phase holds at most `plan_max_requirements_per_phase` requirements, counting `FR` and `NFR` IDs together. A feature that fits the limits is one phase; do not merge unrelated flows to fill a phase, and do not split a flow to shrink one below the limits.
-2. **Order** phases so each depends only on earlier ones: foundations (data, interfaces) first, then behaviour, then failure handling.
-3. **Split** a phase estimated at more than `plan_max_files_per_phase` files, however few requirements it has. Estimate from the code you explored: files to add or change, tests included. A phase of one requirement cannot be split: that is a [stop](#stop-and-ask).
-4. **Place each `NFR`** in the phase of the `FR` it constrains, because the phase that builds the behaviour must meet its threshold. Give an `NFR` its own later phase only when it can be met afterwards without changing behaviour: performance tuning, availability, or an accessibility level. Say why in that phase's scope.
+1. **Start with one phase.** A feature that fits both limits is one, however many flows it has.
+2. **Cut** only what is over a limit, between two slices (a system, flow, or set of data), or inside a flow over a limit alone, where one part works without the other. A phase of one requirement cannot be cut: that is a [stop](#stop-and-ask).
+3. **Count files** from the code you explored, each once per phase, so slices that share files are smaller as one phase. With no code for the feature, Size is a guess that neither cuts a phase nor keeps two apart: the requirement limit alone sizes the phases.
+4. **Place each `NFR`** in the phase of the `FR` it constrains, which must meet its threshold. It gets its own later phase only when it can be met afterwards without changing behaviour: performance tuning, availability, or an accessibility level. Say why in that phase's scope.
+5. **Order** phases so each depends only on earlier ones: foundations (data, interfaces) first, then behaviour, then failure handling.
+6. **Merge neighbours.** In order, merge a phase and the next whenever they fit the limits together, until no pair does. A later `NFR` phase stays on its own.
 
 ## What each phase holds
 
 - **Scope:** what the phase delivers, in one or two sentences, and what it leaves for later phases.
 - **Requirements:** the `FR` and `NFR` IDs it covers.
-- **Size:** the estimated number of files to add or change, tests included, as `about <n> files`.
+- **Size:** the file estimate, as `about <n> files` and nothing more.
 - **Reuse:** existing files, patterns, and utilities, with their paths, or `None found.` on the same line. Only code that exists before the plan counts: what an earlier phase adds is not reuse; name it in Scope or Interface and data changes.
-- **Interface and data changes:** new or changed endpoints, function signatures, events, schemas, config. Name them; do not write the code.
-- **Verify:** how a reviewer checks each requirement ID: the test to add, the command to run, or the behaviour to observe. A verification cites the ID it checks.
+- **Interface and data changes:** new or changed endpoints, function signatures, events, schemas, config.
+- **Verify:** how a reviewer checks each requirement ID: the test to add, the command to run, or the behaviour to observe.
 - **Open questions:** the open `Q-` IDs that touch this phase, or `None.`
 
 ## Validation checklist
 
 Run every item on the plan before returning it.
 
-1. Every written `FR` and `NFR` appears in exactly one phase; none is missing, none is repeated.
+1. Every written `FR` and `NFR` appears in exactly one phase.
 2. No withdrawn line and no blocked requirement appears in a phase; each blocked one has one `Blocked by` entry naming all the questions it waits on.
 3. No open question is answered, closed, or assumed, and no closed question is listed as open.
-4. Every phase is mergeable on its own: it depends only on earlier phases, and nothing it needs is left to a later one.
-5. No phase exceeds the requirement or file limit, each phase states its size, and each phase lists at least one requirement ID.
+4. Every phase depends only on earlier phases: nothing it needs is left to a later one.
+5. No phase exceeds a limit that applies, each states its size and lists at least one requirement ID, and no two neighbours fit the limits as one, except a later `NFR` phase.
 6. Each `NFR` sits with the `FR` it constrains, or has a stated reason for a later phase.
 7. Every file or utility named in Reuse was seen in the code, and none is built by an earlier phase; with no codebase, every Reuse is `None found.`
 8. Every requirement ID in Verify names a check a reviewer can run or observe.

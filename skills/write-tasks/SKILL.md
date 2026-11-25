@@ -53,6 +53,6 @@ Find the plan, in this order:
 
 Write `tasks.md` in the same folder as `plan.md` whenever the plan was read from a file, whichever step found it. Reply in chat only when the plan was pasted or the user asks for chat only.
 
-Limits come from the same config files, or from a limit the user states: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 12).
+Limits come from the same config files, or from a limit the user states: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 16).
 
 If the `tasks.md` that exists does not follow the template, change nothing yet: say so and ask before rewriting it.

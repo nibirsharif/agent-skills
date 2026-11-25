@@ -25,7 +25,7 @@ plan_max_files_per_phase:
 tasks_max_files_per_task:
 
 # write-tasks: the most tasks one phase may have. A phase that needs more is sent back to
-# write-plan to be split, not squeezed. Default 12.
+# write-plan to be split, not squeezed. Default 16.
 tasks_max_per_phase:
 
 # build-phase: the most rework rounds (reopen the tasks behind a requirement that verify-spec does not

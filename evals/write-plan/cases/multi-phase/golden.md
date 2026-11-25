@@ -1,14 +1,13 @@
 ## 1. Approach
 
-There is no existing code in this folder, so the feature is planned from the requirements alone. It is built along the return flow: requests and records first, then the label and warehouse intake, then refunds, then the status pages. Each phase merges on its own and leaves returns working for the flow it covers.
+There is no existing code in this folder, so the feature is planned from the requirements alone. It is built along the return flow: requests and records first, then the label and warehouse intake, then refunds and the status pages. Nineteen requirements at 8 a phase need three phases; the availability target follows them in a fourth. Each phase merges on its own and leaves returns working for the flow it covers.
 
 | Phase | Delivers | Requirements |
 |-------|----------|--------------|
 | 1 | Return requests and records | FR-001, FR-002, FR-003, FR-004, FR-014 |
 | 2 | Label email, cancellation, and warehouse intake | FR-005, NFR-001, FR-006, FR-007, FR-008, FR-009 |
-| 3 | Refunds | FR-010, FR-011, FR-012, FR-013 |
-| 4 | Return status pages | FR-015, FR-016, NFR-002 |
-| 5 | Availability target | NFR-003 |
+| 3 | Refunds and return status pages | FR-010, FR-011, FR-012, FR-013, FR-015, FR-016, NFR-002 |
+| 4 | Availability target | NFR-003 |
 
 ## 2. Phases
 
@@ -61,19 +60,20 @@ There is no existing code in this folder, so the feature is planned from the req
 
 **Open questions:** None.
 
-### Phase 3: Refunds
+### Phase 3: Refunds and return status pages
 
-**Scope:** Calculate and pay the refund, mark a rejected refund, and email the confirmation.
+**Scope:** Calculate and pay the refund, mark a rejected refund, email the confirmation, and show return status to customers and its history to support agents. The accessibility level is met in the page that FR-015 builds.
 
-**Requirements:** FR-010, FR-011, FR-012, FR-013
+**Requirements:** FR-010, FR-011, FR-012, FR-013, FR-015, FR-016, NFR-002
 
-**Size:** about 8 files
+**Size:** about 14 files
 
 **Reuse:** None found.
 
 **Interface and data changes:**
 
 - New or changed interfaces for refunds
+- New or changed interfaces for return status pages
 
 **Verify:**
 
@@ -81,32 +81,13 @@ There is no existing code in this folder, so the feature is planned from the req
 - FR-011: test against the payment gateway's test mode that the refund goes to the original payment method
 - FR-012: test that a gateway rejection marks the record refund failed
 - FR-013: test that a completed refund emails the confirmation
-
-**Open questions:** None.
-
-### Phase 4: Return status pages
-
-**Scope:** Show return status to customers and its history to support agents. The accessibility level is met in the page that FR-015 builds.
-
-**Requirements:** FR-015, FR-016, NFR-002
-
-**Size:** about 7 files
-
-**Reuse:** None found.
-
-**Interface and data changes:**
-
-- New or changed interfaces for return status pages
-
-**Verify:**
-
 - FR-015: browser test that the status page lists each of the customer's returns
 - FR-016: test that the support console shows the status history
 - NFR-002: automated WCAG 2.2 level AA audit of the status page
 
 **Open questions:** None.
 
-### Phase 5: Availability target
+### Phase 4: Availability target
 
 **Scope:** Meet the monthly availability target. It needs monitoring and failover, which change no behaviour, so it follows the phases that build the behaviour.
 

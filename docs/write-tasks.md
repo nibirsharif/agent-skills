@@ -29,7 +29,7 @@ It stops with a single line instead of tasking when:
 | Plan lists a withdrawn or unknown requirement ID | write-plan or write-spec |
 | A phase needs more tasks than the limit | split the phase in write-plan |
 
-Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 12); see [the config](../README.md#configuration).
+Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (default 16); see [the config](../README.md#configuration).
 
 ## FAQ
 

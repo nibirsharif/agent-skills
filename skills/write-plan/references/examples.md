@@ -54,7 +54,7 @@ Q-001: What does the reset rate limit count per: account, IP address, or both? (
 Q-002: How many reset requests are allowed in how long a period? (touches the blocked rate-limit requirement)
 ```
 
-Both questions are about one requirement, so they share one `Blocked by` entry. The topic comes from the questions: the `Pending:` line names only their IDs.
+Both questions are about one requirement, so they share one `Blocked by` entry.
 
 ## An open question changes the core approach
 
@@ -76,10 +76,12 @@ Wrong: phases that list `**Requirements:** None (part of FR-001)`, or one phase 
 
 ## Splitting into phases
 
-Nineteen requirements, limit 8 per phase: group by flow, not by layer.
+The password-reset plan above is right as one phase of 3 requirements, and wrong as a phase per requirement.
+
+Nineteen requirements, limit 8 per phase: cut by flow, not by layer.
 
 - Wrong: Phase 1 database, Phase 2 API, Phase 3 UI. No phase leaves the product working.
-- Right: Phase 1 return requests and their rejection rules; Phase 2 labels and warehouse intake; Phase 3 refunds; Phase 4 status pages; each merges on its own.
+- Right: Phase 1 return requests and their rejection rules; Phase 2 labels and warehouse intake; Phase 3 refunds and status pages; each merges on its own.
 
 The 5-minute email deadline sits in the phase of the requirement that sends the email. A monthly availability target can move to a last phase, and says why:
 

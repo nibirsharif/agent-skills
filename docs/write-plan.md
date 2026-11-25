@@ -35,7 +35,9 @@ Phase size is limited by `plan_max_requirements_per_phase` (default 8) and `plan
 
 **A requirement I added later is not in the plan.** Run it again. It extends `plan.md` and keeps phase numbers. If a new requirement could join a phase, it asks which phases have already merged before placing it. The rules are in [updating.md](../skills/write-plan/references/updating.md).
 
-**There is no codebase yet.** It plans from the requirements alone and says so in the first sentence of the Approach.
+**There is no codebase yet.** It plans from the requirements alone and says so in the first sentence of the Approach. There are no files to count, so each Size is a rough guess and the requirement limit alone decides the phases.
+
+**It cut more phases than I expected.** The limits decide the count: it cuts the fewest phases that fit them and merges neighbours that fit as one. So 29 requirements at 8 a phase are at least 4 phases, however small each requirement is. For a spec of many small requirements, raise `plan_max_requirements_per_phase`, together with `tasks_max_per_phase` so that write-tasks does not send the larger phases back.
 
 ## Verifying results
 

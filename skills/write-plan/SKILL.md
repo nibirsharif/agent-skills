@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Write Plan
 
-Turn a feature's `requirements.md` into `plan.md`: the approach, split into phases that each merge on their own. Read the code first; cover only requirements that are written.
+Turn a feature's `requirements.md` into `plan.md`: the approach, split into phases that each merge on their own.
 
 ## Reply contract
 
@@ -39,7 +39,7 @@ Work silently. Write no text between tool calls and none before the reply: the o
 2. **Sort the requirements** as the rules' "Reading the requirements file" section says: written, withdrawn, and blocked.
 3. **Check for a stop** as the rules' "Stop and ask" section says: an open question that changes the core approach, or one requirement too large for a phase.
 4. **Explore the codebase** as the rules' "Exploring the code" section says.
-5. **Choose the approach and the phases** as the rules say: group, order, split, and place each `NFR`.
+5. **Choose the approach and the phases** as the rules say: one phase, cut where over a limit, place each `NFR`, order, merge neighbours.
 6. **Fill each phase** with the seven fields the rules list.
 7. **Validate** against the rules' checklist. Fix what fails; a check you cannot pass is a question, not a plan line.
 8. **Reply** as the [Reply contract](#reply-contract) says, and save as [Saving to a file](#saving-to-a-file) says.
