@@ -1,4 +1,4 @@
-# Baseline: write-plan 0.18.1
+# Baseline: write-plan 0.19.0
 
 One run per input on `claude-sonnet-5-5` (Claude Code 2.1.327), 2026-11-24, with the skill as changed for [#10](https://github.com/nibirsharif/agent-skills/issues/10): cut the fewest phases that fit the limits, merge neighbours that fit as one, and let the requirement limit alone size the phases where there is no code to count files in. Scored by hand against each `reference.md` as the [README](README.md) says. The references of the six inputs that [baseline-0.14.0.md](baseline-0.14.0.md) scored are unchanged, and its phase counts are beside the new ones. Three dev inputs are new with this change, and their references were written before their first run: the two `dev-note-tags` inputs, which have a project with code, and `dev-saved-searches`, whose scope names more than its requirements state.
 
