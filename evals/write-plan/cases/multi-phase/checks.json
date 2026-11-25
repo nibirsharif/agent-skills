@@ -1,5 +1,5 @@
 {
-  "description": "Nineteen written requirements exceed the phase limit of 8, so the plan splits them into phases by flow. Every ID lands in exactly one phase, no phase has more than 8 IDs or more than 10 files, and the label-email deadline NFR-001 sits with FR-005, the requirement it constrains.",
+  "description": "Nineteen written requirements exceed the phase limit of 8, so the plan cuts them into phases by flow, and into no more phases than the limit needs: three, or four when the availability target NFR-003 has a last phase of its own. Every ID lands in exactly one phase, no phase has more than 8 IDs, and the label-email deadline NFR-001 sits with FR-005, the requirement it constrains. There is no codebase, so no size is checked against the file limit.",
   "counts": {
     "FR-001 once": {
       "pattern": "^\\*\\*Requirements:\\*\\*.*\\bFR-001\\b",
@@ -98,19 +98,16 @@
     },
     "phases": {
       "pattern": "^### Phase \\d+",
-      "min": 3
+      "min": 3,
+      "max": 4
     },
     "phase over 8 requirements": {
       "pattern": "^\\*\\*Requirements:\\*\\*(?:[^\\n]*?(?:FR|NFR)-\\d+){9}",
       "max": 0
     },
     "size stated": {
-      "pattern": "^\\*\\*Size:\\*\\* about \\d+ files",
+      "pattern": "^\\*\\*Size:\\*\\* about \\d+ files[ \\t]*$",
       "min": 3
-    },
-    "phase over 10 files": {
-      "pattern": "^\\*\\*Size:\\*\\* about (1[1-9]|[2-9]\\d|\\d{3,}) files",
-      "max": 0
     },
     "reuse none found": {
       "pattern": "^\\*\\*Reuse:\\*\\*\\s*None found\\.",

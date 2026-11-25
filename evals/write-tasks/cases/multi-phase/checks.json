@@ -10,7 +10,7 @@
     "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
     "verify tasks": { "pattern": "^#### T-\\d\\.\\d+: Verify", "min": 2 },
     "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
-    "phase over 12 tasks": { "pattern": "^#### T-\\d\\.(1[3-9]|[2-9]\\d): ", "max": 0 }
+    "phase over 16 tasks": { "pattern": "^#### T-\\d\\.(1[7-9]|[2-9]\\d): ", "max": 0 }
   },
   "must_match": [
     { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" }

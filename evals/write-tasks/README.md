@@ -49,6 +49,8 @@ Workflow step 1 now says that a path comes only from the request, the conversati
 
 Each of the 15 runs after the change reads the two config files, by Read or `cat`, and replies with the question alone. The whole suite at 3 runs with the judge passed 30 of 30, with 33 judge verdicts and none failed; the nine cases that were there before passed 27 of 27. Every one of them that pastes a plan also names its path, so a probe that is not committed sent `single-phase`'s plan with no path anywhere: 6 of 6 runs wrote the tasks in chat and none asked for a location.
 
+More tasks a phase, 24 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). The default `tasks_max_per_phase` is 16, from 12. write-plan now fills a phase up to its limit of 8 requirements ([#10](https://github.com/nibirsharif/agent-skills/issues/10)), and such a phase needs about one task per requirement and per interface item, plus the verify task. A table-booking plan whose Phase 1 has 8 requirements was pasted in three times at each limit: at 12, one run stopped with `Phase 1 needs more than 12 tasks.` and the others wrote 12 and 11 tasks; at 16, the three runs wrote 10, 9, and 9. The rule for a task's size is unchanged, and so are the benchmark and its references. The `multi-phase` check for a phase over the limit follows the new number. The whole suite at one run each passed 10 of 10; `oversized-phase` states its own limit of 3.
+
 ```bash
 make eval SKILL=write-tasks
 ```

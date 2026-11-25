@@ -2,13 +2,15 @@
 
 The eval cases in [../cases/](../cases/) check that a plan follows the skill's rules. This benchmark measures something else: whether the phase cuts are sensible for requirements the rules were not written against.
 
-Each folder holds an `input.md`, a requirements file pasted into the prompt, and a `reference.md`, which the agent never sees. There is no codebase, so a plan is judged on its cuts, not on what it reuses. The reference lists:
+Each folder holds an `input.md`, a requirements file pasted into the prompt, and a `reference.md`, which the agent never sees. Most inputs have no codebase, so a plan is judged on its cuts, not on what it reuses. `dev-note-tags` and `dev-note-tags-small-limit` have a `project/` folder with code and the requirements file in it: they measure what the others cannot, whether files are counted from the code and whether the file limit cuts. The second is the first with `plan_max_files_per_phase: 4`. The reference lists:
 
 - the written IDs, and any withdrawn lines that must not be planned;
 - a range for the number of phases;
 - `D` items, "before": a requirement that must be in the same phase as another one, or an earlier phase, because the second builds on the first;
 - `T` items, "together": requirements that belong in one phase, such as an `NFR` and the `FR` it limits;
 - the blocked entries the plan must list, and what it must not plan;
+- `N` items, "not planned", for an input whose scope names something that no requirement states;
+- `C` items, "code", for an input with a project: the sizes, the files Reuse names, and paths and tools the project does not have;
 - one sensible cut, as an example. Other cuts that hold every item are as good.
 
 The files list their requirements out of build order on purpose, so a plan that follows the order of the IDs breaks `D` items.
@@ -18,7 +20,7 @@ The files list their requirements out of build order on purpose, so a plan that 
 - `dev-*`: read these replies when changing a rule.
 - `hold-*`: never tune a rule on these. Run them only to check that a change which helped the dev set helps here too.
 
-Both sets have a feature that fits one phase, a feature that needs several, blocked requirements, and withdrawn or closed lines. `hold-message-search` has an open question that decides the architecture, so its right reply is the question and no plan.
+Both sets have a feature that fits one phase, a feature that needs several, blocked requirements, and withdrawn or closed lines. Only the dev set has inputs with a project. Each set has one input whose scope names more than its requirements state: `dev-saved-searches`, which lists `N` items for it, and `hold-profile-photo`. `hold-message-search` has an open question that decides the architecture, so its right reply is the question and no plan.
 
 ## Running
 
@@ -36,6 +38,8 @@ Score each reply by hand against its `reference.md`:
 - **Phases:** the number of phases, and whether it is in the reference's range.
 - **Before:** how many `D` items hold.
 - **Together:** how many `T` items hold.
+- **Code:** how many `C` items hold, for an input with a project.
+- **Not planned:** how many `N` items hold. Saying that the scope names something no requirement covers is not planning it.
 - **Blocked right:** whether section 3 has exactly the reference's entries, no blocked or withdrawn requirement is planned, and no question is answered.
 
 Also note anything the plan invents: a file, a requirement, a value, or an answer to a question.
