@@ -29,10 +29,11 @@ Stop and ask instead of writing when:
 ## Workflow
 
 1. **Read the target file**, if it exists: its highest `FR`, `NFR`, and `Q` IDs, its systems and terms, and its requirements.
-2. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
-3. **Write each requirement** from the input, the user's answers, and the target file only, as the rules say.
-4. **Check** each requirement and the set against the rules' [checklist](references/ears-rules.md#checklist), including coverage gaps. A requirement that still fails is not output: ask about its gap instead.
-5. **Lint** the draft reply, as [Lint](#lint) says, which is required. Then return it, and save if a target path is set.
+2. **Look for a named system's code.** When the input or an answer names a system, list the project's top-level folders. When one holds that system's code, read [references/code-facts.md](references/code-facts.md) and do what it says before step 3. Never skip the listing.
+3. **Split the input** into single requirements: one system reacting to one set of conditions. In a user story, the role and goal describe the trigger and the response.
+4. **Write each requirement** from the input, the user's answers, and the target file only, as the rules say.
+5. **Check** each requirement and the set against the rules' [checklist](references/ears-rules.md#checklist), including coverage gaps. A requirement that still fails is not output: ask about its gap instead.
+6. **Lint** the draft reply, as [Lint](#lint) says, which is required. Then return it, and save if a target path is set.
 
 ## Output
 

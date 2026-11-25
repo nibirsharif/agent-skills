@@ -1,0 +1,48 @@
+{
+  "description": "The project in dirty/ holds the booking service's code, and nothing in it would change a requirement. It returns status 400 where the input asks for 409 and returns no booking ID: both are what the input changes, so they are the feature. Both statements are written from the input and no question is asked because of the code.",
+  "counts": {
+    "requirements": {
+      "pattern": "^(FR|NFR)-\\d+",
+      "min": 2,
+      "max": 3
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 0,
+      "max": 3
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^FR-\\d+: When an employee books a room for a time slot, the booking service shall store the booking and return the booking ID\\.",
+      "why": "the complete statement is written from the input's words"
+    },
+    {
+      "pattern": "^FR-\\d+: If [^\\n]*overlaps a stored booking of that room, then the booking service shall reject the booking and return HTTP status 409\\.",
+      "why": "the status the input gives is written, whatever the code returns today"
+    },
+    {
+      "pattern": "bookings\\.py|schema\\.sql|booking_service/\\*",
+      "target": "trace",
+      "why": "the input names the booking service and the project holds its code, so the skill reads the files"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "booking_service/|bookings\\.py|schema\\.sql",
+      "why": "a question names the code, which holds no fact that would change a requirement"
+    },
+    {
+      "pattern": "\\b(400|200)\\b",
+      "why": "a status code from the code is in the reply: what the code does differently is the feature"
+    },
+    {
+      "pattern": "(?i)^Q-\\d+: [^\\n]*\\b(currently|today|existing code|the code|already returns)\\b",
+      "why": "a question asks about what the code does today"
+    }
+  ],
+  "manual": [
+    "Each question is about the input alone: a coverage gap or an open boundary such as time slots that touch.",
+    "The transcript shows at most 5 files of booking_service/ read."
+  ]
+}

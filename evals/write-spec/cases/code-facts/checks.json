@@ -1,0 +1,67 @@
+{
+  "description": "The project in dirty/ holds the booking service's code, and two facts in it would change a requirement. schema.sql allows one booking of a room a day, a rule the input does not mention and under which a booking that does not overlap is still refused. purge.py deletes a cancelled booking after 7 days, where the input says 30 days as today. Each gets a question that names its file. The contradicted statement is not written, the other three are, and no requirement comes from the code.",
+  "counts": {
+    "requirements": {
+      "pattern": "^(FR|NFR)-\\d+",
+      "min": 3,
+      "max": 4
+    },
+    "questions": {
+      "pattern": "^Q-\\d+: (?!Closed\\.)",
+      "min": 2,
+      "max": 8
+    },
+    "questions that name a file": {
+      "pattern": "^Q-\\d+: [^\\n]*`booking_service/[\\w./]+`",
+      "min": 2,
+      "max": 4
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "(?i)^Q-\\d+: (?=[^\\n]*`booking_service/[\\w./]+`)[^\\n]*(\\b(one|single|only one|unique)\\b[^\\n]*\\b(day|date)\\b|\\b(same|a|per|each|that|any|one) (day|date)\\b)",
+      "why": "the one-booking-a-day rule limits a response the input asks for, so a question names the file and asks about it"
+    },
+    {
+      "pattern": "^Q-\\d+: (?=[^\\n]*`booking_service/[\\w./]+`)(?=[^\\n]*\\b7\\b)[^\\n]*\\b30\\b",
+      "why": "the code deletes after 7 days and the input says 30 as today, so a question names the file and both values"
+    },
+    {
+      "pattern": "^FR-\\d+: When an employee books a room for a time slot, the booking service shall store the booking and return the booking ID\\.",
+      "why": "a statement a constraint limits is still written, from the input's words"
+    },
+    {
+      "pattern": "bookings\\.py|schema\\.sql|booking_service/\\*",
+      "target": "trace",
+      "why": "the input names the booking service and the project holds its code, so the skill reads the files"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "^(FR|NFR)-\\d+[^\\n]*\\b(7|30) days\\b",
+      "why": "the statement the code contradicts is not written until the user answers, and the code's 7 days is never a requirement"
+    },
+    {
+      "pattern": "(?i)^(FR|NFR)-\\d+[^\\n]*\\b((same|a|per|each|that|any|one) day|one booking|on a day|for a day)\\b",
+      "why": "the one-booking-a-day rule is in the code only: no requirement is written from it"
+    },
+    {
+      "pattern": "^(FR|NFR)-\\d+[^\\n]*(booking_service|schema\\.sql|cancelled_at|start_time|end_time|\\b20[14]\\b)",
+      "why": "a name, field, or status code taken from the code is in a requirement"
+    },
+    {
+      "pattern": "^Q-\\d+: [^\\n]*`booking_service/[^\\n]*Proposed:",
+      "why": "a question about a fact in the code carries no proposal"
+    }
+  ],
+  "expectations": [
+    "One question says that the code allows only one booking of a room on a day, names a file under booking_service/, and asks whether a booking that does not overlap is still refused on such a day.",
+    "One question says that the code deletes a cancelled booking after 7 days while the input says 30 days, names a file under booking_service/, and asks which applies.",
+    "No requirement states a behaviour, value, or name that appears only in the code and not in the task's input."
+  ],
+  "manual": [
+    "Each question that names a file states a fact the file really shows.",
+    "No question asks about how the code is built: its table, its field names, its status codes 201 and 204, or its cron job.",
+    "The transcript shows at most 5 files of booking_service/ read."
+  ]
+}

@@ -10,6 +10,8 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `followup-answers` | A follow-up turn: three of six questions are answered and a deadline is added. New requirements are marked `(new)` and continue the sequences, the unchanged requirement is not repeated, answered questions are not asked again, and unanswered ones keep their IDs. |
 | `followup-first-requirements` | A follow-up turn after a first reply of questions only: the first requirements are still marked `(new)`, start at `FR-001`, and new questions continue after the highest `Q` ID. |
 | `propose-system` | The input names no system and the project's README names one: the question carries it as `Proposed:`, and no requirement is written before the user confirms. The project is in the case's `dirty/` folder. |
+| `code-facts` | The project holds the named system's code, and two facts in it would change a requirement: a rule the input does not mention that stops a response, and a value the input says is today's where the code has another. Each gets a question that names its file, the contradicted statement is not written, the other three are, and no requirement comes from the code ([#22](https://github.com/nibirsharif/agent-skills/issues/22)). |
+| `code-no-facts` | The same project where the code differs from the input only in what the input changes (a status code, a return value): both statements are written and no question is asked because of the code. |
 | `vague-only` | Only impressions and no system: questions only. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
 | `ask-location` | No path in the request, no `spec_output_dir` (the input is sent as written, not through the chat-only prompt): the reply is the one location question and no requirement. |
@@ -49,6 +51,34 @@ make eval SKILL=write-spec MODEL=sonnet RUNS=3 JUDGE=1
 ```
 
 Replies, run stats (turns, time, cost, how often the lint ran or was blocked, and which skills fired), full transcripts (`.jsonl`), judge results, and any error output are saved in `runs/`, which git ignores. Work through each case's "Review by hand" list: the checks cannot tell whether a value was invented.
+
+## Questions about the code
+
+`code-facts` and `code-no-facts` are the cases for [#22](https://github.com/nibirsharif/agent-skills/issues/22): write-spec may ask about a fact in a named system's code that would change a requirement, and writes no requirement from the code. All runs on `claude-sonnet-5-5` with Claude Code 2.1.327, 24 November 2026.
+
+| Wording | `code-facts` | `code-no-facts` | What the misses were |
+|---------|--------------|-----------------|----------------------|
+| The lookup as a line under Before writing | 2 of 3 | 0 of 3 read the code | 4 of the 6 runs never looked at the project, so they read neither the rules for the code nor the code: the `code-facts` miss, which wrote the 30 days as a requirement, and all three `code-no-facts` runs, whose replies passed without the code. The case now also checks that the code was read. |
+| The lookup as Workflow step 2 | 5 of 6 | 6 of 6 | All 12 runs listed the project and read the rules. The miss read search results in place of the files and never saw the rule in `schema.sql`. Two `code-no-facts` runs were first marked failed by a check that expected a path with a slash; their replies were right. |
+| The same, and each file read in full | 3 of 3 | 15 of 15 | The whole-suite run with the judge, and 12 more `code-no-facts` runs the same night. All 18 runs read each file in full, 4 files at most. |
+
+In the 10 passing `code-facts` runs both questions name the right file, the three other statements are written from the input's words, and the 30 days are not written. Five of them also ask, naming a file, whether a cancelled booking still counts as a stored booking. No `code-no-facts` run asked a question because of the code or put its status 400 in the reply.
+
+Not measured: the limit of 5 files, since the cases' project holds 5; a large project, where 5 files may not hold the fact; and the real project of [the first real run](../real-runs/2026-11-17.md), which was not run again.
+
+### A shorter wording, not kept
+
+The rules in `code-facts.md` are 809 words. A cut to 664 words was tried the same day and not kept. It removed what the rules repeat from `SKILL.md` and `ears-rules.md` (when to read them, the limit of 10 questions, that the code is not input), the reasons given for two rules, and the requirement lines of the example.
+
+| Rules | `code-facts` | `code-no-facts` | `propose-system` |
+|-------|--------------|-----------------|------------------|
+| Cut | 9 of 9 | 13 of 15 | 6 of 6 |
+| 809 words | 3 of 3 | 15 of 15 | 3 of 3 |
+
+- Both `code-no-facts` misses opened the reply with "Lint is clean, so here are the requirements." before a correct reply. With this few runs a split of 2 in 15 against 0 in 15 comes up by chance about 1 time in 4, so the cut is neither shown to cause the line nor cleared. It saved only words the budget does not count, so the 809 words stay.
+- One `code-facts` run on the cut rules read a search's output in place of the files, as the miss under the second wording did. The files are short, so the output showed both facts and the run passed.
+- The first cut, of 642 words, had dropped the line about a system in a `Proposed:` the user has not confirmed. That line is used: 4 of the 9 `propose-system` runs opened the rules with only such a system, and none read code.
+- The whole-suite run on the cut rules was 33 of 36. Besides one of the `code-no-facts` misses, two `ask-location` replies put a sentence before the question, such as "No target is set, so I'm asking before writing anything." `ask-location` does not open these rules. It missed the same way three times on 19 November, and passed 3 of 3 before and after that run the same day.
 
 ## Adding a case
 

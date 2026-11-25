@@ -8,6 +8,8 @@ Turns a feature description, user story, or rough requirements into EARS require
 
 It writes every requirement the input fully supports and asks a question for each gap. It never invents a system, a value, or a threshold, even when you say "assume defaults": it asks, and proposes a value only when your input or a named standard (WCAG, SPF/DKIM/DMARC) gives one.
 
+It writes requirements from your words only, never from what your code does today. When your input names a system that the project has code for, it reads a few of that system's files and asks about a fact there that would change a requirement, naming the file.
+
 ## When to use it
 
 Type `/nibirsharif-skills:write-spec` (or `/write-spec` when installed from a clone). The agent never starts this skill on its own.
@@ -38,6 +40,8 @@ Set `spec_output_dir` in [the config](../README.md#configuration) and the result
 
 **Why does it ask which system, when my project has only one?** A requirement must name the system that acts, and the skill never writes a name you did not give. It does look at your saved requirements files, the root README, and the top-level folder names, and when they point to one system it asks with that name as `Proposed:`. Reply `accept Q-001` to use it.
 
+**Why does a question name a file in my code?** Your input named a system the project has code for, and that code shows something that would change a requirement: a statement relies on something the code does not do or record, the code enforces a rule that your input does not mention and that stops a response from happening as you stated it, or the input says what the system does today and the code does otherwise. The question states the fact and its file so you can check it, and carries no proposal: whether the code or the input is right is your decision. It reads at most 5 files for a system, found by searching for your input's own words, so on a large project it can miss a fact. It never asks about what the feature changes, or about how the code is built.
+
 **A behaviour with a deadline became two requirements. Why?** The behaviour is an `FR` and the threshold is an `NFR`, so the plan can place the threshold with the behaviour it constrains. A timeout that triggers a response stays functional.
 
 **Why so many questions?** Each is one decision you would otherwise find out about in code review. Accept the proposals you agree with and answer the rest.
@@ -47,7 +51,8 @@ Set `spec_output_dir` in [the config](../README.md#configuration) and the result
 ## Verifying results
 
 - Every requirement names one system and can be checked by a test.
-- No value in a requirement is one you did not give or confirm.
+- No value in a requirement is one you did not give or confirm, and none comes from the code.
+- A question that names a file states something that file really shows.
 - Each question is one decision, not two.
 - The saved file keeps its IDs across updates.
 
