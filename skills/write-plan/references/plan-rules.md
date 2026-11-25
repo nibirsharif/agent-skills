@@ -30,13 +30,13 @@ Name a file or function only after you have seen it, never a plausible-sounding 
 
 ## Phases
 
-A phase is one PR, read in one sitting, that merges with every test green and leaves the product working, with a smaller feature. It holds at most `plan_max_requirements_per_phase` requirements, `FR` and `NFR` together, and `plan_max_files_per_phase` files, tests included. Cut the fewest phases that fit: that a slice could merge alone is no reason to make it a phase, and a layer ("database", "API", "UI") is never one.
+A phase is one PR, read in one sitting, that merges with every test green and leaves the product working. It holds at most `plan_max_requirements_per_phase` requirements, `FR` and `NFR` together, and `plan_max_files_per_phase` files, tests included. Cut the fewest phases that fit: that a slice could merge alone is no reason to make it a phase, and a layer ("database", "API", "UI") is never one.
 
 1. **Start with one phase.** A feature that fits both limits is one, however many flows it has.
 2. **Cut** only what is over a limit, between two slices (a system, flow, or set of data), or inside a flow over a limit alone, where one part works without the other. A phase of one requirement cannot be cut: that is a [stop](#stop-and-ask).
 3. **Count files** from the code you explored, each once per phase, so slices that share files are smaller as one phase. With no code for the feature, Size is a guess that neither cuts a phase nor keeps two apart: the requirement limit alone sizes the phases.
 4. **Place each `NFR`** in the phase of the `FR` it constrains, which must meet its threshold. It gets its own later phase only when it can be met afterwards without changing behaviour: performance tuning, availability, or an accessibility level. Say why in that phase's scope.
-5. **Order** phases so each depends only on earlier ones: foundations (data, interfaces) first, then behaviour, then failure handling.
+5. **Order** phases so each depends only on earlier ones. A requirement that applies to what several phases build goes in the first of them.
 6. **Merge neighbours.** In order, merge a phase and the next whenever they fit the limits together, until no pair does. A later `NFR` phase stays on its own.
 
 ## What each phase holds
@@ -51,7 +51,7 @@ A phase is one PR, read in one sitting, that merges with every test green and le
 
 ## Validation checklist
 
-Run every item on the plan before returning it.
+Run every item before returning the plan.
 
 1. Every written `FR` and `NFR` appears in exactly one phase.
 2. No withdrawn line and no blocked requirement appears in a phase; each blocked one has one `Blocked by` entry naming all the questions it waits on.
