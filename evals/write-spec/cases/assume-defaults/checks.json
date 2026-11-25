@@ -20,7 +20,7 @@
   ],
   "must_not_match": [
     {
-      "pattern": "^(FR|NFR)-\\d+:[^\\n]*\\d+ (seconds?|minutes?|hours?|days?|requests?)\\b",
+      "pattern": "^((FR|NFR)-\\d+|Draft):[^\\n]*\\d+ (seconds?|minutes?|hours?|days?|requests?)\\b",
       "why": "an expiry time or rate limit was assumed"
     },
     {

@@ -6,7 +6,8 @@ Usage: python3 lint.py [--follow-up] FILE [FILE ...]    (use - to read standard 
 --follow-up  the text is a chat reply after the first one in a conversation: every requirement line
              must carry `(new)` or `(changed)`.
 
-Checks every `FR-NNN:`, `NFR-NNN:`, and `Q-NNN:` line. A file whose first heading is
+Checks every `FR-NNN:`, `NFR-NNN:`, and `Q-NNN:` line, and every `Draft:` line: a requirement that
+waits on questions, with `[Q-NNN]` in place of each missing part. A file whose first heading is
 `# Requirements Specification` is also checked against the file template.
 
 ERROR  breaks a rule. Fix it.
@@ -23,6 +24,8 @@ from pathlib import Path
 BANNED = Path(__file__).resolve().parent.parent / "references" / "banned-words.md"
 
 LINE_RE = re.compile(r"^(- )?((FR|NFR|Q)-\d{3,})(?: \((?:new|changed)\))?: (.*)$")
+DRAFT_RE = re.compile(r"^(- )?Draft: (.*)$")
+SLOT_RE = re.compile(r"\[(Q-\d{3,})\]")
 MARKED_RE = re.compile(r"^(- )?(FR|NFR)-\d{3,} \((new|changed)\): ")
 COMMENT_RE = re.compile(r"\s*<!--.*?-->")
 QUOTED_RE = re.compile(r'"[^"]*"|“[^”]*”|`[^`]*`')
@@ -86,6 +89,8 @@ class Linter:
             return
         bare = QUOTED_RE.sub('""', text)
         head, _, response = bare.partition(" shall ")
+        if ident != "Draft" and SLOT_RE.search(bare):
+            self.add(where, "ERROR", ident, "a requirement with a `[Q-NNN]` slot is a draft: `Draft:` in place of the ID")
 
         if not text.endswith("."):
             self.add(where, "ERROR", ident, "does not end with a full stop")
@@ -130,7 +135,7 @@ class Linter:
             self.add(where, "CHECK", ident, "`between X and Y` leaves the boundaries open if it is a limit")
         for m in re.finditer(r"\bwithin \d[\d.,]*\s*[A-Za-z]+\b(?!\s+of\b)", bare):
             self.add(where, "ERROR", ident, f"`{m.group(0)}` has no starting point: `within N <unit> of <event>`")
-        zoned = re.search(r"UTC|GMT|time zone", bare)
+        zoned = re.search(r"UTC|GMT|time zone", bare) or SLOT_RE.search(bare)  # a slot may stand for the zone
         if re.search(r"\b([01]?\d|2[0-3]):[0-5]\d\b", bare) and not zoned:
             self.add(where, "ERROR", ident, "time of day with no time zone")
         elif re.search(DAY_BOUNDARY, head, re.I) and not zoned:
@@ -150,6 +155,18 @@ class Linter:
                 level = "CHECK" if word.lower() in TWO_SENSES else "ERROR"
                 self.add(where, level, ident, f"banned word `{found}`, listed under {group}"
                          + (" (allowed only in another sense)" if level == "CHECK" else ""))
+
+    def draft(self, where, text, asked, is_file):
+        if is_file:
+            self.add(where, "ERROR", "Draft", "a draft is never saved: the file holds its questions")
+            return
+        slots = SLOT_RE.findall(text)
+        if not slots:
+            self.add(where, "ERROR", "Draft", "a draft has `[Q-NNN]` in place of each missing part; "
+                     "with nothing missing it is a requirement")
+        for slot in sorted(set(slots) - asked):
+            self.add(where, "ERROR", "Draft", f"slot `[{slot}]` names a question this reply does not ask")
+        self.requirement(where, "Draft", text)
 
     def question(self, where, ident, text):
         if text.startswith("Closed."):
@@ -177,21 +194,29 @@ class Linter:
 
     def lint(self, name, text, follow_up=False):
         lines = text.splitlines()
-        seen, prev_is_id, run_reported = {}, False, False
+        seen, prev_is_id, run_reported, drafted, order_reported = {}, False, False, False, False
         is_file = next((l for l in lines if l.startswith("# ")), "").startswith("# Requirements Specification")
+        asked = set(re.findall(r"^(Q-\d{3,}): (?!Closed\.)", text, re.M))
         for n, line in enumerate(lines, 1):
             where = f"{name}:{n}"
-            m = LINE_RE.match(line)
-            if not m:
+            m, draft = LINE_RE.match(line), DRAFT_RE.match(line)
+            if not m and not draft:
                 prev_is_id = run_reported = False
                 continue
-            bullet, ident, kind, body = m.groups()
+            bullet, ident, kind, body = m.groups() if m else (draft.group(1), "Draft", "Draft", draft.group(2))
             if bullet:
-                self.add(where, "ERROR", ident, "no bullet before the ID")
+                self.add(where, "ERROR", ident, "no bullet before the ID" if m else "no bullet before `Draft:`")
             if prev_is_id and not run_reported:
                 self.add(where, "ERROR", ident, "needs a blank line before it and before each ID line after it, "
                          "or the lines render as one paragraph")
                 run_reported = True
+            if kind == "Draft":
+                self.draft(where, body.strip(), asked, is_file)
+                drafted = prev_is_id = True
+                continue
+            if drafted and not is_file and not order_reported:
+                self.add(where, "ERROR", ident, "draft lines come last, below the questions")
+                order_reported = True
             if follow_up and not is_file and kind != "Q" and not MARKED_RE.match(line):
                 self.add(where, "ERROR", ident, "a reply after the first marks every requirement: "
                          "`(new)` when it is written for the first time, `(changed)` when it was rewritten")
@@ -230,7 +255,7 @@ class Linter:
             body = text.split(heading, 1)[-1].split("\n## ", 1)[0] if heading in text else ""
             for line in COMMENT_RE.sub("", body).splitlines():
                 line = line.strip()
-                if line and not LINE_RE.match(line) and not re.fullmatch(r"None given\.|None\.|Pending: .+", line):
+                if line and not LINE_RE.match(line) and not DRAFT_RE.match(line) and not re.fullmatch(r"None given\.|None\.|Pending: .+", line):
                     self.add(name, "ERROR", "file", f"`{heading}` holds a line that is not an ID line: `{line[:60]}`")
 
         sections = {h: text.split(h, 1)[-1].split("\n## ", 1)[0] if h in text else "" for h in FILE_HEADINGS[2:4]}

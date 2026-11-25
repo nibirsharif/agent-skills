@@ -1,5 +1,5 @@
 """write-spec's own reply checks: the skill's lint must find no errors, and the reply holds only
-requirement lines, question lines, and the "N more open questions" line."""
+requirement lines, draft lines, question lines, and the "N more open questions" line."""
 
 import importlib.util
 import re
@@ -25,7 +25,7 @@ def check(reply):
             failures.append(f"lint: {where} {ident}: {message}")
 
     for line in reply.splitlines():
-        if line.strip() and not re.match(r"(FR|NFR|Q)-\d+\b|\d+ more open questions after these\b", line):
+        if line.strip() and not re.match(r"(FR|NFR|Q)-\d+\b|Draft: |\d+ more open questions after these\b", line):
             failures.append(f"text outside the requirements and questions: {line[:100]}")
             break
     return failures

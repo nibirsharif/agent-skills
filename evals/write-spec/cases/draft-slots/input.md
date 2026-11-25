@@ -1,0 +1,1 @@
+When a driver scans a ticket at the exit terminal, the parking service opens the exit barrier. The parking service emails each account holder an account statement at 07:00 on the 1st day of each month. The system adds a late fee of 5 EUR to a ticket that is paid more than 24 hours after the car leaves. Paying must be quick.

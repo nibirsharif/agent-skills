@@ -9,10 +9,11 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `nfr-ids` | Functional and non-functional requirements take separate `FR` and `NFR` sequences, and a deadline on a behaviour is split into an `FR` and an `NFR`. |
 | `followup-answers` | A follow-up turn: three of six questions are answered and a deadline is added. New requirements are marked `(new)` and continue the sequences, the unchanged requirement is not repeated, answered questions are not asked again, and unanswered ones keep their IDs. |
 | `followup-first-requirements` | A follow-up turn after a first reply of questions only: the first requirements are still marked `(new)`, start at `FR-001`, and new questions continue after the highest `Q` ID. |
-| `propose-system` | The input names no system and the project's README names one: the question carries it as `Proposed:`, and no requirement is written before the user confirms. The project is in the case's `dirty/` folder. |
+| `propose-system` | The input names no system and the project's README names one: the question carries it as `Proposed:`, the statement is shown as a draft without that name, and no requirement is written before the user confirms. The project is in the case's `dirty/` folder. |
 | `code-facts` | The project holds the named system's code, and two facts in it would change a requirement: a rule the input does not mention that stops a response, and a value the input says is today's where the code has another. Each gets a question that names its file, the contradicted statement is not written, the other three are, and no requirement comes from the code ([#22](https://github.com/nibirsharif/agent-skills/issues/22)). |
 | `code-no-facts` | The same project where the code differs from the input only in what the input changes (a status code, a return value): both statements are written and no question is asked because of the code. |
-| `vague-only` | Only impressions and no system: questions only. |
+| `draft-slots` | One statement is complete, one lacks only a time zone, one lacks only its system, and one gives only an impression: the first is written, the next two are drafts with the question's ID where the missing part goes, and the impression gets questions and no draft ([#21](https://github.com/nibirsharif/agent-skills/issues/21)). |
+| `vague-only` | Only impressions and no system: questions only, and no draft. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
 | `ask-location` | No path in the request, no `spec_output_dir` (the input is sent as written, not through the chat-only prompt): the reply is the one location question and no requirement. |
 | `routing-gherkin` | Routing: a Given/When/Then request, which the skill's description excludes. The skill must not fire. |
@@ -28,7 +29,7 @@ Each case folder holds:
 
 A skill whose cases need code to work on names a folder in its `config.json` as `"fixture"`. Every case of that skill starts in a copy of it, committed as a git repository on `main`. Without one, each run starts in an empty folder.
 
-Besides each case's checks, every reply except in a `"fires": false` case must pass [hooks.py](hooks.py): the skill's lint finds no errors, and the reply holds nothing but requirement and question lines (and the "N more open questions" line).
+Besides each case's checks, every reply except in a `"fires": false` case must pass [hooks.py](hooks.py): the skill's lint finds no errors, and the reply holds nothing but requirement, draft, and question lines (and the "N more open questions" line).
 
 ## Running
 
@@ -79,6 +80,19 @@ The rules in `code-facts.md` are 809 words. A cut to 664 words was tried the sam
 - One `code-facts` run on the cut rules read a search's output in place of the files, as the miss under the second wording did. The files are short, so the output showed both facts and the run passed.
 - The first cut, of 642 words, had dropped the line about a system in a `Proposed:` the user has not confirmed. That line is used: 4 of the 9 `propose-system` runs opened the rules with only such a system, and none read code.
 - The whole-suite run on the cut rules was 33 of 36. Besides one of the `code-no-facts` misses, two `ask-location` replies put a sentence before the question, such as "No target is set, so I'm asking before writing anything." `ask-location` does not open these rules. It missed the same way three times on 19 November, and passed 3 of 3 before and after that run the same day.
+
+## Drafts
+
+`draft-slots` is the case for [#21](https://github.com/nibirsharif/agent-skills/issues/21), and `propose-system` and `vague-only` check drafts too: a statement that lacks only a system name or a value is shown as a `Draft:` line below the questions, and an impression gets none. The rules are in the skill's `references/drafts.md`, which the workflow opens only after the requirements and questions are linted. Read up front, the same rules made every reply ask fewer questions: see the [benchmark record](benchmark/after-drafts.md). All runs on `claude-sonnet-5-5` with Claude Code 2.1.327, 25 November 2026, 3 runs each with the judge.
+
+| Run | Passed | What the misses were |
+|-----|--------|----------------------|
+| The suite, first wording of `drafts.md` | 35 of 39 | Two replies opened with a sentence: "No statement lacks a value that a question asks for, so there are no drafts." in `clean-feature`, and one about the lint in `propose-system`. `drafts.md` now ends by saying what the reply's first line is, also when no draft was added. One `draft-slots` reply asked 9 questions where the case allowed 8; it allows 10 now. One `prd-solar-monitoring` reply wrote an installed add-on with `While`. |
+| The suite, after that fix | 37 of 39 | No reply opened with a sentence. `nfr-ids` asked a fourth coverage question, with no draft involved. One `draft-slots` reply wrote the passive late-fee statement with the system of the statements around it; the input now says "The system adds a late fee", as `prd-solar-monitoring` does for its statement with no system. |
+| `draft-slots` alone, 6 runs, after that | 5 of 6 | One reply wrote a draft for "Paying must be quick". The rule against a draft for an impression now names `fast`, `secure`, and `quick`. |
+| The six cases a draft can appear in, after that | 18 of 18 | `draft-slots`, `vague-only`, `propose-system`, `prd-solar-monitoring`, `clean-feature`, `assume-defaults`. |
+
+Not measured: the follow-up turn with drafts. `followup-first-requirements` and `followup-answers` passed 6 of 6 in each suite run, but their first replies, which the input quotes, hold no draft.
 
 ## Adding a case
 
