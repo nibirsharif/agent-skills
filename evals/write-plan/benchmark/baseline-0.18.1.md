@@ -1,13 +1,14 @@
 # Baseline: write-plan 0.18.1
 
-One run per input on `claude-sonnet-5-5` (Claude Code 2.1.327), 2026-11-24, with the skill as changed for [#10](https://github.com/nibirsharif/agent-skills/issues/10): cut the fewest phases that fit the limits, merge neighbours that fit as one, and let the requirement limit alone size the phases where there is no code to count files in. Scored by hand against each `reference.md` as the [README](README.md) says. The references of the six inputs that [baseline-0.14.0.md](baseline-0.14.0.md) scored are unchanged, and its phase counts are beside the new ones. The two `dev-note-tags` inputs are new with this change: they have a project with code, and their references were written before their first run.
+One run per input on `claude-sonnet-5-5` (Claude Code 2.1.327), 2026-11-24, with the skill as changed for [#10](https://github.com/nibirsharif/agent-skills/issues/10): cut the fewest phases that fit the limits, merge neighbours that fit as one, and let the requirement limit alone size the phases where there is no code to count files in. Scored by hand against each `reference.md` as the [README](README.md) says. The references of the six inputs that [baseline-0.14.0.md](baseline-0.14.0.md) scored are unchanged, and its phase counts are beside the new ones. Three dev inputs are new with this change, and their references were written before their first run: the two `dev-note-tags` inputs, which have a project with code, and `dev-saved-searches`, whose scope names more than its requirements state.
 
 | Input | Coverage | Phases (0.14.0; reference) | Before | Together | Code | Blocked right |
 |-------|----------|----------------------------|--------|----------|------|---------------|
 | dev-document-sharing | 10 of 10 | 3 (6; 2 to 4) | 5 of 5 | 4 of 4 | no project | yes |
 | dev-feature-flags | 5 of 5 | 1 (1; 1) | none listed | 2 of 2 | no project | yes |
 | dev-table-booking | 12 of 12 | 2 (5; 2 to 4) | 7 of 7 | 4 of 4 | no project | yes |
-| **dev total, without code** | 27 of 27 | 3 of 3 in range (1 of 3) | 12 of 12 | 10 of 10 | | 3 of 3 |
+| **dev total, the three 0.14.0 scored** | 27 of 27 | 3 of 3 in range (1 of 3) | 12 of 12 | 10 of 10 | | 3 of 3 |
+| dev-saved-searches | 6 of 6 | 1 (new; 1) | none listed | 2 of 2 | no project | yes |
 | dev-note-tags | 5 of 5 | 1 (new; 1) | none listed | 2 of 2 | 4 of 4 | yes |
 | dev-note-tags-small-limit | 5 of 5 | 2 (new; 2 to 3) | 2 of 2 | 2 of 2 | 4 of 4 | yes |
 | **dev total, with code** | 10 of 10 | 2 of 2 in range | 2 of 2 | 4 of 4 | 8 of 8 | 2 of 2 |
@@ -40,16 +41,22 @@ Both inputs ran three times while the rules were written, with the same phases a
 
 dev-document-sharing T4: the access log (FR-010) belongs in the first phase that changes access. 0.14.0 put it in a fourth phase, and the first wording of this change put it in Phase 2, with the public links, in 2 of 3 runs, though Phase 1 had room. The Order step now says that a requirement that applies to what several phases build goes in the first of them. With that sentence FR-010 is in Phase 1 in 5 of 5 runs.
 
+## A scope that names more than the requirements
+
+`dev-saved-searches` has six requirements for saving and deleting a saved search and a hint for a user who has none, and a scope that also names renaming, listing, and running one. Its reference lists those three as not planned (`N1` to `N3`). It was written to see, on a dev input, what hold-profile-photo showed (next section).
+
+It ran three times on the final wording, one phase each time. All three replies say that the scope names renaming, listing, and running, that no requirement states them, and that they are left out, and none has a scope or interface line for them. The table's run holds 2 of 3: its check for FR-001 ends "and the list once one exists", which tests a list no requirement states (`N3`). The other two hold 3 of 3. So the fault is not reproduced here, and no rule was written for it.
+
 ## What the plans add
 
-- hold-profile-photo plans that the web app shows the photo: a component "that shows the photo, or the user's initials when the user has no photo". The scope names showing a photo, but no written requirement states it; FR-006 covers only the initials, "in place of the profile photo". The 0.14.0 run said so in its Approach and planned neither. Both hold runs of this change plan it, the first also in FR-001's check. Replacing a photo, which the scope also names, is not planned. It is left as it is: a rule made from a hold reply would end the hold set's use.
+- hold-profile-photo plans that the web app shows the photo: a component "that shows the photo, or the user's initials when the user has no photo". The scope names showing a photo, but no written requirement states it; FR-006 covers only the initials, "in place of the profile photo". The 0.14.0 run said so in its Approach and planned neither. Both hold runs of this change plan it, the first also in FR-001's check. Replacing a photo, which the scope also names, is not planned. It is left as it is: a rule made from a hold reply would end the hold set's use, and the dev input written for the same gap does not show the fault.
 - In the first of the two hold runs, hold-parking-permits repeated the answer of the closed Q-003 in an interface line. It is in the file, not invented, and the question was listed neither as blocked nor as open. The second run does not mention it.
 
 No reply for an input without a project names a file, and each of their Reuse lines is `None found.`
 
 ## The runs while the rules were written
 
-The three dev inputs without code ran at least five times each, and the hold set twice: once on the wording without the Order sentence and once on the final wording, which the table shows. The phase counts were the same every time: 3, 1, and 2 for the dev inputs, 2 and 1 for the hold plans, and the question for hold-message-search.
+The three dev inputs that 0.14.0 scored ran at least five times each, and the hold set twice: once on the wording without the Order sentence and once on the final wording, which the table shows. The phase counts were the same every time: 3, 1, and 2 for the dev inputs, 2 and 1 for the hold plans, and the question for hold-message-search.
 
 The first wording said to "write Size as a rough guess", and two of the three replies then wrote `**Size:** about 14 files (rough guess, no code to count)`. The Size field now says `about <n> files` and nothing more, and no reply since has added to the line.
 

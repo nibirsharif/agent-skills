@@ -9,6 +9,7 @@ Each folder holds an `input.md`, a requirements file pasted into the prompt, and
 - `D` items, "before": a requirement that must be in the same phase as another one, or an earlier phase, because the second builds on the first;
 - `T` items, "together": requirements that belong in one phase, such as an `NFR` and the `FR` it limits;
 - the blocked entries the plan must list, and what it must not plan;
+- `N` items, "not planned", for an input whose scope names something that no requirement states;
 - `C` items, "code", for an input with a project: the sizes, the files Reuse names, and paths and tools the project does not have;
 - one sensible cut, as an example. Other cuts that hold every item are as good.
 
@@ -19,7 +20,7 @@ The files list their requirements out of build order on purpose, so a plan that 
 - `dev-*`: read these replies when changing a rule.
 - `hold-*`: never tune a rule on these. Run them only to check that a change which helped the dev set helps here too.
 
-Both sets have a feature that fits one phase, a feature that needs several, blocked requirements, and withdrawn or closed lines. Only the dev set has inputs with a project. `hold-message-search` has an open question that decides the architecture, so its right reply is the question and no plan.
+Both sets have a feature that fits one phase, a feature that needs several, blocked requirements, and withdrawn or closed lines. Only the dev set has inputs with a project. Each set has one input whose scope names more than its requirements state: `dev-saved-searches`, which lists `N` items for it, and `hold-profile-photo`. `hold-message-search` has an open question that decides the architecture, so its right reply is the question and no plan.
 
 ## Running
 
@@ -38,6 +39,7 @@ Score each reply by hand against its `reference.md`:
 - **Before:** how many `D` items hold.
 - **Together:** how many `T` items hold.
 - **Code:** how many `C` items hold, for an input with a project.
+- **Not planned:** how many `N` items hold. Saying that the scope names something no requirement covers is not planning it.
 - **Blocked right:** whether section 3 has exactly the reference's entries, no blocked or withdrawn requirement is planned, and no question is answered.
 
 Also note anything the plan invents: a file, a requirement, a value, or an answer to a question.
