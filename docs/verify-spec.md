@@ -54,6 +54,8 @@ It stops with a single line instead when there is no `requirements.md` for the f
 
 **Why is a requirement `untested` when the code is right?** `met` needs both the code and a passing test. When two verdicts fit, it takes the weaker one, so a requirement is never rounded up.
 
+**Why is a requirement `partial` when its test passes?** Two cases besides a wrong value. The check holds on the path the test drives and another command, route, or job reaches the same code without it: the row names that caller. Or the requirement names one part of the code, such as "the store shall reject", and only the code that calls the store does the rejecting: the row names both places. A requirement that names the whole product is met wherever its code is.
+
 **Why does it run my tests?** A test that exists is not evidence; one that passed in this run is. It runs the project's existing test command (or `test_command` from `.agent-skills-config.yaml`) once and nothing else: no installs, no scripts that change data. When the tests cannot run, the `Tests:` line says why and no row is `met`.
 
 **Does it tell me how to fix a gap?** No. A row says what is missing. Fix code with [implement-task](implement-task.md) and requirements with [write-spec](write-spec.md).
@@ -63,6 +65,7 @@ It stops with a single line instead when there is no `requirements.md` for the f
 ## Verifying results
 
 - Open one `met` row's cited line: it should be where the behaviour is, and the named test should assert the behaviour, not just call the code.
+- For a requirement that forbids something, search for what else calls the code that does it. It looks for those callers itself; on a project of hundreds of files that search has not been measured.
 - A `Done` task in `tasks.md` has no effect on any verdict.
 - `git status` after the run is what it was before: nothing edited, staged, or committed.
 

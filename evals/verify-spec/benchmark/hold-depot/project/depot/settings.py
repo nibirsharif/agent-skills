@@ -1,0 +1,6 @@
+"""Numbers the depot runs on."""
+
+OVERDUE_DAYS = 14
+COUNT_TOLERANCE = 2
+RETURN_WINDOW_DAYS = 30
+CURRENCY = "EUR"
