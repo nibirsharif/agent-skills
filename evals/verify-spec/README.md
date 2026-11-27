@@ -43,10 +43,19 @@ Shorter rules, the next piece of [#24](https://github.com/nibirsharif/agent-skil
 
 The benchmark's one differing row is not from the change: see [benchmark/after-shorter-rules.md](benchmark/after-shorter-rules.md). In the suite run after the change, every run that loaded the skill ran `check_scope.py` and read both `verify-rules.md` and `examples.md` (24 of 27; the other three are `routing-review`), and none read `without-commands.md`: the harness always allows commands, so that file has no case. Also with no case that would show a difference: the stops for a file with no IDs, a phase with no `plan.md`, and a phase `plan.md` does not have, which have unit tests in `tests/` and no eval case, and tests that cannot run.
 
+Verdict rules for [#23](https://github.com/nibirsharif/agent-skills/issues/23), 26 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327). The benchmark has four harder inputs, each input runs three times, and [benchmark/score.py](benchmark/score.py) counts the verdicts and how many rows agree across runs. On the skill as it was, a rule that one path skips was `met` in 6 of 6 runs, and a rule kept outside the system the requirement names was `met` in 3 of 6 and `partial` in the other 3: [benchmark/baseline-0.20.0.md](benchmark/baseline-0.20.0.md). Three rules now decide these and the `partial` that was sometimes given to code that is right: [benchmark/after-verdict-rules.md](benchmark/after-verdict-rules.md).
+
+| Rules | Suite at 3 runs | Benchmark rows right | Gaps called `met` | Rows the same in 3 runs | Drift right |
+|---|---|---|---|---|---|
+| Before the change | not run | 203 of 213 | 9 of 129 | 68 of 71 | 30 of 30 |
+| After | 27 of 27 | 213 of 213 | 0 of 129 | 70 of 71 | 30 of 30 |
+
+The suite has no case for the new rules: the `textstats` fixture has one module and one way in, so only the benchmark shows them.
+
 Case folders, the golden and bad replies, running, and adding a case work as described in [../write-spec/README.md](../write-spec/README.md). Checks with `"target": "trace"` read the agent's tool calls. Work through each case's "Review by hand" list: the checks cannot tell whether a cited line is the right one.
 
 ```bash
 make eval SKILL=verify-spec
 ```
 
-[benchmark/](benchmark/README.md) measures whether the verdicts are right on six other projects with planted faults, which these cases do not.
+[benchmark/](benchmark/README.md) measures whether the verdicts are right, and the same from run to run, on ten other projects with planted faults, which these cases do not.

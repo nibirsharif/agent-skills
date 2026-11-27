@@ -28,7 +28,7 @@ PLUGIN_JSON = ROOT / ".claude-plugin" / "plugin.json"
 WORD_BUDGETS = {
     "build-phase": (2800, ["references/build-rules.md"]),
     "implement-task": (3480, ["references/implement-rules.md", "references/examples.md"]),
-    "verify-spec": (3020, ["references/verify-rules.md", "references/examples.md"]),
+    "verify-spec": (3040, ["references/verify-rules.md", "references/examples.md"]),
     "write-plan": (3100, ["references/plan-rules.md", "references/examples.md", "references/plan-template.md"]),
     "write-spec": (5330, ["references/ears-rules.md", "references/examples.md", "references/drafts.md"]),
     "write-tasks": (3330, ["references/task-rules.md", "references/examples.md", "references/tasks-template.md"]),

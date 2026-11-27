@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Run a skill's benchmark inputs through the agent once each and save the replies. Nothing is graded here.
+"""Run a skill's benchmark inputs through the agent and save the replies. Nothing is graded here.
 
-Usage: python3 evals/bench.py <skill> [input ...] [--model M] [--label NAME] [--file turn2.md]
+Usage: python3 evals/bench.py <skill> [input ...] [--model M] [--label NAME] [--file turn2.md] [--runs N]
 
 Inputs are evals/<skill>/benchmark/<name>/input.md, or the file --file names in the same folder (turn2.md is
 the input, a fixed first reply, and scripted answers). Each has a reference.md beside it, which the agent never
@@ -9,7 +9,9 @@ sees: the decisions the input leaves open, or the faults planted in its project.
 folder beside it runs in a copy of that folder, set up as run.py sets up a fixture: committed on main, then
 the input's branch/ folder committed on the branch feature-work, then its dirty/ folder left uncommitted.
 Replies go to evals/<skill>/runs/bench-<label>/<name>.md, with the run's cost, model ID, and Claude Code
-version in <name>.json. See evals/<skill>/benchmark/README.md for how the replies are scored.
+version in <name>.json and the transcript in <name>.jsonl. With --runs N each input runs N times, all at once, and the replies are
+<name>-r1.md to <name>-r<N>.md: for a score that needs to know whether a reply repeats. See
+evals/<skill>/benchmark/README.md for how the replies are scored.
 """
 
 import argparse
@@ -40,6 +42,7 @@ def one(skill, config, name, source, out, model):
     trace = grading.summarize(events, config.get("watch", []))
     result = trace["result"]
     out.write_text(result.get("result", ""))
+    out.with_suffix(".jsonl").write_text(stdout)
     stats = {k: v for k, v in result.items() if k != "result"}
     stats.update(model=trace["model"], claude_code_version=trace["cli_version"])
     out.with_suffix(".json").write_text(json.dumps(stats, indent=2))
@@ -54,6 +57,7 @@ def main(argv):
     parser.add_argument("--model")
     parser.add_argument("--file", default="input.md")
     parser.add_argument("--label", default=time.strftime("%Y%m%d-%H%M%S"))
+    parser.add_argument("--runs", type=int, default=1)
     args = parser.parse_args(argv)
 
     here = grading.EVALS / args.skill
@@ -61,10 +65,12 @@ def main(argv):
     names = args.inputs or sorted(p.name for p in (here / "benchmark").iterdir() if (p / args.file).is_file())
     out_dir = here / "runs" / f"bench-{args.label}"
     out_dir.mkdir(parents=True, exist_ok=True)
-    print(f"Started {len(names)} runs. Replies go to {out_dir.relative_to(run.ROOT)}/")
-    with ThreadPoolExecutor(max_workers=len(names)) as pool:
-        jobs = [pool.submit(one, args.skill, config, n, here / "benchmark" / n / args.file,
-                            out_dir / f"{n}.md", args.model) for n in names]
+    # One run keeps the plain name, so earlier records and scripts that read <name>.md still work.
+    replies = [(n, f"{n}-r{i}" if args.runs > 1 else n) for n in names for i in range(1, args.runs + 1)]
+    print(f"Started {len(replies)} runs. Replies go to {out_dir.relative_to(run.ROOT)}/")
+    with ThreadPoolExecutor(max_workers=len(replies)) as pool:
+        jobs = [pool.submit(one, args.skill, config, reply, here / "benchmark" / n / args.file,
+                            out_dir / f"{reply}.md", args.model) for n, reply in replies]
         lines = [job.result() for job in jobs]
     print("\n".join(lines))
     return 1 if any(line.startswith("FAIL") for line in lines) else 0

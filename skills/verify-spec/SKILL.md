@@ -51,7 +51,7 @@ This skill reports and nothing else. It does not edit code, tests, or any spec f
 Work silently: do not narrate what you found or which rule applies.
 
 1. **Find `requirements.md` and the scope**, as [Finding the files](#finding-the-files) says: one script does both, and prints the stop line when there is one. Blocked requirements are `skipped`, as the rules say.
-2. **Explore the code:** for each requirement in scope, find where its behaviour lives and the tests that drive it. Read the test bodies.
+2. **Explore the code:** for each requirement in scope, find where its behaviour lives, every caller that reaches it, and the tests that drive it. Read the test bodies.
 3. **Run the project's test command** once, as the rules say, and read the result per test.
 4. **Decide each verdict** and write its evidence, taking the weaker verdict when unsure.
 5. **Find drift**, as the rules say: run `git status --porcelain` every time.

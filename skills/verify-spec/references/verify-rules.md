@@ -32,7 +32,7 @@ Every row has exactly one of these:
 
 Rules that decide between them:
 
-- **`met` needs both halves.** Code alone is `untested`. A test alone is not enough either: cite the code the test exercises.
+- **`met` needs both halves.** Code alone is `untested`, however weak its tests: `partial` is only for code that falls short. A test alone is not enough either: cite the code the test exercises.
 - **Read the test, not its name.** A test counts only if its body drives the statement's trigger and asserts its response. A test that passes without asserting the behaviour does not count.
 - **Failure beats presence.** A test for the requirement that ran and failed makes the row `unmet`, with the failure as evidence.
 - **An NFR with a threshold but no benchmark** (a stated limit and no test that measures it) is `untested`, not `cannot tell`.
@@ -50,6 +50,9 @@ Look for each part of the sentence, not only its verb:
 - None of these: the behaviour holds on every call.
 
 A value in the statement (200, 15 minutes, `TypeError`) is checked as written. A different value is `partial`.
+
+- **Every way in.** Search for each caller of the code the statement is about (a command, route, job, or hook), not only the one a test drives. When one reaches the trigger or the effect and skips the statement's check or response, the row is `partial`; cite that caller.
+- **The named system.** When the statement names one part of the code (the store, the parser) and only a caller of that part does the behaviour, the row is `partial`; cite both places. A name for the whole product is met anywhere in it.
 
 ## Evidence
 
@@ -85,7 +88,7 @@ A changed file is drift when it neither implements nor tests any requirement in 
 Run every item before replying.
 
 1. Every requirement in scope has exactly one row, in file order; every blocked or out-of-phase one is `skipped`.
-2. Every `met` row cites an implementation line and a test that ran and passed in this run. Where two verdicts fit, the weaker one is used.
+2. Every `met` row cites an implementation line and a test that ran and passed in this run, and no caller skips it. Where two verdicts fit, the weaker one is used.
 3. Every cited path and line exists, and you opened it.
 4. A `Tests:` line names the command and its result, or why the tests did not run.
 5. `Tally:` counts match the rows; `Drift:` lists paths or says why it was not checked.
