@@ -1,5 +1,7 @@
 Set: dev. Domain: API. Form: bullet list.
 
+Statements: 5 (five list items; the title is not one).
+
 Open decisions:
 - R1: How many times, and at what intervals, a failed delivery is retried.
 - R2: What the notification service does with a delivery that still fails after the last retry.

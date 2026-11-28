@@ -1,5 +1,7 @@
 Set: holdout. Domain: device. Form: prose.
 
+Statements: 4 (four sentences; the title is not one).
+
 Open decisions:
 - R1: What the firmware does when the handle is tapped and no registered phone is within 2 metres.
 - R2: What the firmware does when the door is still open 30 seconds after unlocking, and when it then locks.

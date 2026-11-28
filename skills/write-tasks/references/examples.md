@@ -9,11 +9,11 @@ The password-reset plan has one phase with `FR-001`, `FR-002`, `NFR-001`, and th
 ```
 ## 1. Overview
 
-There is no codebase in this folder, so every file is new. The token store comes first, then expiry, then the email and its deadline, then the phase check.
+There is no codebase in this folder, so every file is new. The token store comes first, then expiry, then the email with its deadline, then the phase check.
 
 | Phase | Tasks | Requirements |
 |-------|-------|--------------|
-| 1 | T-1.1 to T-1.5 | FR-001, FR-002, NFR-001 |
+| 1 | T-1.1 to T-1.4 | FR-001, FR-002, NFR-001 |
 
 ## 2. Tasks
 
@@ -43,39 +43,27 @@ There is no codebase in this folder, so every file is new. The token store comes
 
 **Status:** Todo
 
-#### T-1.3: Email the reset link
+#### T-1.3: Email the reset link within its deadline
 
-**Covers:** FR-001
+**Covers:** FR-001, NFR-001
 
-**Files:** new: `POST /auth/password-reset` handler, new: mail call, new: integration test
+**Files:** new: `POST /auth/password-reset` handler with its mail call, new: integration test, new: load test script
 
 **Depends on:** T-1.1
 
-**Done when:** FR-001: integration test that a reset request for a registered user sends one email containing a link
+**Done when:** FR-001: integration test that a reset request for a registered user sends one email containing a link; NFR-001: load test run shows 99% of reset emails sent within 2 minutes of the request
 
 **Status:** Todo
 
-#### T-1.4: Measure the email deadline
-
-**Covers:** NFR-001
-
-**Files:** new: load test script
-
-**Depends on:** T-1.3
-
-**Done when:** NFR-001: load test run shows 99% of reset emails sent within 2 minutes of the request
-
-**Status:** Todo
-
-#### T-1.5: Verify the phase
+#### T-1.4: Verify the phase
 
 **Covers:** FR-001, FR-002, NFR-001
 
 **Files:** None.
 
-**Depends on:** T-1.2, T-1.4
+**Depends on:** T-1.2, T-1.3
 
-**Done when:** FR-001: T-1.1 and T-1.3 tests pass; FR-002: T-1.2 test passes; NFR-001: T-1.4 load test passes; the full test suite is green
+**Done when:** FR-001: T-1.1 and T-1.3 tests pass; FR-002: T-1.2 test passes; NFR-001: T-1.3 load test passes; the full test suite is green
 
 **Status:** Todo
 
@@ -86,7 +74,8 @@ None.
 
 ## Splitting a task
 
-- Too big: `T-1.3: Build password reset` with six files. Split by behaviour: token store, expiry, email, deadline.
+- Too big: `T-1.3: Build password reset` with six files. Split by behaviour: token store, expiry, email.
+- Too small: `Email the reset link` and `Measure the email deadline` as two tasks. `NFR-001` is a threshold on `FR-001`'s response, and the files fit: one task, with a check for each ID. `FR-002` stays apart: opening a link is another event.
 - Layers: `T-1.1 Add database`, `T-1.2 Add API`, `T-1.3 Add UI`. Each task should leave the product working; split by behaviour.
 
 ## An interface item no Verify line names
@@ -137,7 +126,7 @@ With `spec_output_dir: docs/specs`, the file is `docs/specs/password-reset/tasks
 
 ```
 Saved docs/specs/password-reset/tasks.md.
-Phase 1: 5 tasks (FR-001, FR-002, NFR-001)
+Phase 1: 4 tasks (FR-001, FR-002, NFR-001)
 Blocked: Q-001, Q-002 (rate limiting)
 ```
 

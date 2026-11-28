@@ -1,5 +1,7 @@
 Set: holdout. Domain: UI. Form: prose.
 
+Statements: 4 (four sentences).
+
 Open decisions:
 - R1: Which system displays the form and which sends the welcome email ("the web app" is not a concrete system name).
 - R2: What makes a password strong, in rules a tester can check.

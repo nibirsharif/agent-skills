@@ -11,7 +11,7 @@
     "FR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-001\\b", "min": 2 },
     "FR-002 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bFR-002\\b", "min": 2 },
     "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
-    "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:[^,\\n]*,){3}", "max": 0 },
+    "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:.*?\\bnew: ){4}", "max": 0 },
     "verify task last": { "pattern": "^#### T-1\\.\\d+: Verify", "min": 1 }
   },
   "must_match": [

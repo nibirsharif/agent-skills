@@ -1,5 +1,7 @@
 Set: dev. Domain: device. Form: statements.
 
+Statements: 4 (four sentences).
+
 Open decisions:
 - R1: Whether a setpoint of exactly 5 °C and exactly 30 °C is allowed ("between 5 and 30").
 - R2: What the thermostat controller does when the temperature sensor gives no reading or fails.

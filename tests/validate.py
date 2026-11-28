@@ -31,7 +31,7 @@ WORD_BUDGETS = {
     "verify-spec": (3040, ["references/verify-rules.md", "references/examples.md"]),
     "write-plan": (3100, ["references/plan-rules.md", "references/examples.md", "references/plan-template.md"]),
     "write-spec": (5330, ["references/ears-rules.md", "references/examples.md", "references/drafts.md"]),
-    "write-tasks": (3330, ["references/task-rules.md", "references/examples.md", "references/tasks-template.md"]),
+    "write-tasks": (3500, ["references/task-rules.md", "references/examples.md", "references/tasks-template.md"]),
 }
 
 

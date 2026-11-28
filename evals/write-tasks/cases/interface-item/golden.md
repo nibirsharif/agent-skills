@@ -4,7 +4,7 @@ There is no codebase in this folder, so every file is new. The `export_path` hel
 
 | Phase | Tasks | Requirements |
 |-------|-------|--------------|
-| 1 | T-1.1 to T-1.5 | FR-001, FR-002, FR-003 |
+| 1 | T-1.1 to T-1.4 | FR-001, FR-002, FR-003 |
 
 ## 2. Tasks
 
@@ -22,31 +22,19 @@ There is no codebase in this folder, so every file is new. The `export_path` hel
 
 **Status:** Todo
 
-#### T-1.2: Export a report as CSV
+#### T-1.2: Export a report as CSV, and refuse without EXPORT_DIR
 
-**Covers:** FR-001
+**Covers:** FR-001, FR-003
 
 **Files:** new: `report export` command, new: CSV writer, new: integration test
 
 **Depends on:** T-1.1
 
-**Done when:** FR-001: integration test that `report export 7` writes a CSV with the report's rows at `export_path(7)`
+**Done when:** FR-001: integration test that `report export 7` writes a CSV with the report's rows at `export_path(7)`; FR-003: integration test that `report export 7` with `EXPORT_DIR` unset exits 1 with "EXPORT_DIR is not set" and writes no file
 
 **Status:** Todo
 
-#### T-1.3: Refuse an export without EXPORT_DIR
-
-**Covers:** FR-003
-
-**Files:** new: the missing-folder check in the `report export` command, new: integration test
-
-**Depends on:** T-1.2
-
-**Done when:** FR-003: integration test that `report export 7` with `EXPORT_DIR` unset exits 1 with "EXPORT_DIR is not set" and writes no file
-
-**Status:** Todo
-
-#### T-1.4: Download an exported report
+#### T-1.3: Download an exported report
 
 **Covers:** FR-002
 
@@ -58,15 +46,15 @@ There is no codebase in this folder, so every file is new. The `export_path` hel
 
 **Status:** Todo
 
-#### T-1.5: Verify the phase
+#### T-1.4: Verify the phase
 
 **Covers:** FR-001, FR-002, FR-003
 
 **Files:** None.
 
-**Depends on:** T-1.3, T-1.4
+**Depends on:** T-1.2, T-1.3
 
-**Done when:** FR-001: T-1.1 and T-1.2 tests pass; FR-002: T-1.1 and T-1.4 tests pass; FR-003: T-1.3 test passes; the full test suite is green
+**Done when:** FR-001: T-1.1 and T-1.2 tests pass; FR-002: T-1.1 and T-1.3 tests pass; FR-003: T-1.2 test passes; the full test suite is green
 
 **Status:** Todo
 

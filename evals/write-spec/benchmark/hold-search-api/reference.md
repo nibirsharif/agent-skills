@@ -1,5 +1,7 @@
 Set: holdout. Domain: API. Form: prose.
 
+Statements: 4 (four sentences).
+
 Open decisions:
 - R1: The request limit for clients with an API key.
 - R2: What the anonymous limit is counted per (IP address or other), and whether the minute is a fixed or rolling window.

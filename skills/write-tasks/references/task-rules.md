@@ -47,7 +47,7 @@ A check is a test or a command whenever a test runner the project already has ca
 
 ## Size and order
 
-1. **Small.** One behaviour, or one interface or data change, per task. A task that needs "and" to describe two separate behaviours is two tasks.
+1. **One behaviour per task,** or one interface or data change. A behaviour is one event and everything the phase's requirements say about it: the requirement the event triggers, each `If ... then` requirement for that event going wrong, and an `NFR` that sets a threshold on its response. One task builds them together: it covers all their IDs and has a check for each, an exception's check in the test file of the requirement it is an exception to. Only when the task's files would still pass the limit does the `NFR` or the exception become the next task. Two events are two tasks, even in one file: a task that needs "and" to join two events is two tasks.
 2. **Order by dependency.** Data and interfaces first, then behaviour, then failure handling, as the plan's phase does.
 3. **Check with the change.** The check that proves a requirement is written in the task that builds the behaviour, or in an earlier task. Never leave all tests for a final task.
 4. **Every task can be finished and committed on its own,** leaving the product working and the tests green. No task ends with a half-wired feature that a later task completes.

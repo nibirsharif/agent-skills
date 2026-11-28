@@ -1,0 +1,24 @@
+{
+  "description": "One phase with two events: an upload (FR-001) with its size exception (FR-002) and its deadline (NFR-001), and a delete (FR-003) with its ownership exception (FR-004). Each event is one task that covers its requirements together, with a check for each ID; the two events are two tasks.",
+  "counts": {
+    "tasks": { "pattern": "^#### T-1\\.\\d+: ", "min": 3, "max": 6 },
+    "task of both events": { "pattern": "^\\*\\*Covers:\\*\\*(?=.*\\bFR-001\\b)(?=.*\\bFR-003\\b)", "max": 1 },
+    "NFR-001 covered": { "pattern": "^\\*\\*Covers:\\*\\*.*\\bNFR-001\\b", "min": 2 },
+    "task over 3 files": { "pattern": "^\\*\\*Files:\\*\\*(?:.*?\\bnew: ){4}", "max": 0 },
+    "verify task last": { "pattern": "^#### T-1\\.\\d+: Verify", "min": 1 }
+  },
+  "must_match": [
+    { "pattern": "\\A## 1\\. Overview", "why": "the reply is the tasks alone: it starts at the Overview heading" },
+    { "pattern": "^\\*\\*Covers:\\*\\*(?=.*\\bFR-001\\b)(?=.*\\bFR-002\\b)(?!.*\\bFR-003\\b).*\\n\\n\\*\\*Files:\\*\\*.*\\n\\n\\*\\*Depends on:\\*\\*.*\\n\\n\\*\\*Done when:\\*\\*(?=.*\\bFR-001: )(?=.*\\bFR-002: )", "why": "one task builds the upload with its size exception, and has a check for each ID" },
+    { "pattern": "^\\*\\*Covers:\\*\\*(?=.*\\bFR-003\\b)(?=.*\\bFR-004\\b)(?!.*\\bFR-001\\b).*\\n\\n\\*\\*Files:\\*\\*.*\\n\\n\\*\\*Depends on:\\*\\*.*\\n\\n\\*\\*Done when:\\*\\*(?=.*\\bFR-003: )(?=.*\\bFR-004: )", "why": "one task builds the delete with its ownership exception, and has a check for each ID" }
+  ],
+  "must_not_match": [
+    { "pattern": "^\\*\\*Covers:\\*\\* (FR-002|FR-004)\\s*$", "why": "an exception is not a task of its own while its event's task has room for its files" },
+    { "pattern": "^\\*\\*Done when:\\*\\*(?!.*\\b(FR|NFR)-\\d+)", "why": "every Done when cites a requirement ID" },
+    { "pattern": "^\\*\\*Files:\\*\\*.*`[\\w.-]+/[\\w./-]+\\.\\w+`", "why": "with no codebase, no file path is named" },
+    { "pattern": "^```", "why": "tasks hold no code" }
+  ],
+  "manual": [
+    "NFR-001 is covered by the upload's task, or by the next task when the upload's files would pass 3."
+  ]
+}
