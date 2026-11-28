@@ -16,6 +16,7 @@ Made-up inputs that exercise the write-spec skill's rules, each with automatic c
 | `vague-only` | Only impressions and no system: questions only, and no draft. |
 | `assume-defaults` | The user asks for defaults: no value is assumed, and business decisions get no proposal. |
 | `ask-location` | No path in the request, no `spec_output_dir` (the input is sent as written, not through the chat-only prompt): the reply is the one location question and no requirement. |
+| `spec-dir` | The same request where the project's config sets `spec_output_dir`: the skill's `target.py` gives the folder, the file is saved at `docs/specs/password-reset/requirements.md`, the reply's last line states that path, and the location question is not asked ([#42](https://github.com/nibirsharif/agent-skills/issues/42)). The config is in the case's `dirty/` folder. |
 | `routing-gherkin` | Routing: a Given/When/Then request, which the skill's description excludes. The skill must not fire. |
 
 Each case folder holds:
@@ -29,7 +30,7 @@ Each case folder holds:
 
 A skill whose cases need code to work on names a folder in its `config.json` as `"fixture"`. Every case of that skill starts in a copy of it, committed as a git repository on `main`. Without one, each run starts in an empty folder.
 
-Besides each case's checks, every reply except in a `"fires": false` case must pass [hooks.py](hooks.py): the skill's lint finds no errors, and the reply holds nothing but requirement, draft, and question lines (and the "N more open questions" line).
+Besides each case's checks, every reply except in a `"fires": false` case must pass [hooks.py](hooks.py): the skill's lint finds no errors, and the reply holds nothing but requirement, draft, and question lines (and the "N more open questions" line), except that its last line may state the path of a saved file.
 
 ## Running
 
@@ -93,6 +94,35 @@ The rules in `code-facts.md` are 809 words. A cut to 664 words was tried the sam
 | The six cases a draft can appear in, after that | 18 of 18 | `draft-slots`, `vague-only`, `propose-system`, `prd-solar-monitoring`, `clean-feature`, `assume-defaults`. |
 
 Not measured: the follow-up turn with drafts. `followup-first-requirements` and `followup-answers` passed 6 of 6 in each suite run, but their first replies, which the input quotes, hold no draft.
+
+## A sentence before the reply
+
+[#42](https://github.com/nibirsharif/agent-skills/issues/42): some replies open with one sentence about the step the agent just finished, such as "No target is set, so I'm asking before writing anything." or "Lint is clean, so here are the requirements." Everything after the sentence is right. All runs below are on `claude-sonnet-5-5` with Claude Code 2.1.327, 26 and 27 November 2026.
+
+**The location question.** `ask-location`, 20 runs at a time:
+
+| Skill text | Passed | The misses |
+|------------|--------|------------|
+| `master` at 0.20.0 | 18 of 20 | Both open with the sentence. |
+| A rule in `SKILL.md` that the last message is the reply and never starts with a sentence about what was found, with two of the sentences as examples | 16 of 20 | All four open with the sentence. Not kept. |
+| `scripts/target.py` reads the config and prints the question | 60 of 60, then 5 of 6 in two whole-suite runs | One reply: "No target is known, so I can't write the requirements yet." |
+
+- Without the script the agent looked for the two config files itself, in two or three commands of its own choosing, and some runs listed the user's home folder. In the 40 runs without it, the 14 that had a thinking step before the last message all passed, and 6 of the other 26 opened with the sentence: with no thinking step, what the agent concluded from its lookups went into the reply.
+- With the script, the last thing the agent reads is the question itself, and it runs one command where it ran two or three: 5 turns for 7, and $0.125 a run for $0.137. No run with the script had a thinking step before the last message, so the 65 of 66 are all of the kind that missed 6 of 26.
+- The three batches of 20 differ in one sentence each (below); the two suite runs are on the text that was kept.
+
+**A sentence before the script runs.** In 12 of the 66 runs the agent wrote a sentence before the command, such as "No path named; run target.py." The eval grades the last message only, so these runs pass, and a person in an interactive session sees that sentence above the question. No run without the script had one. Two wordings against it changed nothing and were not kept: "Write no text between tool calls." in `SKILL.md`'s Output (2 of 20, against 3 of 20 without it) and "Write no text before the command" beside the step in `saving.md` (6 of 20).
+
+**Every other reply.** Not fixed. Two whole-suite runs with the judge, 14 cases at 3 runs each:
+
+| Run | Passed | The misses |
+|-----|--------|------------|
+| The lint's last line reworded to "When you send the reply, start it with its first FR-, NFR-, or Q- line: no sentence before it, and no word about this lint." | 38 of 42 | Two open with a sentence: the one `ask-location` miss above, and a `followup-first-requirements` reply that explained why it kept a wording the lint had marked `CHECK`. The reworded line was the last thing that reply's agent read, so it was not kept. The other two: `nfr-ids` asked a fourth question, and `draft-slots` wrote no requirement for its one complete statement. |
+| The text that was kept | 41 of 42 | `code-no-facts` opened with "No statement qualifies for a draft, so the reply stays as linted." |
+
+So about 1 reply in 40 that holds requirements still opens with a sentence (2 of the 72 here), as before the change, and a suite run of 42 has one more often than not. Each of them reports the step just finished: the lint, or the drafts. A rule against it is already the last thing the agent reads in both places, in the lint's last line and at the end of `drafts.md`. Showing that a further change helps at this rate needs a few hundred runs. It is left as it is: a person reads the reply, and the sentence changes neither the lines after it nor the saved file.
+
+`spec-dir`, the new case for the folder the script prints, passed 6 of 6 in the two suite runs: every run ran the script, read neither config file itself, and saved to `docs/specs/password-reset/requirements.md`. Three runs before them did the same and were failed only by [hooks.py](hooks.py), which did not yet allow the last line that states the saved file's path.
 
 ## Adding a case
 

@@ -7,10 +7,12 @@ Read this before looking for `spec_output_dir`, or reading, writing, or updating
 Pick the path in this order:
 
 1. A path the user named.
-2. `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. Use `<spec_output_dir>/<feature-name>/requirements.md`, where `<feature-name>` is the input's feature in kebab-case (for example `password-reset`). First look at the existing `<spec_output_dir>/*/requirements.md` files: if one already covers this feature, use it. Ask when the input names no feature, or when more than one existing file could match.
-3. Neither is set: ask where to save, as the skill's Scope says, before writing any requirement. Write no file only when the user answers "chat only" or asked for chat only at the start.
+2. Otherwise, unless the user asked for chat only, run [../scripts/target.py](../scripts/target.py) by its full path, with the project as the current directory. It reads the config files: do not look for or read them yourself. Do what it prints:
+   - `dir <path>`: the folder, with a relative `spec_output_dir` already resolved against the project root. Use `<path>/<feature-name>/requirements.md`, where `<feature-name>` is the input's feature in kebab-case (for example `password-reset`). First look at the existing `<path>/*/requirements.md` files: if one already covers this feature, use it. Ask when the input names no feature, or when more than one existing file could match.
+   - `ask <question>`: no folder is set. Write no requirement and run nothing more: `<question>` is your whole reply, as written.
+3. Only when you cannot run commands, find the folder yourself: `spec_output_dir` from `.agent-skills-config.yaml` in the project root (the repository root, or the current directory outside a repository), else from `~/.agent-skills-config.yaml`. Resolve a relative `spec_output_dir` against the project root. When neither sets it, the whole reply is the one line `Where should I save the requirements? Give a path, set `spec_output_dir` in `.agent-skills-config.yaml`, or say "chat only".`
 
-Write a file only when at least one requirement was written. After writing, state the path in one line, and run the lint on the file without `--follow-up`, since a file holds no markers: `python3 <this skill folder>/scripts/lint.py <file>`. Fix every `ERROR`.
+Write a file only when at least one requirement was written, and none when the user answers "chat only" or asked for chat only at the start. After writing, state the path in one line, the last of the reply, and run the lint on the file without `--follow-up`, since a file holds no markers: `python3 <this skill folder>/scripts/lint.py <file>`. Fix every `ERROR`.
 
 ## A new file
 

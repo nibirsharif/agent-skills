@@ -1,5 +1,6 @@
 """write-spec's own reply checks: the skill's lint must find no errors, and the reply holds only
-requirement lines, draft lines, question lines, and the "N more open questions" line."""
+requirement lines, draft lines, question lines, the "N more open questions" line, and, as its last
+line, the one line that states the path of a saved file."""
 
 import importlib.util
 import re
@@ -24,8 +25,12 @@ def check(reply):
         if level == "ERROR":
             failures.append(f"lint: {where} {ident}: {message}")
 
-    for line in reply.splitlines():
-        if line.strip() and not re.match(r"(FR|NFR|Q)-\d+\b|Draft: |\d+ more open questions after these\b", line):
+    lines = [line for line in reply.splitlines() if line.strip()]
+    # saving.md: after writing a file, the reply states its path in one line.
+    if len(lines) > 1 and re.search(r"\S\.md\b", lines[-1]) and not re.match(r"(FR|NFR|Q)-\d+\b|Draft: ", lines[-1]):
+        lines.pop()
+    for line in lines:
+        if not re.match(r"(FR|NFR|Q)-\d+\b|Draft: |\d+ more open questions after these\b", line):
             failures.append(f"text outside the requirements and questions: {line[:100]}")
             break
     return failures

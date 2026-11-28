@@ -21,7 +21,7 @@ This skill writes EARS requirements only. Asked for Given/When/Then (Gherkin) sc
 
 Stop and ask instead of writing when:
 
-- No target is known: the user named no path and did not say chat only, and no `spec_output_dir` is set, as [The path](references/saving.md#the-path) says. Write nothing yet. The whole reply is the one line `Where should I save the requirements? Give a path, set `spec_output_dir` in `.agent-skills-config.yaml`, or say "chat only".` After the user answers, go on with that answer for the rest of the conversation.
+- No target is known: the user named no path and did not say chat only, and [scripts/target.py](scripts/target.py) prints `ask`, as [The path](references/saving.md#the-path) says. Write nothing yet. The question it prints is your whole reply, as written. After the user answers, go on with that answer for the rest of the conversation.
 - The input states no behaviour or property of any system. Write nothing, and ask what the system must do.
 - The user asks you to assume or use defaults. Still write no value the user did not give: ask each gap, with a proposal where [Output](#output) allows one.
 - The user insists on a banned word or an untestable requirement. Do not write it. Keep its question open and say once which rule blocks it.

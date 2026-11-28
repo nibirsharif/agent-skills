@@ -29,4 +29,5 @@ TODO.md
 
 # Eval cases that commit their own config or a test-double skill
 !evals/*/cases/*/committed/.agent-skills-config.yaml
+!evals/*/cases/*/dirty/.agent-skills-config.yaml
 !evals/*/cases/*/committed/.claude/
