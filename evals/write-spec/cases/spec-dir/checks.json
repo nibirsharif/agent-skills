@@ -1,0 +1,45 @@
+{
+  "description": "No path in the request, and the project's config sets spec_output_dir (the input is sent as written, not through the chat-only prompt). The skill's script gives the folder, the requirements are saved under it in a folder named for the feature, and the location question is not asked.",
+  "raw": true,
+  "counts": {
+    "requirements": {
+      "pattern": "^(FR|NFR)-\\d+",
+      "min": 1,
+      "max": 3
+    }
+  },
+  "must_match": [
+    {
+      "pattern": "^FR-001: When [^\\n]*, the authentication service shall (send|email) ",
+      "why": "the input's one statement is complete, so it is written"
+    },
+    {
+      "pattern": "^Bash [^\\n]*scripts/target\\.py",
+      "why": "the script finds spec_output_dir",
+      "target": "trace"
+    },
+    {
+      "pattern": "^Write [^\\n]*/work/docs/specs/password-reset/requirements\\.md",
+      "why": "the file is saved at <spec_output_dir>/<feature-name>/requirements.md, resolved against the project root",
+      "target": "trace"
+    },
+    {
+      "pattern": "\\n[^\\n]*docs/specs/password-reset/requirements\\.md[^\\n]*\\s*\\Z",
+      "why": "the reply's last line states the path of the saved file"
+    }
+  ],
+  "must_not_match": [
+    {
+      "pattern": "Where should I save the requirements\\?",
+      "why": "a folder is set, so the location question is not asked"
+    },
+    {
+      "pattern": "^(Bash|Read|Glob|Grep) [^\\n]*\\.agent-skills-config\\.yaml",
+      "why": "the script reads the config files, and the agent does not look for them itself",
+      "target": "trace"
+    }
+  ],
+  "manual": [
+    "The saved file follows the template in saving.md, and its lint was run."
+  ]
+}
