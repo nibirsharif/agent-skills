@@ -4,7 +4,7 @@ Instructions the agent follows: [skills/write-tasks/SKILL.md](../skills/write-ta
 
 ## Overview
 
-Reads a saved `plan.md` and the `requirements.md` beside it, explores the codebase, and writes `tasks.md`: each phase split into small tasks numbered `T-<phase>.<n>`, in build order. Every task names the `FR` and `NFR` IDs it covers, the files it touches (`new:` for files that do not exist yet), the earlier tasks it depends on, a one-line check that shows it is done (a test or command, or a `manual:` check for a person), and a Status (`Todo` until [implement-task](implement-task.md) finishes it). Each phase ends with a verify task.
+Reads a saved `plan.md` and the `requirements.md` beside it, explores the codebase, and writes `tasks.md`: each phase split into small tasks numbered `T-<phase>.<n>`, in build order. A task builds one behaviour: one event with everything the phase's requirements say about it. Every task names the `FR` and `NFR` IDs it covers, the files it touches (`new:` for files that do not exist yet), the earlier tasks it depends on, a one-line check that shows it is done (a test or command, or a `manual:` check for a person), and a Status (`Todo` until [implement-task](implement-task.md) finishes it). Each phase ends with a verify task.
 
 Blocked requirements are copied from the plan and never tasked. Open questions are never answered.
 
@@ -19,7 +19,7 @@ It does not write requirements, change the plan, or write code.
 
 ## Output
 
-When saved, one line for the path, then one line per phase (`Phase 1: 5 tasks (FR-001, FR-002, NFR-001)`) and the blocked entries. In chat only, the tasks themselves, starting at `## 1. Overview`. When you pasted the plan and did not ask for chat only, their last line says so: `Not saved: the plan was pasted, not read from a file. ...`.
+When saved, one line for the path, then one line per phase (`Phase 1: 4 tasks (FR-001, FR-002, NFR-001)`) and the blocked entries. In chat only, the tasks themselves, starting at `## 1. Overview`. When you pasted the plan and did not ask for chat only, their last line says so: `Not saved: the plan was pasted, not read from a file. ...`.
 
 It stops with a single line instead of tasking when:
 
@@ -35,6 +35,8 @@ Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (defaul
 
 **Why does it refuse a big phase instead of using bigger tasks?** A phase over the limit usually means the plan's cut is wrong. Squeezing it into fewer, larger tasks hides that. Split it in plan.md.
 
+**Why does one task cover several requirements?** A requirement, the `If ... then` requirements for the same event going wrong, and an `NFR` that sets a threshold on its response change the same code and the same test file, so one task builds them, and its "done when" has a check for each ID. Only when that task's files would pass the file limit is the `NFR` or the exception the next task. Two events are always two tasks. The rule is in [task-rules.md](../skills/write-tasks/references/task-rules.md#size-and-order).
+
 **What is the verify task?** The last task of a phase. It ties the earlier checks together and runs the full test suite, citing each requirement ID the phase covers.
 
 **What happens to Status when I re-run it?** A phase with any `Done` task has started: its tasks keep their IDs and Status, and new work is appended as `Todo` tasks. The rules are in [updating.md](../skills/write-tasks/references/updating.md).
@@ -47,7 +49,8 @@ Limits: `tasks_max_files_per_task` (default 3) and `tasks_max_per_phase` (defaul
 
 ## Verifying results
 
-- Each task is one focused change, with at most the file limit.
+- Each task is one behaviour (one event with its exceptions and its threshold) or one interface or data change, with at most the file limit. No task joins two events.
+- Every ID in a task's Covers has its own check in that task's "done when".
 - Every requirement of a phase is covered by a task other than the verify task.
 - Each "done when" check is a test or command you can run, or starts with `manual:` and says what to do and what to see.
 - No check is `manual:` where the project's tests could make it.

@@ -1,5 +1,7 @@
 Set: holdout. Domain: scheduled notifications. Form: prose.
 
+Statements: 4 (four sentences; the title is not one).
+
 Open decisions:
 - R1: What happens to the second reminder when an appointment is booked less than 2 hours ahead.
 - R2: What happens to reminders when an appointment is moved to another time.

@@ -1,5 +1,7 @@
 Set: dev. Domain: batch job. Form: meeting notes.
 
+Statements: 5 (five sentences; Tom's question and its answer are one).
+
 Open decisions:
 - R1: Which system runs the export.
 - R2: The time zone of 02:00 and of "the previous day".

@@ -1,5 +1,7 @@
 Set: dev. Domain: UI. Form: user story.
 
+Statements: 3 (three acceptance criteria; the story line above them is not one).
+
 Open decisions:
 - R1: Which system adds products to the wishlist and displays the wishlist page.
 - R2: How a shopper removes an item: which control, on which page.

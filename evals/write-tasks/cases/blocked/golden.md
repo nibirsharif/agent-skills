@@ -1,10 +1,10 @@
 ## 1. Overview
 
-There is no codebase in this folder, so every file is new. The token store comes first, then expiry, then the email and its deadline, then the phase check.
+There is no codebase in this folder, so every file is new. The token store comes first, then expiry, then the email with its deadline, then the phase check.
 
 | Phase | Tasks | Requirements |
 |-------|-------|--------------|
-| 1 | T-1.1 to T-1.5 | FR-001, FR-002, NFR-001 |
+| 1 | T-1.1 to T-1.4 | FR-001, FR-002, NFR-001 |
 
 ## 2. Tasks
 
@@ -34,39 +34,27 @@ There is no codebase in this folder, so every file is new. The token store comes
 
 **Status:** Todo
 
-#### T-1.3: Email the reset link
+#### T-1.3: Email the reset link within its deadline
 
-**Covers:** FR-001
+**Covers:** FR-001, NFR-001
 
-**Files:** new: `POST /auth/password-reset` handler, new: mail call, new: integration test
+**Files:** new: `POST /auth/password-reset` handler with its mail call, new: integration test, new: load test script
 
 **Depends on:** T-1.1
 
-**Done when:** FR-001: integration test that a reset request for a registered user sends one email containing a link
+**Done when:** FR-001: integration test that a reset request for a registered user sends one email containing a link; NFR-001: load test run shows 99% of reset emails sent within 2 minutes of the request
 
 **Status:** Todo
 
-#### T-1.4: Measure the email deadline
-
-**Covers:** NFR-001
-
-**Files:** new: load test script
-
-**Depends on:** T-1.3
-
-**Done when:** NFR-001: load test run shows 99% of reset emails sent within 2 minutes of the request
-
-**Status:** Todo
-
-#### T-1.5: Verify the phase
+#### T-1.4: Verify the phase
 
 **Covers:** FR-001, FR-002, NFR-001
 
 **Files:** None.
 
-**Depends on:** T-1.2, T-1.4
+**Depends on:** T-1.2, T-1.3
 
-**Done when:** FR-001: T-1.1 and T-1.3 tests pass; FR-002: T-1.2 test passes; NFR-001: T-1.4 load test passes; the full test suite is green
+**Done when:** FR-001: T-1.1 and T-1.3 tests pass; FR-002: T-1.2 test passes; NFR-001: T-1.3 load test passes; the full test suite is green
 
 **Status:** Todo
 

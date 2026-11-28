@@ -1,5 +1,7 @@
 Set: dev. Domain: security. Form: one-line idea.
 
+Statements: 1 (one sentence).
+
 Open decisions:
 - R1: Which system performs the login.
 - R2: What the second factor is (authenticator app code, SMS code, security key, other).

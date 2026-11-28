@@ -124,6 +124,10 @@ So about 1 reply in 40 that holds requirements still opens with a sentence (2 of
 
 `spec-dir`, the new case for the folder the script prints, passed 6 of 6 in the two suite runs: every run ran the script, read neither config file itself, and saved to `docs/specs/password-reset/requirements.md`. Three runs before them did the same and were failed only by [hooks.py](hooks.py), which did not yet allow the last line that states the saved file's path.
 
+## The size of a spec
+
+Measured for [#44](https://github.com/nibirsharif/agent-skills/issues/44), 27 November 2026 (`claude-sonnet-5-5`, Claude Code 2.1.327); no rule of write-spec changed. The benchmark's follow-up turn now has a size measure, counted by [benchmark/size.py](benchmark/size.py): 1.82 requirements for each input statement after the turn (71 for 39 in each of three runs), about a third of them from coverage-gap answers, and 37 questions still open. The baseline, and the two options for write-spec that were tried and not taken (coverage gaps one level deep, and a size line at the end of the reply), are in [benchmark/baseline-size.md](benchmark/baseline-size.md). The same script counts a saved requirements file by source; the real run's 29 requirements are in [its record](../real-runs/2026-11-17.md#the-29-requirements-by-source).
+
 ## Adding a case
 
 Copy a case folder, write the input, and write `golden.md` first. Then write checks that the golden passes and that a plausible wrong reply fails, and run `make test`.

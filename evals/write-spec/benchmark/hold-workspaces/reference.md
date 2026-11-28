@@ -1,5 +1,7 @@
 Set: holdout. Domain: data and permissions. Form: prose.
 
+Statements: 5 (five sentences).
+
 Open decisions:
 - R1: Withdrawn ([#27](https://github.com/nibirsharif/agent-skills/issues/27)). It was "What the notes service does when an invite is opened more than 72 hours after it was sent". "Valid for 72 hours" states that: the invite is refused after that time, so a reply writes the reject as a requirement.
 - R2: What the notes service does when an admin invites an email address that is already a member.
